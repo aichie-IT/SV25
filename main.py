@@ -1,5 +1,7 @@
-def main():
-    print("Hello, world!")
+import streamlit as st
 
-if __name__ == "__main__":
-    main()
+st.set_page_config(
+    page_title="Genetic Algorithm"
+)
+
+st.header("Genetic Algorithm", divider="gray")
