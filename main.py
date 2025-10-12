@@ -1,11 +1,5 @@
 import streamlit as st
 
-st.set_page_config(
-    page_title="Scientific Visualization"
-)
-
-st.header("Scientific Visualization", divider="gray")
-
 # 1. Define the URL for the data source
 DATA_URL = 'https://raw.githubusercontent.com/aichie-IT/SV25/refs/heads/main/arts_faculty_data.csv'
 
