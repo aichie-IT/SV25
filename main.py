@@ -7,17 +7,6 @@ st.set_page_config(
 st.header("Scientific Visualization", divider="gray")
 
 
-This code block provides a complete, runnable Streamlit application that reads the data from your GitHub CSV link and generates the gender distribution visualization using Plotly Express, replacing Matplotlib.
-
-Streamlit App with Plotly Visualization
-This application requires the streamlit, pandas, and plotly libraries.
-
-Python
-
-import streamlit as st
-import pandas as pd
-import plotly.express as px
-
 # 1. Define the URL for the data source
 DATA_URL = "https://raw.githubusercontent.com/aichie-IT/SV25/refs/heads/main/arts_faculty_data.csv"
 
