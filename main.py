@@ -3,19 +3,21 @@ import pandas as pd
 import plotly.express as px
 
 # 1. Define the URL for the data source
-DATA_URL = 'https://raw.githubusercontent.com/aichie-IT/SV25/refs/heads/main/arts_faculty_data.csv'
+URL = 'https://raw.githubusercontent.com/aichie-IT/SV25/refs/heads/main/arts_faculty_data.csv'
 
-# Streamlit page configuration
+# Set Streamlit page configuration
 st.set_page_config(
     page_title="Scientific Visualization",
-    layout="wide"
+    layout="wide" 
 )
 
-st.header("Distribution of Gender in Arts Faculty", divider="gray")
+st.title("Distribution of Gender in Arts Faculty")
+st.markdown("---")
 
-# --- 2. Data Loading and Caching ---
+# --- Data Loading and Caching ---
 
-# Use Streamlit's caching to load data only once
+# Use Streamlit's caching decorator to load data only once
+# This is crucial for performance in a web application
 @st.cache_data
 def load_data(url):
     """Loads the CSV data from the URL."""
@@ -23,67 +25,65 @@ def load_data(url):
         df = pd.read_csv(url)
         return df
     except Exception as e:
-        st.error(f"Error loading data: {e}")
-        return pd.DataFrame()
+        st.error(f"Error loading data from URL: {url}\n{e}")
+        return pd.DataFrame() # Return empty DataFrame on failure
 
-arts_df = load_data(DATA_URL)
+arts_df = load_data(URL)
 
-# --- 3. Data Processing and Visualization ---
+if arts_df.empty:
+    st.stop() # Stop execution if data loading failed
 
-if not arts_df.empty and 'Gender' in arts_df.columns:
-    
-    # Calculate gender counts and reset index for Plotly structure
-    gender_counts = arts_df['Gender'].value_counts().reset_index()
-    gender_counts.columns = ['Gender', 'Count']
-
-    # Display a preview of the data (replaces arts_df.head())
-    st.subheader("Data Preview")
-    st.dataframe(arts_df.head(), use_container_width=True)
-    st.markdown("---")
+# --- 1. Data Preview (replacing display(arts_df.head())) ---
+st.subheader("1. Data Preview")
+st.dataframe(arts_df.head(), use_container_width=True)
 
 
-    # --- 4. Plotly Pie Chart (Replacing Matplotlib Pie) ---
-    st.subheader("Gender Distribution: Pie Chart")
-    
-    # Create the Plotly Pie figure
-    fig_pie = px.pie(
-        gender_counts,
-        values='Count',
-        names='Gender',
-        title='Distribution of Gender in Arts Faculty (Percentage)',
-        hole=0.4 # Optional: makes it a donut chart
-    )
-    
-    # Customize text format
-    fig_pie.update_traces(textposition='inside', textinfo='percent+label')
-    
-    # Display the Plotly figure in Streamlit
-    st.plotly_chart(fig_pie, use_container_width=True)
-    st.markdown("---")
+# --- 2. Data Processing and Visualization ---
 
+if 'Gender' in arts_df.columns:
+    # Calculate the gender counts and format for Plotly
+    gender_counts_df = arts_df['Gender'].value_counts().reset_index()
+    # Rename columns for clarity in Plotly
+    gender_counts_df.columns = ['Gender', 'Count']
 
-    # --- 5. Plotly Bar Chart (Replacing Matplotlib Bar) ---
-    st.subheader("Gender Distribution: Bar Chart")
-    
-    # Create the Plotly Bar figure
-    fig_bar = px.bar(
-        gender_counts,
-        x='Gender',
-        y='Count',
-        title='Distribution of Gender in Arts Faculty (Count)',
-        color='Gender' # Color the bars by Gender
-    )
-    
-    # Customize bar chart layout for better readability
-    fig_bar.update_layout(
-        xaxis_title='Gender',
-        yaxis_title='Count',
-        # Sort bars by count in descending order
-        xaxis={'categoryorder':'total descending'} 
-    )
+    col1, col2 = st.columns(2)
 
-    # Display the Plotly figure in Streamlit
-    st.plotly_chart(fig_bar, use_container_width=True)
+    # --- Plotly Pie Chart (replacing Matplotlib Pie Chart) ---
+    with col1:
+        st.subheader("2. Gender Distribution (Pie Chart)")
+        fig_pie = px.pie(
+            gender_counts_df,
+            values='Count',
+            names='Gender',
+            title='**Gender Distribution**',
+            hole=0.4 # Makes it a donut chart
+        )
+        # Customize appearance
+        fig_pie.update_traces(textposition='inside', textinfo='percent+label')
+        
+        # Display the Plotly figure in Streamlit
+        st.plotly_chart(fig_pie, use_container_width=True)
+
+    # --- Plotly Bar Chart (replacing Matplotlib Bar Chart) ---
+    with col2:
+        st.subheader("3. Gender Distribution (Bar Chart)")
+        fig_bar = px.bar(
+            gender_counts_df,
+            x='Gender',
+            y='Count',
+            title='**Gender Count**',
+            color='Gender'
+        )
+
+        # Customize the bar chart layout to sort by count (total descending)
+        fig_bar.update_layout(
+            xaxis_title='Gender',
+            yaxis_title='Count',
+            xaxis={'categoryorder':'total descending'}
+        )
+
+        # Display the Plotly figure in Streamlit
+        st.plotly_chart(fig_bar, use_container_width=True)
 
 else:
-    st.error("Cannot proceed. The data failed to load or the 'Gender' column is missing.")
+    st.error("The loaded CSV data does not contain a 'Gender' column required for visualization.")
