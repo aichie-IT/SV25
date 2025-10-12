@@ -1,66 +1,91 @@
-import streamlit as st
-
 st.set_page_config(
     page_title="Scientific Visualization"
 )
 
 st.header("Scientific Visualization", divider="gray")
 
-
 # 1. Define the URL for the data source
-DATA_URL = "https://raw.githubusercontent.com/aichie-IT/SV25/refs/heads/main/arts_faculty_data.csv"
+DATA_URL = 'https://raw.githubusercontent.com/aichie-IT/SV25/refs/heads/main/arts_faculty_data.csv'
 
-# Streamlit page configuration (from your initial prompt)
+# Streamlit page configuration
 st.set_page_config(
     page_title="Scientific Visualization",
-    layout="wide" # Use wide layout for better visualization space
+    layout="wide"
 )
 
-st.header("Genetic Algorithm: Distribution of Gender in Arts Faculty", divider="gray")
+st.header("Distribution of Gender in Arts Faculty", divider="gray")
 
-# --- Data Loading and Processing ---
+# --- 2. Data Loading and Caching ---
 
-# Use Streamlit's caching decorator to load data only once
+# Use Streamlit's caching to load data only once
 @st.cache_data
-def load_data():
-    """Loads the CSV data from the URL using pandas."""
+def load_data(url):
+    """Loads the CSV data from the URL."""
     try:
-        df = pd.read_csv(DATA_URL)
+        df = pd.read_csv(url)
         return df
     except Exception as e:
         st.error(f"Error loading data: {e}")
-        return pd.DataFrame({'Gender': ['Error']})
+        return pd.DataFrame()
 
-arts_df = load_data()
+arts_df = load_data(DATA_URL)
 
-# Check if the required column exists before proceeding
-if 'Gender' in arts_df.columns:
-    # 2. Calculate the gender counts and format for Plotly
+# --- 3. Data Processing and Visualization ---
+
+if not arts_df.empty and 'Gender' in arts_df.columns:
+    
+    # Calculate gender counts and reset index for Plotly structure
     gender_counts = arts_df['Gender'].value_counts().reset_index()
-    # Rename columns for clarity in Plotly
     gender_counts.columns = ['Gender', 'Count']
 
-    # --- Plotly Pie Chart (replacing Matplotlib) ---
+    # Display a preview of the data (replaces arts_df.head())
+    st.subheader("Data Preview")
+    st.dataframe(arts_df.head(), use_container_width=True)
+    st.markdown("---")
 
-    # 3. Create the Plotly figure (Pie Chart)
-    fig = px.pie(
+
+    # --- 4. Plotly Pie Chart (Replacing Matplotlib Pie) ---
+    st.subheader("Gender Distribution: Pie Chart")
+    
+    # Create the Plotly Pie figure
+    fig_pie = px.pie(
         gender_counts,
         values='Count',
         names='Gender',
-        title='**Distribution of Gender in Arts Faculty**',
-        color_discrete_sequence=px.colors.sequential.RdBu, # Optional: Customize colors
+        title='Distribution of Gender in Arts Faculty (Percentage)',
         hole=0.4 # Optional: makes it a donut chart
     )
+    
+    # Customize text format
+    fig_pie.update_traces(textposition='inside', textinfo='percent+label')
+    
+    # Display the Plotly figure in Streamlit
+    st.plotly_chart(fig_pie, use_container_width=True)
+    st.markdown("---")
 
-    # Optional: Customize the appearance
-    fig.update_traces(textposition='inside', textinfo='percent+label')
+
+    # --- 5. Plotly Bar Chart (Replacing Matplotlib Bar) ---
+    st.subheader("Gender Distribution: Bar Chart")
     
-    # 4. Display the Plotly figure using Streamlit
-    st.plotly_chart(fig, use_container_width=True)
+    # Create the Plotly Bar figure
+    fig_bar = px.bar(
+        gender_counts,
+        x='Gender',
+        y='Count',
+        title='Distribution of Gender in Arts Faculty (Count)',
+        color='Gender' # Color the bars by Gender
+    )
     
+    # Customize bar chart layout for better readability
+    fig_bar.update_layout(
+        xaxis_title='Gender',
+        yaxis_title='Count',
+        # Sort bars by count in descending order
+        xaxis={'categoryorder':'total descending'} 
+    )
+
+    # Display the Plotly figure in Streamlit
+    st.plotly_chart(fig_bar, use_container_width=True)
+
 else:
-    st.warning("The loaded CSV data does not contain a 'Gender' column. Please check the file structure.")
-
-# Optional: Display the raw data
-with st.expander("View Raw Data"):
-    st.dataframe(arts_df)
+    st.error("Cannot proceed. The data failed to load or the 'Gender' column is missing.")
