@@ -8,11 +8,11 @@ URL = 'https://raw.githubusercontent.com/aichie-IT/SV25/refs/heads/main/arts_fac
 
 # Set Streamlit page configuration
 st.set_page_config(
-    page_title="Arts Faculty Data Visualization",
+    page_title="Scientific Visualization",
     layout="wide"
 )
 
-st.title("Scientific Visualization: Arts Faculty Data Analysis")
+st.title("Arts Faculty Data Analysis")
 st.markdown("---")
 
 # --- 1. Data Loading and Caching ---
