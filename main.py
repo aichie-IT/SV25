@@ -153,12 +153,17 @@ else:
 # --- F. Survey Correlation Heatmap ---
 st.subheader("Survey Question Correlation Heatmap")
 
-# Filter and clean data for heatmap
+# Robust code to handle non-numeric values gracefully:
 q_df = arts_df[NUMERICAL_Q_COLUMNS].copy()
-q_df = q_df.astype(float)
-q_df = q_df.dropna()
 
-if not q_df.empty and len(q_df.columns) > 1:
+# Apply to_numeric to each column, forcing errors to become NaN
+for col in NUMERICAL_Q_COLUMNS:
+    q_df[col] = pd.to_numeric(q_df[col], errors='coerce') 
+
+q_df = q_df.dropna() # Now drop rows that contain any of the coerced NaN values
+
+if not q_df.empty and len(q_df.columns) > 2:
+    st.info(f"Heatmap data size: {len(q_df)} valid rows found.")
     correlation_matrix = q_df.corr()
 
     # Create Plotly Heatmap
@@ -192,4 +197,4 @@ if not q_df.empty and len(q_df.columns) > 1:
     
     st.plotly_chart(fig_heatmap, use_container_width=True)
 else:
-    st.info("Skipping Heatmap: Not enough numerical survey columns or valid data.")
+    st.warning(f"Heatmap could not be generated. Only {len(q_df)} valid rows remain after cleaning.")
