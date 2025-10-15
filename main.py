@@ -163,27 +163,23 @@ for col in NUMERICAL_Q_COLUMNS:
 
 q_df = q_df.dropna() # Now drop rows that contain any of the coerced NaN values
 
-# New, stricter validation check: must have at least 2 columns and 2 rows for correlation
 if not q_df.empty and len(q_df.columns) >= 2 and len(q_df) > 1:
     st.info(f"Heatmap data size: {len(q_df)} valid rows found.")
     
-    # Calculate the correlation matrix
-    correlation_matrix = q_df.corr()
+    correlation_matrix = q_df.corr().fillna(0)
     
-    # Handle potential NaNs in the correlation matrix (e.g., if columns have zero variance)
-    # Fill these with 0 for plotting, as correlation is undefined in these cases.
-    correlation_matrix = correlation_matrix.fillna(0)
-    
-    # Check if the correlation matrix itself is not empty
     if not correlation_matrix.empty:
 
-        # Create Plotly Heatmap
         try:
             fig_heatmap = go.Figure(data=go.Heatmap(
                                 z=correlation_matrix.values,
                                 x=correlation_matrix.columns,
                                 y=correlation_matrix.index,
-                                colorscale=pcolors.diverging.Coolwarm, # Use the standard colorscale name
+                                # --- FIXED LINE ---
+                                colorscale='rdbu', # Using the valid built-in string 'rdbu'
+                                # If you MUST use 'Coolwarm', you need: colorscale=pcolors.diverging.Coolwarm
+                                # and ensure pcolors is imported.
+                                # ------------------
                                 zmin=-1, 
                                 zmax=1,
                                 hovertemplate='Feature X: %{y}<br>Feature Y: %{x}<br>Correlation: %{z:.2f}<extra></extra>'
@@ -204,14 +200,13 @@ if not q_df.empty and len(q_df.columns) >= 2 and len(q_df) > 1:
                 title='Correlation Heatmap of Numerical Survey Questions',
                 xaxis_title="Survey Question",
                 yaxis_title="Survey Question",
-                yaxis_autorange='reversed' # Ensure y-axis order matches dataframes
+                yaxis_autorange='reversed'
             )
             
             st.plotly_chart(fig_heatmap, use_container_width=True)
             
         except Exception as e:
             st.error(f"Plotly Heatmap rendering failed. Check data structure. Error: {e}")
-
     else:
         st.warning("Correlation matrix is empty after calculation. Check data variance.")
 else:
