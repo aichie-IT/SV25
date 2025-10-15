@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 
 # 1. Define the URL for the data source
 URL = 'https://raw.githubusercontent.com/aichie-IT/SV25/refs/heads/main/arts_faculty_data.csv'
@@ -11,16 +12,14 @@ st.set_page_config(
     layout="wide" 
 )
 
-st.title("Distribution of Gender in Arts Faculty")
+st.title("Arts Faculty Data Analysis")
 st.markdown("---")
 
-# --- Data Loading and Caching ---
+# --- 1. Data Loading and Caching ---
 
-# Use Streamlit's caching decorator to load data only once
-# This is crucial for performance in a web application
 @st.cache_data
 def load_data(url):
-    """Loads the CSV data from the URL."""
+    """Loads the CSV data from the URL, using caching for efficiency."""
     try:
         df = pd.read_csv(url)
         return df
@@ -33,57 +32,165 @@ arts_df = load_data(URL)
 if arts_df.empty:
     st.stop() # Stop execution if data loading failed
 
-# --- 1. Data Preview (replacing display(arts_df.head())) ---
-st.subheader("1. Data Preview")
-st.dataframe(arts_df.head(), use_container_width=True)
+# --- 2. Data Cleaning and Preparation for Visualizations ---
+
+# Coerce GPA columns to numeric for calculation (as done in the original code)
+arts_df['S.S.C (GPA)'] = pd.to_numeric(arts_df['S.S.C (GPA)'], errors='coerce')
+arts_df['H.S.C (GPA)'] = pd.to_numeric(arts_df['H.S.C (GPA)'], errors='coerce')
+
+# Define numerical survey columns for the correlation heatmap
+NUMERICAL_Q_COLUMNS = [
+    'Q3 [What was your expectation about the University as related to quality of resources?]',
+    'Q4 [What was your expectation about the University as related to quality of learning environment?]',
+    'Q5 [To what extent your expectation was met?]',
+    # Include other numerical columns if necessary, the original list was short
+]
 
 
-# --- 2. Data Processing and Visualization ---
+# --- 3. Visualization Sections ---
 
+st.header("1. Gender and Program Analysis")
+col1, col2 = st.columns(2)
+
+# --- A. Gender Distribution (Pie Chart & Bar Chart) ---
 if 'Gender' in arts_df.columns:
-    # Calculate the gender counts and format for Plotly
     gender_counts_df = arts_df['Gender'].value_counts().reset_index()
-    # Rename columns for clarity in Plotly
     gender_counts_df.columns = ['Gender', 'Count']
 
-    col1, col2 = st.columns(2)
-
-    # --- Plotly Pie Chart (replacing Matplotlib Pie Chart) ---
     with col1:
-        st.subheader("2. Gender Distribution (Pie Chart)")
+        st.subheader("Gender Distribution (Pie Chart)")
         fig_pie = px.pie(
             gender_counts_df,
             values='Count',
             names='Gender',
-            title='**Gender Distribution**',
-            hole=0.4 # Makes it a donut chart
+            title='Gender Percentage',
+            hole=0.4
         )
-        # Customize appearance
-        fig_pie.update_traces(textposition='inside', textinfo='percent+label')
-        
-        # Display the Plotly figure in Streamlit
         st.plotly_chart(fig_pie, use_container_width=True)
 
-    # --- Plotly Bar Chart (replacing Matplotlib Bar Chart) ---
     with col2:
-        st.subheader("3. Gender Distribution (Bar Chart)")
-        fig_bar = px.bar(
-            gender_counts_df,
-            x='Gender',
-            y='Count',
-            title='**Gender Count**',
-            color='Gender'
+        st.subheader("Gender vs. Arts Program (Stacked Bar)")
+        # Calculate counts for stacked bar plot
+        gender_program_counts = arts_df.groupby(['Gender', 'Arts Program']).size().reset_index(name='Count')
+        
+        fig_stacked_bar = px.bar(
+            gender_program_counts, 
+            x='Gender', 
+            y='Count', 
+            color='Arts Program',
+            title='Count by Gender and Program'
         )
-
-        # Customize the bar chart layout to sort by count (total descending)
-        fig_bar.update_layout(
-            xaxis_title='Gender',
-            yaxis_title='Count',
-            xaxis={'categoryorder':'total descending'}
-        )
-
-        # Display the Plotly figure in Streamlit
-        st.plotly_chart(fig_bar, use_container_width=True)
-
+        st.plotly_chart(fig_stacked_bar, use_container_width=True)
 else:
-    st.error("The loaded CSV data does not contain a 'Gender' column required for visualization.")
+    st.warning("Skipping Gender analysis: 'Gender' column not found.")
+
+st.markdown("---")
+st.header("2. Academic Performance Distribution (Histograms)")
+col3, col4, col5 = st.columns(3)
+
+# --- B. H.S.C (GPA) Histogram ---
+with col3:
+    st.subheader("H.S.C (GPA) Distribution")
+    if 'H.S.C (GPA)' in arts_df.columns:
+        fig_hsc_hist = px.histogram(
+            arts_df.dropna(subset=['H.S.C (GPA)']), 
+            x='H.S.C (GPA)', 
+            nbins=10, 
+            title='H.S.C (GPA) Level'
+        )
+        st.plotly_chart(fig_hsc_hist, use_container_width=True)
+    else:
+        st.info("H.S.C (GPA) column not found.")
+
+# --- C. S.S.C (GPA) Histogram ---
+with col4:
+    st.subheader("S.S.C (GPA) Distribution")
+    if 'S.S.C (GPA)' in arts_df.columns:
+        fig_ssc_hist = px.histogram(
+            arts_df.dropna(subset=['S.S.C (GPA)']), 
+            x='S.S.C (GPA)', 
+            nbins=10, 
+            title='S.S.C (GPA) Level'
+        )
+        st.plotly_chart(fig_ssc_hist, use_container_width=True)
+    else:
+        st.info("S.S.C (GPA) column not found.")
+
+# --- D. Coaching Center Score Distribution (Histogram) ---
+with col5:
+    st.subheader("Coaching Center Attendance")
+    coaching_col = 'Did you ever attend a Coaching center?'
+    if coaching_col in arts_df.columns:
+        fig_coaching_hist = px.histogram(
+            arts_df, 
+            x=coaching_col, 
+            title='Coaching Center Score Distribution'
+        )
+        st.plotly_chart(fig_coaching_hist, use_container_width=True)
+    else:
+        st.info(f"'{coaching_col}' column not found.")
+
+
+st.markdown("---")
+st.header("3. Correlation and Relationship Analysis")
+
+# --- E. S.S.C vs H.S.C Scatter Plot ---
+st.subheader("S.S.C (GPA) vs. H.S.C (GPA) Scatter Plot")
+scatter_data = arts_df.dropna(subset=['S.S.C (GPA)', 'H.S.C (GPA)'])
+
+if not scatter_data.empty:
+    fig_scatter = px.scatter(
+        scatter_data, 
+        x='S.S.C (GPA)', 
+        y='H.S.C (GPA)', 
+        title='Relationship between S.S.C and H.S.C GPAs',
+        hover_data=['Gender', 'Arts Program'] # Add hover details for interactivity
+    )
+    st.plotly_chart(fig_scatter, use_container_width=True)
+else:
+    st.info("Skipping Scatter Plot: Not enough valid data points in S.S.C (GPA) and H.S.C (GPA).")
+
+
+# --- F. Survey Correlation Heatmap ---
+st.subheader("Survey Question Correlation Heatmap")
+
+# Filter and clean data for heatmap
+q_df = arts_df[NUMERICAL_Q_COLUMNS].copy()
+q_df = q_df.astype(float)
+q_df = q_df.dropna()
+
+if not q_df.empty and len(q_df.columns) > 1:
+    correlation_matrix = q_df.corr()
+
+    # Create Plotly Heatmap
+    fig_heatmap = go.Figure(data=go.Heatmap(
+                       z=correlation_matrix.values,
+                       x=correlation_matrix.columns,
+                       y=correlation_matrix.index,
+                       colorscale='Coolwarm',
+                       zmin=-1, 
+                       zmax=1,
+                       hovertemplate='Feature X: %{y}<br>Feature Y: %{x}<br>Correlation: %{z:.2f}<extra></extra>'
+                   ))
+
+    # Add text annotations (like seaborn's annot=True)
+    for i in range(len(correlation_matrix.index)):
+        for j in range(len(correlation_matrix.columns)):
+            fig_heatmap.add_annotation(
+                x=correlation_matrix.columns[j], 
+                y=correlation_matrix.index[i], 
+                text=f"{correlation_matrix.iloc[i, j]:.2f}", 
+                showarrow=False,
+                font=dict(color="black" if abs(correlation_matrix.iloc[i, j]) < 0.7 else "white")
+            )
+
+    fig_heatmap.update_layout(
+        title='Correlation Heatmap of Numerical Survey Questions',
+        xaxis_title="Survey Question",
+        yaxis_title="Survey Question",
+        yaxis_autorange='reversed' # Ensure y-axis order matches dataframes
+    )
+    
+    st.plotly_chart(fig_heatmap, use_container_width=True)
+else:
+    st.info("Skipping Heatmap: Not enough numerical survey columns or valid data.")
