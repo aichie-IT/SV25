@@ -149,3 +149,47 @@ if not scatter_data.empty:
     st.plotly_chart(fig_scatter, use_container_width=True)
 else:
     st.info("Skipping Scatter Plot: Not enough valid data points in S.S.C (GPA) and H.S.C (GPA).")
+
+# --- F. Survey Correlation Heatmap ---
+st.subheader("Survey Question Correlation Heatmap")
+
+# Filter and clean data for heatmap
+q_df = arts_df[NUMERICAL_Q_COLUMNS].copy()
+q_df = q_df.astype(float)
+q_df = q_df.dropna()
+
+if not q_df.empty and len(q_df.columns) > 1:
+    correlation_matrix = q_df.corr()
+
+    # Create Plotly Heatmap
+    fig_heatmap = go.Figure(data=go.Heatmap(
+                       z=correlation_matrix.values,
+                       x=correlation_matrix.columns,
+                       y=correlation_matrix.index,
+                       colorscale='Coolwarm',
+                       zmin=-1, 
+                       zmax=1,
+                       hovertemplate='Feature X: %{y}<br>Feature Y: %{x}<br>Correlation: %{z:.2f}<extra></extra>'
+                   ))
+
+    # Add text annotations (like seaborn's annot=True)
+    for i in range(len(correlation_matrix.index)):
+        for j in range(len(correlation_matrix.columns)):
+            fig_heatmap.add_annotation(
+                x=correlation_matrix.columns[j], 
+                y=correlation_matrix.index[i], 
+                text=f"{correlation_matrix.iloc[i, j]:.2f}", 
+                showarrow=False,
+                font=dict(color="black" if abs(correlation_matrix.iloc[i, j]) < 0.7 else "white")
+            )
+
+    fig_heatmap.update_layout(
+        title='Correlation Heatmap of Numerical Survey Questions',
+        xaxis_title="Survey Question",
+        yaxis_title="Survey Question",
+        yaxis_autorange='reversed' # Ensure y-axis order matches dataframes
+    )
+    
+    st.plotly_chart(fig_heatmap, use_container_width=True)
+else:
+    st.info("Skipping Heatmap: Not enough numerical survey columns or valid data.")
