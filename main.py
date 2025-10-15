@@ -154,10 +154,14 @@ else:
 # --- F. Survey Correlation Heatmap ---
 st.subheader("Survey Question Correlation Heatmap")
 
-# Filter and clean data for heatmap
+# Robust code to handle non-numeric values gracefully:
 q_df = arts_df[NUMERICAL_Q_COLUMNS].copy()
-q_df = q_df.astype(float)
-q_df = q_df.dropna()
+
+# Apply to_numeric to each column, forcing errors to become NaN
+for col in NUMERICAL_Q_COLUMNS:
+    q_df[col] = pd.to_numeric(q_df[col], errors='coerce') 
+
+q_df = q_df.dropna() # Now drop rows that contain any of the coerced NaN values
 
 if not q_df.empty and len(q_df.columns) > 1:
     correlation_matrix = q_df.corr()
