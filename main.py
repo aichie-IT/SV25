@@ -151,7 +151,7 @@ else:
     st.info("Skipping Scatter Plot: Not enough valid data points in S.S.C (GPA) and H.S.C (GPA).")
 
 
-# --- Key Data Interpretation (NEW SECTION) ---
+# --- Data Interpretation (NEW SECTION) ---
 st.header("4. Key Data Interpretation")
 st.markdown("""
 The visual analysis of the Arts Faculty data highlights two key insights. 
