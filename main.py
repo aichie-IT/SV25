@@ -150,7 +150,7 @@ if not scatter_data.empty:
 else:
     st.info("Skipping Scatter Plot: Not enough valid data points in S.S.C (GPA) and H.S.C (GPA).")
 
-# --- F. Survey Correlation Heatmap ---
+# --- F. Survey Correlation Heatmap (FIXED) ---
 st.subheader("Survey Question Correlation Heatmap")
 
 # Robust code to handle non-numeric values gracefully:
@@ -162,39 +162,56 @@ for col in NUMERICAL_Q_COLUMNS:
 
 q_df = q_df.dropna() # Now drop rows that contain any of the coerced NaN values
 
-if not q_df.empty and len(q_df.columns) > 2:
+# New, stricter validation check: must have at least 2 columns and 2 rows for correlation
+if not q_df.empty and len(q_df.columns) >= 2 and len(q_df) > 1:
     st.info(f"Heatmap data size: {len(q_df)} valid rows found.")
-    correlation_matrix = q_df.corr()
-
-    # Create Plotly Heatmap
-    fig_heatmap = go.Figure(data=go.Heatmap(
-                       z=correlation_matrix.values,
-                       x=correlation_matrix.columns,
-                       y=correlation_matrix.index,
-                       colorscale='Coolwarm',
-                       zmin=-1, 
-                       zmax=1,
-                       hovertemplate='Feature X: %{y}<br>Feature Y: %{x}<br>Correlation: %{z:.2f}<extra></extra>'
-                   ))
-
-    # Add text annotations (like seaborn's annot=True)
-    for i in range(len(correlation_matrix.index)):
-        for j in range(len(correlation_matrix.columns)):
-            fig_heatmap.add_annotation(
-                x=correlation_matrix.columns[j], 
-                y=correlation_matrix.index[i], 
-                text=f"{correlation_matrix.iloc[i, j]:.2f}", 
-                showarrow=False,
-                font=dict(color="black" if abs(correlation_matrix.iloc[i, j]) < 0.7 else "white")
-            )
-
-    fig_heatmap.update_layout(
-        title='Correlation Heatmap of Numerical Survey Questions',
-        xaxis_title="Survey Question",
-        yaxis_title="Survey Question",
-        yaxis_autorange='reversed' # Ensure y-axis order matches dataframes
-    )
     
-    st.plotly_chart(fig_heatmap, use_container_width=True)
+    # Calculate the correlation matrix
+    correlation_matrix = q_df.corr()
+    
+    # Handle potential NaNs in the correlation matrix (e.g., if columns have zero variance)
+    # Fill these with 0 for plotting, as correlation is undefined in these cases.
+    correlation_matrix = correlation_matrix.fillna(0)
+    
+    # Check if the correlation matrix itself is not empty
+    if not correlation_matrix.empty:
+
+        # Create Plotly Heatmap
+        try:
+            fig_heatmap = go.Figure(data=go.Heatmap(
+                                z=correlation_matrix.values,
+                                x=correlation_matrix.columns,
+                                y=correlation_matrix.index,
+                                colorscale='Coolwarm', # Use the standard colorscale name
+                                zmin=-1, 
+                                zmax=1,
+                                hovertemplate='Feature X: %{y}<br>Feature Y: %{x}<br>Correlation: %{z:.2f}<extra></extra>'
+                            ))
+        
+            # Add text annotations (like seaborn's annot=True)
+            for i in range(len(correlation_matrix.index)):
+                for j in range(len(correlation_matrix.columns)):
+                    fig_heatmap.add_annotation(
+                        x=correlation_matrix.columns[j], 
+                        y=correlation_matrix.index[i], 
+                        text=f"{correlation_matrix.iloc[i, j]:.2f}", 
+                        showarrow=False,
+                        font=dict(color="black" if abs(correlation_matrix.iloc[i, j]) < 0.7 else "white")
+                    )
+        
+            fig_heatmap.update_layout(
+                title='Correlation Heatmap of Numerical Survey Questions',
+                xaxis_title="Survey Question",
+                yaxis_title="Survey Question",
+                yaxis_autorange='reversed' # Ensure y-axis order matches dataframes
+            )
+            
+            st.plotly_chart(fig_heatmap, use_container_width=True)
+            
+        except Exception as e:
+            st.error(f"Plotly Heatmap rendering failed. Check data structure. Error: {e}")
+
+    else:
+        st.warning("Correlation matrix is empty after calculation. Check data variance.")
 else:
-    st.warning(f"Heatmap could not be generated. Only {len(q_df)} valid rows remain after cleaning.")
+    st.warning(f"Heatmap could not be generated. Data needs at least 2 columns and 2 rows. Found {len(q_df)} valid rows.")
