@@ -152,10 +152,8 @@ else:
 
 
 # --- Data Interpretation (NEW SECTION) ---
-st.header("4. Key Data Interpretation")
+st.header("Data Interpretation")
 st.markdown("""
-The visual analysis of the Arts Faculty data highlights two key insights. 
-There is a clear, strong positive correlation between students' S.S.C. (GPA) and H.S.C. (GPA), indicating that performance in the initial stage of schooling is highly predictive of later academic success. 
-Additionally, analysis of the gender distribution reveals the dominant demographic in the Arts program, and the stacked bar chart further clarifies which specific Arts Programs are most popular among those gender groups.
+Based on the visual analysis of the Faculty of Arts data above, the visual data on gender distribution reveals the dominant demographics in the Arts program. The stacked bar chart further explains which particular Arts Program is most popular among that gender group. While the visual data from the histogram and scatter plot show a clear and strong positive correlation between students' S.S.C. (GPA) and H.S.C. (GPA), indicating that performance in early schooling is highly predictive of later academic success.
 """)
 # ---------------------------------------------
