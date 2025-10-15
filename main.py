@@ -168,10 +168,7 @@ if not q_df.empty and len(q_df.columns) >= 2 and len(q_df) > 1:
                                 z=correlation_matrix.values,
                                 x=correlation_matrix.columns,
                                 y=correlation_matrix.index,
-                                # ---> MODIFIED LINE HERE <---
-                                colorscale=pcolors.diverging.RdBu, # Use RdBu (Red-Blue) for diverging correlation
-                                # If you specifically want the 'Coolwarm' aesthetic, you can try
-                                # colorscale=pcolors.diverging.Coolwarm 
+                                colorscale=pcolors.diverging.Coolwarm, 
                                 zmin=-1, 
                                 zmax=1,
                                 hovertemplate='Feature X: %{y}<br>Feature Y: %{x}<br>Correlation: %{z:.2f}<extra></extra>'
