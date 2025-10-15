@@ -149,3 +149,13 @@ if not scatter_data.empty:
     st.plotly_chart(fig_scatter, use_container_width=True)
 else:
     st.info("Skipping Scatter Plot: Not enough valid data points in S.S.C (GPA) and H.S.C (GPA).")
+
+
+# --- 4. Key Data Interpretation (NEW SECTION) ---
+st.header("4. Key Data Interpretation")
+st.markdown("""
+The visual analysis of the Arts Faculty data highlights two key insights. 
+There is a clear, strong positive correlation between students' S.S.C. (GPA) and H.S.C. (GPA), indicating that performance in the initial stage of schooling is highly predictive of later academic success. 
+Additionally, analysis of the gender distribution reveals the dominant demographic in the Arts program, and the stacked bar chart further clarifies which specific Arts Programs are most popular among those gender groups.
+""")
+# ---------------------------------------------
