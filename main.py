@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
+import plotly.graph_objects as go 
 
 # Define the URL for the data source
 URL = 'https://raw.githubusercontent.com/aichie-IT/SV25/refs/heads/main/arts_faculty_data.csv'
@@ -182,7 +182,7 @@ if not q_df.empty and len(q_df.columns) >= 2 and len(q_df) > 1:
                                 z=correlation_matrix.values,
                                 x=correlation_matrix.columns,
                                 y=correlation_matrix.index,
-                                colorscale='Coolwarm', # Use the standard colorscale name
+                                colorscale='rdbu',
                                 zmin=-1, 
                                 zmax=1,
                                 hovertemplate='Feature X: %{y}<br>Feature Y: %{x}<br>Correlation: %{z:.2f}<extra></extra>'
