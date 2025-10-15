@@ -3,16 +3,16 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
-# 1. Define the URL for the data source
+# Define the URL for the data source
 URL = 'https://raw.githubusercontent.com/aichie-IT/SV25/refs/heads/main/arts_faculty_data.csv'
 
 # Set Streamlit page configuration
 st.set_page_config(
-    page_title="Scientific Visualization",
-    layout="wide" 
+    page_title="Arts Faculty Data Visualization",
+    layout="wide"
 )
 
-st.title("Arts Faculty Data Analysis")
+st.title("Scientific Visualization: Arts Faculty Data Analysis")
 st.markdown("---")
 
 # --- 1. Data Loading and Caching ---
