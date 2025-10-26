@@ -1,17 +1,18 @@
 import streamlit as st
 
+# Set overall page configuration once
 st.set_page_config(
-    page_title="Student Survey"
+    page_title="Scientific Visualization Portal",
+    layout="wide",
 )
 
-visualise = st.Page('main.py', title='Pencapaian Akademik Pelajar', icon=":material/school:")
-
-home = st.Page('home.py', title='Homepage', default=True, icon=":material/home:")
-
-pg = st.navigation(
-        {
-            "Menu": [home, visualise]
-        }
-    )
-
-pg.run()
+# Sidebar navigation
+st.sidebar.title("Navigation")
+page = st.sidebar.radio(
+    "Go to page:",
+    ["🏠 Home", "📊 Student Data Visualization"]
+)
+if "Home" in page:
+    from home import *
+else:
+    from main import *
