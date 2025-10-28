@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import seaborn as sns
 
 # --- Page Setup ---
 st.set_page_config(
@@ -14,7 +13,7 @@ st.set_page_config(
 color_theme = px.colors.sequential.Viridis
 
 # --- Load Dataset ---
-url = https://raw.githubusercontent.com/aichie-IT/SV25/refs/heads/main/motor_accident.csv"
+url = "https://raw.githubusercontent.com/aichie-IT/SV25/refs/heads/main/motor_accident.csv"
 df = pd.read_csv(url)
 
 # --- Sidebar Filters ---
