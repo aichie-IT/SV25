@@ -4,7 +4,7 @@ st.set_page_config(
     page_title="Motor Accident Severity"
 )
 
-visualise = st.Page('motor_accident.py', title='Motor Accident Severity Analysis', icon=":material/school:")
+visualise = st.Page('main.py', title='Motor Accident Severity Analysis', icon=":material/school:")
 
 home = st.Page('home.py', title='Homepage', default=True, icon=":material/home:")
 
