@@ -14,7 +14,7 @@ st.set_page_config(
 color_theme = px.colors.sequential.Viridis
 
 # --- Load Dataset ---
-url = "https://raw.githubusercontent.com/aichie-IT/SV25/refs/heads/main/motor_accident.csv"
+url = https://raw.githubusercontent.com/aichie-IT/SV25/refs/heads/main/motor_accident.csv"
 df = pd.read_csv(url)
 
 # --- Sidebar Filters ---
