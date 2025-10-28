@@ -1,159 +1,171 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
 
-# Define the URL for the data source
-URL = 'https://raw.githubusercontent.com/aichie-IT/SV25/refs/heads/main/arts_faculty_data.csv'
+# --- PAGE CONFIG ---
+st.set_page_config(page_title="Motorbike Accident Insights Dashboard", page_icon="🏍️", layout="wide")
 
-# Set Streamlit page configuration
-st.set_page_config(
-    page_title="Scientific Visualization",
-    layout="wide"
+# --- COLOR THEME ---
+color_theme = px.colors.qualitative.Pastel
+
+# --- LOAD DATA ---
+url = "https://raw.githubusercontent.com/aichie-IT/SV25/refs/heads/main/motor_accident.csv"
+df = pd.read_csv(url)
+
+# --- SIDEBAR FILTERS ---
+st.sidebar.header("🔍 Filter Data")
+
+# Select Accident Severity
+severity_options = df["Accident_Severity"].dropna().unique().tolist()
+selected_severity = st.sidebar.multiselect(
+    "Select Accident Severity:",
+    options=severity_options,
+    default=severity_options
 )
 
-st.title("Arts Faculty Data Analysis")
+# Filtered dataset
+filtered_df = df[df["Accident_Severity"].isin(selected_severity)]
+
+# --- MAIN TITLE ---
+st.title("🏍️ Motorbike Accident Insights Dashboard")
+st.markdown("Explore accident patterns and biker behaviors with interactive visual analytics.")
+
 st.markdown("---")
 
-# --- 1. Data Loading and Caching ---
+# --- SUMMARY CARDS ---
+col1, col2, col3, col4 = st.columns(4)
+col1.metric("Total Records", f"{len(filtered_df):,}")
+col2.metric("Avg. Age", f"{filtered_df['Biker_Age'].mean():.1f} years")
+col3.metric("Avg. Speed", f"{filtered_df['Bike_Speed'].mean():.1f} km/h")
+col4.metric("Avg. Travel Distance", f"{filtered_df['Daily_Travel_Distance'].mean():.1f} km")
 
-@st.cache_data
-def load_data(url):
-    """Loads the CSV data from the URL, using caching for efficiency."""
-    try:
-        df = pd.read_csv(url)
-        return df
-    except Exception as e:
-        st.error(f"Error loading data from URL: {url}\n{e}")
-        return pd.DataFrame() # Return empty DataFrame on failure
+st.markdown("---")
 
-arts_df = load_data(URL)
+# --- TAB LAYOUT ---
+tab1, tab2, tab3 = st.tabs(["⚙️ General Overview", "📊 Accident Factors", "📈 Numerical Analysis"])
 
-if arts_df.empty:
-    st.stop() # Stop execution if data loading failed
+# ============ TAB 1: GENERAL OVERVIEW ============
+with tab1:
+    st.subheader("Distribution Overview")
 
-# --- 2. Data Cleaning and Preparation for Visualizations ---
+    col1, col2, col3 = st.columns(3)
 
-# Coerce GPA columns to numeric for calculation (as done in the original code)
-arts_df['S.S.C (GPA)'] = pd.to_numeric(arts_df['S.S.C (GPA)'], errors='coerce')
-arts_df['H.S.C (GPA)'] = pd.to_numeric(arts_df['H.S.C (GPA)'], errors='coerce')
-
-# Define numerical survey columns for the correlation heatmap
-NUMERICAL_Q_COLUMNS = [
-    'Q3 [What was your expectation about the University as related to quality of resources?]',
-    'Q4 [What was your expectation about the University as related to quality of learning environment?]',
-    'Q5 [To what extent your expectation was met?]',
-    # Include other numerical columns if necessary, the original list was short
-]
-
-
-# --- 3. Visualization Sections ---
-
-st.header("1. Gender and Program Analysis")
-col1, col2 = st.columns(2)
-
-# --- A. Gender Distribution (Pie Chart & Bar Chart) ---
-if 'Gender' in arts_df.columns:
-    gender_counts_df = arts_df['Gender'].value_counts().reset_index()
-    gender_counts_df.columns = ['Gender', 'Count']
-
+    # Pie: Accident Severity
     with col1:
-        st.subheader("Gender Distribution (Pie Chart)")
-        fig_pie = px.pie(
-            gender_counts_df,
-            values='Count',
-            names='Gender',
-            title='Gender Percentage',
-            hole=0.4
+        severity_counts = filtered_df["Accident_Severity"].value_counts().reset_index()
+        severity_counts.columns = ["Accident_Severity", "Count"]
+        fig1 = px.pie(
+            severity_counts, 
+            values="Count", 
+            names="Accident_Severity",
+            title="Accident Severity Distribution",
+            color_discrete_sequence=color_theme
         )
-        st.plotly_chart(fig_pie, use_container_width=True)
+        st.plotly_chart(fig1, use_container_width=True)
+
+    # Pie: Helmet Usage
+    with col2:
+        helmet_counts = filtered_df["Wearing_Helmet"].value_counts().reset_index()
+        helmet_counts.columns = ["Wearing_Helmet", "Count"]
+        fig2 = px.pie(
+            helmet_counts, 
+            values="Count", 
+            names="Wearing_Helmet", 
+            title="Wearing Helmet Distribution",
+            color_discrete_sequence=color_theme
+        )
+        st.plotly_chart(fig2, use_container_width=True)
+
+    # Pie: Valid License
+    with col3:
+        license_counts = filtered_df["Valid_Driving_License"].value_counts().reset_index()
+        license_counts.columns = ["Valid_Driving_License", "Count"]
+        fig3 = px.pie(
+            license_counts, 
+            values="Count", 
+            names="Valid_Driving_License",
+            title="Valid Driving License Distribution",
+            color_discrete_sequence=color_theme
+        )
+        st.plotly_chart(fig3, use_container_width=True)
+
+# ============ TAB 2: ACCIDENT FACTORS ============
+with tab2:
+    st.subheader("Accident Severity by Categorical Factors")
+
+    # Occupation
+    fig4 = px.bar(
+        filtered_df,
+        y="Biker_Occupation",
+        color="Accident_Severity",
+        title="Accident Severity by Biker Occupation",
+        color_discrete_sequence=color_theme
+    )
+    st.plotly_chart(fig4, use_container_width=True)
+
+    # Education
+    fig5 = px.bar(
+        filtered_df,
+        y="Biker_Education_Level",
+        color="Accident_Severity",
+        title="Accident Severity by Biker Education Level",
+        color_discrete_sequence=color_theme
+    )
+    st.plotly_chart(fig5, use_container_width=True)
+
+    st.subheader("Other Influencing Factors")
+
+    categorical_cols = [
+        "Wearing_Helmet", "Motorcycle_Ownership", "Valid_Driving_License",
+        "Bike_Condition", "Road_Type", "Road_condition", "Weather",
+        "Time_of_Day", "Traffic_Density", "Biker_Alcohol"
+    ]
+
+    for col in categorical_cols:
+        fig = px.bar(
+            filtered_df,
+            y=col,
+            color="Accident_Severity",
+            title=f"Accident Severity by {col.replace('_', ' ')}",
+            color_discrete_sequence=color_theme
+        )
+        st.plotly_chart(fig, use_container_width=True)
+
+# ============ TAB 3: NUMERICAL ANALYSIS ============
+with tab3:
+    st.subheader("Distribution of Numeric Variables")
+
+    col1, col2 = st.columns(2)
+    with col1:
+        fig6 = px.histogram(
+            filtered_df, x="Biker_Age", nbins=20,
+            title="Distribution of Biker Age",
+            color_discrete_sequence=color_theme
+        )
+        st.plotly_chart(fig6, use_container_width=True)
+
+        fig7 = px.histogram(
+            filtered_df, x="Bike_Speed", nbins=20,
+            title="Distribution of Bike Speed",
+            color_discrete_sequence=color_theme
+        )
+        st.plotly_chart(fig7, use_container_width=True)
 
     with col2:
-        st.subheader("Gender vs. Arts Program (Stacked Bar)")
-        # Calculate counts for stacked bar plot
-        gender_program_counts = arts_df.groupby(['Gender', 'Arts Program']).size().reset_index(name='Count')
-        
-        fig_stacked_bar = px.bar(
-            gender_program_counts, 
-            x='Gender', 
-            y='Count', 
-            color='Arts Program',
-            title='Count by Gender and Program'
+        fig8 = px.histogram(
+            filtered_df, x="Riding_Experience", nbins=20,
+            title="Distribution of Riding Experience",
+            color_discrete_sequence=color_theme
         )
-        st.plotly_chart(fig_stacked_bar, use_container_width=True)
-else:
-    st.warning("Skipping Gender analysis: 'Gender' column not found.")
+        st.plotly_chart(fig8, use_container_width=True)
 
+        fig9 = px.histogram(
+            filtered_df, x="Daily_Travel_Distance", nbins=20,
+            title="Distribution of Daily Travel Distance",
+            color_discrete_sequence=color_theme
+        )
+        st.plotly_chart(fig9, use_container_width=True)
+
+# --- FOOTER ---
 st.markdown("---")
-st.header("2. Academic Performance Distribution (Histograms)")
-col3, col4, col5 = st.columns(3)
-
-# --- B. H.S.C (GPA) Histogram ---
-with col3:
-    st.subheader("H.S.C (GPA) Distribution")
-    if 'H.S.C (GPA)' in arts_df.columns:
-        fig_hsc_hist = px.histogram(
-            arts_df.dropna(subset=['H.S.C (GPA)']), 
-            x='H.S.C (GPA)', 
-            nbins=10, 
-            title='H.S.C (GPA) Level'
-        )
-        st.plotly_chart(fig_hsc_hist, use_container_width=True)
-    else:
-        st.info("H.S.C (GPA) column not found.")
-
-# --- C. S.S.C (GPA) Histogram ---
-with col4:
-    st.subheader("S.S.C (GPA) Distribution")
-    if 'S.S.C (GPA)' in arts_df.columns:
-        fig_ssc_hist = px.histogram(
-            arts_df.dropna(subset=['S.S.C (GPA)']), 
-            x='S.S.C (GPA)', 
-            nbins=10, 
-            title='S.S.C (GPA) Level'
-        )
-        st.plotly_chart(fig_ssc_hist, use_container_width=True)
-    else:
-        st.info("S.S.C (GPA) column not found.")
-
-# --- D. Coaching Center Score Distribution (Histogram) ---
-with col5:
-    st.subheader("Coaching Center Attendance")
-    coaching_col = 'Did you ever attend a Coaching center?'
-    if coaching_col in arts_df.columns:
-        fig_coaching_hist = px.histogram(
-            arts_df, 
-            x=coaching_col, 
-            title='Coaching Center Score Distribution'
-        )
-        st.plotly_chart(fig_coaching_hist, use_container_width=True)
-    else:
-        st.info(f"'{coaching_col}' column not found.")
-
-
-st.markdown("---")
-st.header("3. Correlation and Relationship Analysis")
-
-# --- E. S.S.C vs H.S.C Scatter Plot ---
-st.subheader("S.S.C (GPA) vs. H.S.C (GPA) Scatter Plot")
-scatter_data = arts_df.dropna(subset=['S.S.C (GPA)', 'H.S.C (GPA)'])
-
-if not scatter_data.empty:
-    fig_scatter = px.scatter(
-        scatter_data, 
-        x='S.S.C (GPA)', 
-        y='H.S.C (GPA)', 
-        title='Relationship between S.S.C and H.S.C GPAs',
-        hover_data=['Gender', 'Arts Program'] # Add hover details for interactivity
-    )
-    st.plotly_chart(fig_scatter, use_container_width=True)
-else:
-    st.info("Skipping Scatter Plot: Not enough valid data points in S.S.C (GPA) and H.S.C (GPA).")
-
-
-# --- Data Interpretation (NEW SECTION) ---
-st.header("Data Interpretation")
-st.markdown("""
-Based on the visual analysis of the Faculty of Arts data above, the visual data on gender distribution reveals the dominant demographics in the Arts program. The stacked bar chart further explains which particular Arts Program is most popular among that gender group. While the visual data from the histogram and scatter plot show a clear and strong positive correlation between students' S.S.C. (GPA) and H.S.C. (GPA), indicating that performance in early schooling is highly predictive of later academic success.
-""")
-# ---------------------------------------------
+st.caption("© 2025 Motorbike Accident Dashboard | Designed with ❤️ using Streamlit & Plotly")
