@@ -1,171 +1,203 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import seaborn as sns
 
-# --- PAGE CONFIG ---
-st.set_page_config(page_title="Motorbike Accident Insights Dashboard", page_icon="🏍️", layout="wide")
-
-# --- COLOR THEME ---
-color_theme = px.colors.qualitative.Pastel
-
-# --- LOAD DATA ---
-url = "https://raw.githubusercontent.com/aichie-IT/SV25/refs/heads/main/motor_accident.csv"
-df = pd.read_csv(url)
-
-# --- SIDEBAR FILTERS ---
-st.sidebar.header("🔍 Filter Data")
-
-# Select Accident Severity
-severity_options = df["Accident_Severity"].dropna().unique().tolist()
-selected_severity = st.sidebar.multiselect(
-    "Select Accident Severity:",
-    options=severity_options,
-    default=severity_options
+# --- Page Setup ---
+st.set_page_config(
+    page_title="Motorbike Insights Dashboard",
+    page_icon="🏍️",
+    layout="wide"
 )
 
-# Filtered dataset
-filtered_df = df[df["Accident_Severity"].isin(selected_severity)]
+# --- Theme Colors ---
+color_theme = px.colors.sequential.Viridis
 
-# --- MAIN TITLE ---
-st.title("🏍️ Motorbike Accident Insights Dashboard")
-st.markdown("Explore accident patterns and biker behaviors with interactive visual analytics.")
+# --- Load Dataset ---
+url = "https://raw.githubusercontent.com/aichie-IT/SVASS1/refs/heads/main/motorbike_dataset.csv"
+df = pd.read_csv(url)
+
+# --- Sidebar Filters ---
+st.sidebar.header("🔍 Filter Data")
+
+brand_options = sorted(df["Brand"].dropna().unique())
+type_options = sorted(df["Type"].dropna().unique())
+
+selected_brand = st.sidebar.multiselect(
+    "Select Brand:",
+    options=brand_options,
+    default=brand_options
+)
+
+selected_type = st.sidebar.multiselect(
+    "Select Type:",
+    options=type_options,
+    default=type_options
+)
+
+# --- Filter Data ---
+filtered_df = df[
+    (df["Brand"].isin(selected_brand)) &
+    (df["Type"].isin(selected_type))
+]
+
+# --- Main Header ---
+st.title("🏍️ Motorbike Insights Dashboard")
+st.markdown("Explore performance, pricing, and specifications of various motorbike brands and models.")
 
 st.markdown("---")
 
-# --- SUMMARY CARDS ---
+# --- Summary Boxes ---
 col1, col2, col3, col4 = st.columns(4)
-col1.metric("Total Records", f"{len(filtered_df):,}")
-col2.metric("Avg. Age", f"{filtered_df['Biker_Age'].mean():.1f} years")
-col3.metric("Avg. Speed", f"{filtered_df['Bike_Speed'].mean():.1f} km/h")
-col4.metric("Avg. Travel Distance", f"{filtered_df['Daily_Travel_Distance'].mean():.1f} km")
+
+with col1:
+    st.metric("Total Motorbikes", f"{len(filtered_df):,}", help="Total number of motorbikes in dataset")
+
+with col2:
+    avg_price = filtered_df["Price"].mean()
+    st.metric("Average Price", f"${avg_price:,.0f}", help="Average selling price")
+
+with col3:
+    avg_mileage = filtered_df["Mileage"].mean()
+    st.metric("Average Mileage", f"{avg_mileage:.1f} km/l", help="Average mileage (fuel efficiency)")
+
+with col4:
+    unique_brands = filtered_df["Brand"].nunique()
+    st.metric("Number of Brands", f"{unique_brands}", help="Unique motorbike brands available")
 
 st.markdown("---")
 
-# --- TAB LAYOUT ---
-tab1, tab2, tab3 = st.tabs(["⚙️ General Overview", "📊 Accident Factors", "📈 Numerical Analysis"])
+# --- Tabs ---
+tab1, tab2, tab3 = st.tabs(["📊 Overview", "⚙️ Performance", "💬 Features"])
 
-# ============ TAB 1: GENERAL OVERVIEW ============
+# --- TAB 1: OVERVIEW ---
 with tab1:
-    st.subheader("Distribution Overview")
-
-    col1, col2, col3 = st.columns(3)
-
-    # Pie: Accident Severity
-    with col1:
-        severity_counts = filtered_df["Accident_Severity"].value_counts().reset_index()
-        severity_counts.columns = ["Accident_Severity", "Count"]
-        fig1 = px.pie(
-            severity_counts, 
-            values="Count", 
-            names="Accident_Severity",
-            title="Accident Severity Distribution",
-            color_discrete_sequence=color_theme
-        )
-        st.plotly_chart(fig1, use_container_width=True)
-
-    # Pie: Helmet Usage
-    with col2:
-        helmet_counts = filtered_df["Wearing_Helmet"].value_counts().reset_index()
-        helmet_counts.columns = ["Wearing_Helmet", "Count"]
-        fig2 = px.pie(
-            helmet_counts, 
-            values="Count", 
-            names="Wearing_Helmet", 
-            title="Wearing Helmet Distribution",
-            color_discrete_sequence=color_theme
-        )
-        st.plotly_chart(fig2, use_container_width=True)
-
-    # Pie: Valid License
-    with col3:
-        license_counts = filtered_df["Valid_Driving_License"].value_counts().reset_index()
-        license_counts.columns = ["Valid_Driving_License", "Count"]
-        fig3 = px.pie(
-            license_counts, 
-            values="Count", 
-            names="Valid_Driving_License",
-            title="Valid Driving License Distribution",
-            color_discrete_sequence=color_theme
-        )
-        st.plotly_chart(fig3, use_container_width=True)
-
-# ============ TAB 2: ACCIDENT FACTORS ============
-with tab2:
-    st.subheader("Accident Severity by Categorical Factors")
-
-    # Occupation
-    fig4 = px.bar(
-        filtered_df,
-        y="Biker_Occupation",
-        color="Accident_Severity",
-        title="Accident Severity by Biker Occupation",
-        color_discrete_sequence=color_theme
-    )
-    st.plotly_chart(fig4, use_container_width=True)
-
-    # Education
-    fig5 = px.bar(
-        filtered_df,
-        y="Biker_Education_Level",
-        color="Accident_Severity",
-        title="Accident Severity by Biker Education Level",
-        color_discrete_sequence=color_theme
-    )
-    st.plotly_chart(fig5, use_container_width=True)
-
-    st.subheader("Other Influencing Factors")
-
-    categorical_cols = [
-        "Wearing_Helmet", "Motorcycle_Ownership", "Valid_Driving_License",
-        "Bike_Condition", "Road_Type", "Road_condition", "Weather",
-        "Time_of_Day", "Traffic_Density", "Biker_Alcohol"
-    ]
-
-    for col in categorical_cols:
-        fig = px.bar(
-            filtered_df,
-            y=col,
-            color="Accident_Severity",
-            title=f"Accident Severity by {col.replace('_', ' ')}",
-            color_discrete_sequence=color_theme
-        )
-        st.plotly_chart(fig, use_container_width=True)
-
-# ============ TAB 3: NUMERICAL ANALYSIS ============
-with tab3:
-    st.subheader("Distribution of Numeric Variables")
+    st.subheader("📈 Motorbike Distribution Overview")
 
     col1, col2 = st.columns(2)
-    with col1:
-        fig6 = px.histogram(
-            filtered_df, x="Biker_Age", nbins=20,
-            title="Distribution of Biker Age",
-            color_discrete_sequence=color_theme
-        )
-        st.plotly_chart(fig6, use_container_width=True)
 
-        fig7 = px.histogram(
-            filtered_df, x="Bike_Speed", nbins=20,
-            title="Distribution of Bike Speed",
+    with col1:
+        brand_counts = filtered_df["Brand"].value_counts().reset_index()
+        brand_counts.columns = ["Brand", "Count"]
+        fig_brand = px.pie(
+            brand_counts,
+            values="Count",
+            names="Brand",
+            title="Market Share by Brand",
             color_discrete_sequence=color_theme
         )
-        st.plotly_chart(fig7, use_container_width=True)
+        st.plotly_chart(fig_brand, use_container_width=True)
 
     with col2:
-        fig8 = px.histogram(
-            filtered_df, x="Riding_Experience", nbins=20,
-            title="Distribution of Riding Experience",
+        type_counts = filtered_df["Type"].value_counts().reset_index()
+        type_counts.columns = ["Type", "Count"]
+        fig_type = px.bar(
+            type_counts,
+            x="Type",
+            y="Count",
+            title="Motorbike Count by Type",
+            color="Count",
+            color_continuous_scale=color_theme
+        )
+        fig_type.update_layout(xaxis_title="Type", yaxis_title="Count")
+        st.plotly_chart(fig_type, use_container_width=True)
+
+    st.subheader("Average Price by Brand")
+    fig_price_brand = px.bar(
+        filtered_df.groupby("Brand")["Price"].mean().reset_index(),
+        x="Brand",
+        y="Price",
+        title="Average Price per Brand",
+        color="Price",
+        color_continuous_scale=color_theme
+    )
+    fig_price_brand.update_layout(xaxis_title="Brand", yaxis_title="Average Price")
+    st.plotly_chart(fig_price_brand, use_container_width=True)
+
+# --- TAB 2: PERFORMANCE ---
+with tab2:
+    st.subheader("⚙️ Performance Analysis")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        fig_mileage = px.histogram(
+            filtered_df,
+            x="Mileage",
+            nbins=15,
+            title="Distribution of Mileage (km/l)",
             color_discrete_sequence=color_theme
         )
-        st.plotly_chart(fig8, use_container_width=True)
+        fig_mileage.update_layout(xaxis_title="Mileage (km/l)", yaxis_title="Count")
+        st.plotly_chart(fig_mileage, use_container_width=True)
 
-        fig9 = px.histogram(
-            filtered_df, x="Daily_Travel_Distance", nbins=20,
-            title="Distribution of Daily Travel Distance",
+    with col2:
+        fig_engine = px.histogram(
+            filtered_df,
+            x="Engine_Capacity",
+            nbins=15,
+            title="Distribution of Engine Capacity (cc)",
             color_discrete_sequence=color_theme
         )
-        st.plotly_chart(fig9, use_container_width=True)
+        fig_engine.update_layout(xaxis_title="Engine Capacity (cc)", yaxis_title="Count")
+        st.plotly_chart(fig_engine, use_container_width=True)
 
-# --- FOOTER ---
+    st.subheader("Price vs Engine Capacity")
+    fig_scatter = px.scatter(
+        filtered_df,
+        x="Engine_Capacity",
+        y="Price",
+        color="Brand",
+        size="Mileage",
+        hover_data=["Model"],
+        title="Price vs Engine Capacity by Brand",
+        color_discrete_sequence=color_theme
+    )
+    st.plotly_chart(fig_scatter, use_container_width=True)
+
+# --- TAB 3: FEATURES ---
+with tab3:
+    st.subheader("💬 Feature Preferences & Insights")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        transmission_counts = filtered_df["Transmission"].value_counts().reset_index()
+        transmission_counts.columns = ["Transmission", "Count"]
+        fig_transmission = px.bar(
+            transmission_counts,
+            x="Transmission",
+            y="Count",
+            title="Transmission Type Distribution",
+            color="Count",
+            color_continuous_scale=color_theme
+        )
+        st.plotly_chart(fig_transmission, use_container_width=True)
+
+    with col2:
+        fuel_counts = filtered_df["Fuel_Type"].value_counts().reset_index()
+        fuel_counts.columns = ["Fuel_Type", "Count"]
+        fig_fuel = px.pie(
+            fuel_counts,
+            values="Count",
+            names="Fuel_Type",
+            title="Fuel Type Distribution",
+            color_discrete_sequence=color_theme
+        )
+        st.plotly_chart(fig_fuel, use_container_width=True)
+
+    st.subheader("Top 10 Models by Price")
+    top_models = filtered_df.nlargest(10, "Price")
+    fig_top_models = px.bar(
+        top_models,
+        x="Model",
+        y="Price",
+        color="Brand",
+        title="Top 10 Most Expensive Motorbikes",
+        color_discrete_sequence=color_theme
+    )
+    st.plotly_chart(fig_top_models, use_container_width=True)
+
+# --- Footer ---
 st.markdown("---")
-st.caption("© 2025 Motorbike Accident Dashboard | Designed with ❤️ using Streamlit & Plotly")
+st.caption("© 2025 Motorbike Dashboard | Designed with ❤️ using Streamlit & Plotly")
