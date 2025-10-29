@@ -25,7 +25,7 @@ df = load_data()
 with st.sidebar:
     # --- Logo and Title ---
     st.image("https://cdn-icons-png.flaticon.com/512/743/743922.png", width=80)
-    st.title("⚙️ Dashboard Controls")
+    st.title("Dashboard Controls")
 
     # --- Data Summary ---
     st.markdown("### 🧾 Data Summary")
@@ -189,6 +189,20 @@ st.caption("Designed with ❤️ using Streamlit")
 st.title("🏍️ Motorbike Accident Insights Dashboard")
 st.markdown("Explore accident patterns and biker behaviors with interactive visual analytics.")
 
+st.markdown("---")
+
+# Show current filters
+st.markdown("### Current Filters Applied:")
+st.write({
+    "Accident Severity": severity,
+    "Weather": weather,
+    "Time of Day": time_of_day,
+    "Road Type": road_type,
+    "Alcohol": alcohol,
+    "Traffic": traffic,
+    "License": license_status,
+    "Age Range": f"{min_age} - {max_age}" if min_age is not None else "All"
+})
 st.markdown("---")
 
 # --- SUMMARY BOX ---
