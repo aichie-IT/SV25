@@ -14,16 +14,14 @@ st.set_page_config(page_title="Motorbike Accident Insights Dashboard", page_icon
 color_theme = px.colors.qualitative.Pastel
 
 # --- LOAD DATA ---
-url = "https://raw.githubusercontent.com/aichie-IT/SV25/refs/heads/main/motor_accident.csv"
-df = pd.read_csv(url)
-
-# ====== LOAD DATA ======
 @st.cache_data
 def load_data():
-    df = pd.read_csv("road_accidents.csv")  # Replace with your dataset
+    url = "https://raw.githubusercontent.com/aichie-IT/SV25/refs/heads/main/motor_accident.csv"
+    df = pd.read_csv(url)
     return df
 
 df = load_data()
+
 
 # ====== SIDEBAR ======
 with st.sidebar:
