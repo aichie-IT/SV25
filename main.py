@@ -10,7 +10,41 @@ warnings.filterwarnings("ignore")
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Motorbike Accident Insights Dashboard", page_icon="🏍️", layout="wide")
 
-# --- COLOR THEME ---
+# ===== THEME TOGGLE =====
+st.sidebar.markdown("### 🌓 Theme Settings")
+theme_mode = st.sidebar.radio("Select Theme Mode", ["Light 🌞", "Dark 🌙"], horizontal=True)
+
+if theme_mode == "Dark 🌙":
+    st.markdown(
+        """
+        <style>
+        body { background-color: #121212; color: white; }
+        [data-testid="stSidebar"] {
+            background-color: #1E1E1E;
+            color: white;
+        }
+        .stMetric, .stPlotlyChart, .stMarkdown {
+            color: white !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+else:
+    st.markdown(
+        """
+        <style>
+        body { background-color: #FAFAFA; color: black; }
+        [data-testid="stSidebar"] {
+            background-color: #FFFFFF;
+            color: black;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+# ===== COLOR THEME =====
 color_theme = px.colors.qualitative.Pastel
 
 # --- LOAD DATA ---
@@ -25,39 +59,65 @@ df = load_data()
 
 # ====== SIDEBAR ======
 with st.sidebar:
+    # --- Logo and Title ---
     st.image("https://cdn-icons-png.flaticon.com/512/743/743922.png", width=80)
     st.title("⚙️ Dashboard Controls")
 
-    # --- Summary box ---
+    # --- Data Summary ---
     st.markdown("### 🧾 Data Summary")
     st.info(f"**Total Records:** {len(df):,}\n\n**Columns:** {len(df.columns)}")
 
-    # --- Filters section ---
+    # --- Filters Section ---
     with st.expander("🎯 Filter Options", expanded=True):
         st.markdown("Select filters to refine your dashboard view:")
 
-        # Categorical filters — adjust to your dataset
+        # Categorical Filters
         severity = st.selectbox(
-            "Select Accident Severity",
+            "Accident Severity",
             ["All"] + sorted(df["Accident_Severity"].dropna().unique().tolist())
         )
 
         weather = st.selectbox(
-            "Select Weather Condition",
+            "Weather Condition",
             ["All"] + sorted(df["Weather"].dropna().unique().tolist())
         )
 
         time_of_day = st.selectbox(
-            "Select Time of Day",
+            "Time of Day",
             ["All"] + sorted(df["Time_of_Day"].dropna().unique().tolist())
         )
 
         road_type = st.selectbox(
-            "Select Road Type",
+            "Road Type",
             ["All"] + sorted(df["Road_Type"].dropna().unique().tolist())
         )
 
-        # Numeric filter
+        # --- Optional Filters (only shown if columns exist) ---
+        if "Biker_Alcohol" in df.columns:
+            alcohol = st.selectbox(
+                "Biker Alcohol Consumption",
+                ["All"] + sorted(df["Biker_Alcohol"].dropna().unique().tolist())
+            )
+        else:
+            alcohol = "All"
+
+        if "Traffic_Density" in df.columns:
+            traffic = st.selectbox(
+                "Traffic Density",
+                ["All"] + sorted(df["Traffic_Density"].dropna().unique().tolist())
+            )
+        else:
+            traffic = "All"
+
+        if "Valid_Driving_License" in df.columns:
+            license_status = st.selectbox(
+                "Valid Driving License",
+                ["All"] + sorted(df["Valid_Driving_License"].dropna().unique().tolist())
+            )
+        else:
+            license_status = "All"
+
+        # --- Numeric Filter: Biker Age ---
         if "Biker_Age" in df.columns:
             min_age, max_age = st.slider(
                 "Filter by Biker Age",
@@ -68,7 +128,7 @@ with st.sidebar:
         else:
             min_age, max_age = None, None
 
-        # Apply filters
+        # --- Apply Filters ---
         filtered_df = df.copy()
         if severity != "All":
             filtered_df = filtered_df[filtered_df["Accident_Severity"] == severity]
@@ -78,17 +138,56 @@ with st.sidebar:
             filtered_df = filtered_df[filtered_df["Time_of_Day"] == time_of_day]
         if road_type != "All":
             filtered_df = filtered_df[filtered_df["Road_Type"] == road_type]
+        if alcohol != "All":
+            filtered_df = filtered_df[filtered_df["Biker_Alcohol"] == alcohol]
+        if traffic != "All":
+            filtered_df = filtered_df[filtered_df["Traffic_Density"] == traffic]
+        if license_status != "All":
+            filtered_df = filtered_df[filtered_df["Valid_Driving_License"] == license_status]
         if min_age is not None:
             filtered_df = filtered_df[
                 (filtered_df["Biker_Age"] >= min_age) & (filtered_df["Biker_Age"] <= max_age)
             ]
 
-    # --- Reset button ---
-    if st.button("🔄 Reset Filters"):
-        st.experimental_rerun()
+    # --- Sticky Sidebar Effect ---
+    st.markdown("""
+        <style>
+            [data-testid="stSidebar"] {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                overflow-y: auto;
+                border-right: 2px solid #ccc;
+                padding-right: 10px;
+            }
+            section.main > div {
+                margin-left: 320px; /* shifts main area to the right */
+            }
+        </style>
+    """, unsafe_allow_html=True)
 
+
+    # --- Reset and Download Buttons ---
     st.markdown("---")
+
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("Reset Filters"):
+            for key in list(st.session_state.keys()):
+                del st.session_state[key]
+            st.rerun()
+
+    with col2:
+        st.download_button(
+            label="Download CSV",
+            data=filtered_df.to_csv(index=False).encode("utf-8"),
+            file_name="motor_accident_data.csv",
+            mime="text/csv"
+        )
+
     st.caption("Designed with ❤️ using Streamlit")
+
 
 # --- MAIN TITLE ---
 st.title("🏍️ Motorbike Accident Insights Dashboard")
