@@ -13,7 +13,7 @@ url = "https://raw.githubusercontent.com/aichie-IT/SV25/refs/heads/main/motor_ac
 df = pd.read_csv(url)
 
 # --- SIDEBAR FILTERS ---
-st.sidebar.header("🔍 Filter Data")
+st.sidebar.header("Filter Data")
 
 # Select Accident Severity
 severity_options = df["Accident_Severity"].dropna().unique().tolist()
