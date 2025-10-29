@@ -3,3 +3,4 @@ pandas
 plotly
 seaborn
 st_pages
+Page, navigation
