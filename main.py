@@ -17,20 +17,58 @@ color_theme = px.colors.qualitative.Pastel
 url = "https://raw.githubusercontent.com/aichie-IT/SV25/refs/heads/main/motor_accident.csv"
 df = pd.read_csv(url)
 
-# --- SIDEBAR FILTERS ---
-st.sidebar.header("Filter Data")
+# ====== LOAD DATA ======
+@st.cache_data
+def load_data():
+    df = pd.read_csv("road_accidents.csv")  # Replace with your dataset
+    return df
 
-# Select Accident Severity
-severity_options = df["Accident_Severity"].dropna().unique().tolist()
-selected_severity = st.sidebar.multiselect(
-    "Select Accident Severity:",
-    options=severity_options,
-    default=severity_options
-)
+df = load_data()
 
-# Filtered dataset
-filtered_df = df[df["Accident_Severity"].isin(selected_severity)]
+# ====== SIDEBAR ======
+with st.sidebar:
+    st.image("https://cdn-icons-png.flaticon.com/512/743/743922.png", width=80)
+    st.title("⚙️ Dashboard Controls")
 
+    # --- Summary box ---
+    st.markdown("### 🧾 Data Summary")
+    st.info(f"**Total Records:** {len(df):,}\n\n**Columns:** {len(df.columns)}")
+
+    # --- Filters section ---
+    with st.expander("🎯 Filter Options", expanded=True):
+        st.markdown("Select filters to refine your dashboard view:")
+
+        # Dropdown filters (example: adjust according to your columns)
+        state = st.selectbox("Select State", ["All"] + sorted(df["State"].unique().tolist()))
+        year = st.selectbox("Select Year", ["All"] + sorted(df["Year"].unique().tolist()))
+        severity = st.selectbox("Accident Severity", ["All"] + sorted(df["Severity"].unique().tolist()))
+
+        # Numeric filter
+        min_age, max_age = st.slider(
+            "Filter by Driver Age",
+            int(df["Driver_Age"].min()),
+            int(df["Driver_Age"].max()),
+            (int(df["Driver_Age"].min()), int(df["Driver_Age"].max()))
+        )
+
+        # Apply filters dynamically
+        filtered_df = df.copy()
+        if state != "All":
+            filtered_df = filtered_df[filtered_df["State"] == state]
+        if year != "All":
+            filtered_df = filtered_df[filtered_df["Year"] == year]
+        if severity != "All":
+            filtered_df = filtered_df[filtered_df["Severity"] == severity]
+        filtered_df = filtered_df[
+            (filtered_df["Driver_Age"] >= min_age) & (filtered_df["Driver_Age"] <= max_age)
+        ]
+
+    # --- Reset button ---
+    if st.button("🔄 Reset Filters"):
+        st.experimental_rerun()
+
+    st.markdown("---")
+    st.caption("Designed with ❤️ using Streamlit")
 # --- MAIN TITLE ---
 st.title("🏍️ Motorbike Accident Insights Dashboard")
 st.markdown("Explore accident patterns and biker behaviors with interactive visual analytics.")
@@ -47,7 +85,7 @@ col4.metric("Avg. Travel Distance", f"{filtered_df['Daily_Travel_Distance'].mean
 st.markdown("---")
 
 # --- TAB LAYOUT ---
-tab1, tab2, tab3, tab4 = st.tabs(["⚙️ General Overview", "📊 Accident Factors", "📈 Numerical Analysis", "📉 Advanced Visualizations"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["⚙️ General Overview", "📊 Accident Factors", "📈 Numerical Analysis", "📉 Advanced Visualizations", "🗺️ Geographical Distribution"])
 
 # ============ TAB 1: GENERAL OVERVIEW ============
 with tab1:
@@ -279,6 +317,13 @@ with tab4:
         sns.scatterplot(x='Daily_Travel_Distance', y='Biker_Age', data=filtered_df, alpha=0.6)
         show_plot('Biker Age vs Daily Travel Distance', 'Daily Travel Distance', 'Biker Age')
 
+# ---- Tab 5: Map ----
+with tab5:
+    st.subheader("🗺️ Geographical Distribution")
+    if "Latitude" in filtered_df.columns and "Longitude" in filtered_df.columns:
+        st.map(filtered_df[["Latitude", "Longitude"]])
+    else:
+        st.warning("Map data not available in this dataset.")
 
 # --- FOOTER ---
 st.markdown("---")
