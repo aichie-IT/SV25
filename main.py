@@ -113,7 +113,6 @@ with tab2:
         color_discrete_sequence=color_theme,
         barmode="group"
     )
-    st.plotly_chart(fig4, use_container_width=True)
 
     # --- EDUCATION ---
     agg_edu = (
@@ -130,8 +129,14 @@ with tab2:
         color_discrete_sequence=color_theme,
         barmode="group"
     )
-    st.plotly_chart(fig5, use_container_width=True)
 
+    col1, col2 = st.columns(2)
+    with col1:
+        st.plotly_chart(fig4, use_container_width=True)
+    with col2:
+        st.plotly_chart(fig5, use_container_width=True)
+
+    st.markdown("---")
     st.subheader("Other Influencing Factors")
 
     # --- LOOP FOR OTHER CATEGORICAL VARIABLES ---
@@ -141,25 +146,34 @@ with tab2:
         "Time_of_Day", "Traffic_Density", "Biker_Alcohol"
     ]
 
-    for col in categorical_cols:
-        agg_df = (
-            filtered_df.groupby([col, "Accident_Severity"])
-            .size()
-            .reset_index(name="Count")
-            .sort_values("Count", ascending=False)
-        )
+    # Display 2 charts per row
+    for i in range(0, len(categorical_cols), 2):
+        col1, col2 = st.columns(2)
 
-        fig = px.bar(
-            agg_df,
-            x=col,
-            y="Count",
-            color="Accident_Severity",
-            title=f"Accident Severity by {col.replace('_', ' ')}",
-            color_discrete_sequence=color_theme,
-            barmode="group"
-        )
-        st.plotly_chart(fig, use_container_width=True)
+        for j, col in enumerate(categorical_cols[i:i+2]):
+            agg_df = (
+                filtered_df.groupby([col, "Accident_Severity"])
+                .size()
+                .reset_index(name="Count")
+                .sort_values("Count", ascending=False)
+            )
 
+            fig = px.bar(
+                agg_df,
+                x=col,
+                y="Count",
+                color="Accident_Severity",
+                title=f"Accident Severity by {col.replace('_', ' ')}",
+                color_discrete_sequence=color_theme,
+                barmode="group"
+            )
+
+            if j == 0:
+                with col1:
+                    st.plotly_chart(fig, use_container_width=True)
+            else:
+                with col2:
+                    st.plotly_chart(fig, use_container_width=True)
 
 # ============ TAB 3: NUMERICAL ANALYSIS ============
 with tab3:
