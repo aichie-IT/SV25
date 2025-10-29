@@ -168,21 +168,16 @@ st.markdown("---")
 
 # Show current filters
 st.markdown("### 📝 Current Filters Applied")
-cols = st.columns(4)  # adjust number of columns
-filters = {
-    "Accident Severity": ", ".join(severity) if isinstance(severity, list) else severity,
-    "Weather": ", ".join(weather) if isinstance(weather, list) else weather,
-    "Time of Day": ", ".join(time_of_day) if isinstance(time_of_day, list) else time_of_day,
-    "Road Type": ", ".join(road_type) if isinstance(road_type, list) else road_type,
-    "Alcohol": ", ".join(alcohol) if isinstance(alcohol, list) else alcohol,
-    "Traffic": ", ".join(traffic) if isinstance(traffic, list) else traffic,
-    "License": ", ".join(license_status) if isinstance(license_status, list) else license_status,
-    "Age Range": f"{min_age} - {max_age}" if min_age is not None else "All"
-}
-
-for i, (key, value) in enumerate(filters.items()):
-    col = cols[i % 4]
-    col.metric(label=key, value=value)
+filter_df = pd.DataFrame({
+    "Filter": list(filters.keys()),
+    "Selection": list(filters.values())
+})
+st.dataframe(filter_df.style.set_properties(**{
+    'background-color': '#f0f2f6', 
+    'color': '#111', 
+    'border-color': '#ccc',
+    'font-weight': 'bold'
+}).hide_index())
 
 st.markdown("---")
 
