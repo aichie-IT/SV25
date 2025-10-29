@@ -176,8 +176,8 @@ else:
         [data-testid="stSidebar"] { background-color: #FFFFFF; color: black; }
         </style>
     """, unsafe_allow_html=True)
-    st.markdown("---")
-    st.caption("Designed with ❤️ using Streamlit")
+st.markdown("---")
+st.caption("Designed with ❤️ using Streamlit")
 
 # ===== COLOR THEME =====
 color_theme = px.colors.qualitative.Pastel
