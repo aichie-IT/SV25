@@ -10,7 +10,41 @@ warnings.filterwarnings("ignore")
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Motorbike Accident Insights Dashboard", page_icon="🏍️", layout="wide")
 
-# --- COLOR THEME ---
+# ===== THEME TOGGLE =====
+st.sidebar.markdown("### 🌓 Theme Settings")
+theme_mode = st.sidebar.radio("Select Theme Mode", ["Light 🌞", "Dark 🌙"], horizontal=True)
+
+if theme_mode == "Dark 🌙":
+    st.markdown(
+        """
+        <style>
+        body { background-color: #121212; color: white; }
+        [data-testid="stSidebar"] {
+            background-color: #1E1E1E;
+            color: white;
+        }
+        .stMetric, .stPlotlyChart, .stMarkdown {
+            color: white !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+else:
+    st.markdown(
+        """
+        <style>
+        body { background-color: #FAFAFA; color: black; }
+        [data-testid="stSidebar"] {
+            background-color: #FFFFFF;
+            color: black;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+# ===== COLOR THEME =====
 color_theme = px.colors.qualitative.Pastel
 
 # --- LOAD DATA ---
@@ -115,19 +149,38 @@ with st.sidebar:
                 (filtered_df["Biker_Age"] >= min_age) & (filtered_df["Biker_Age"] <= max_age)
             ]
 
+    # --- Sticky Sidebar Effect ---
+    st.markdown("""
+        <style>
+            [data-testid="stSidebar"] {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                overflow-y: auto;
+                border-right: 2px solid #ccc;
+                padding-right: 10px;
+            }
+            section.main > div {
+                margin-left: 320px; /* shifts main area to the right */
+            }
+        </style>
+    """, unsafe_allow_html=True)
+
+
     # --- Reset and Download Buttons ---
     st.markdown("---")
 
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("🔄 Reset Filters"):
+        if st.button("Reset Filters"):
             for key in list(st.session_state.keys()):
                 del st.session_state[key]
             st.rerun()
 
     with col2:
         st.download_button(
-            label="⬇️ Download CSV",
+            label="Download CSV",
             data=filtered_df.to_csv(index=False).encode("utf-8"),
             file_name="motor_accident_data.csv",
             mime="text/csv"
