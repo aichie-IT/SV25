@@ -85,7 +85,9 @@ with st.sidebar:
 
     # --- Reset button ---
     if st.button("🔄 Reset Filters"):
-        st.experimental_rerun()
+    for key in list(st.session_state.keys()):
+        del st.session_state[key]
+    st.rerun()
 
     st.markdown("---")
     st.caption("Designed with ❤️ using Streamlit")
