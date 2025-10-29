@@ -85,9 +85,11 @@ with st.sidebar:
 
     # --- Reset button ---
     if st.button("🔄 Reset Filters"):
-    for key in list(st.session_state.keys()):
-        del st.session_state[key]
-    st.rerun()
+        # Clear all sidebar filter states
+        for key in list(st.session_state.keys()):
+            if key.startswith("Select") or key in ["severity", "weather", "time_of_day", "road_type", "min_age", "max_age"]:
+                del st.session_state[key]
+        st.rerun()
 
     st.caption("Designed with ❤️ using Streamlit")
 
