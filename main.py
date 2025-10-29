@@ -10,42 +10,6 @@ warnings.filterwarnings("ignore")
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Motorbike Accident Insights Dashboard", page_icon="🏍️", layout="wide")
 
-# ===== THEME TOGGLE =====
-st.sidebar.markdown("### 🌓 Theme Settings")
-theme_mode = st.sidebar.radio("Select Theme Mode", ["Light 🌞", "Dark 🌙"], horizontal=True)
-
-if theme_mode == "Dark 🌙":
-    st.markdown(
-        """
-        <style>
-        body { background-color: #121212; color: white; }
-        [data-testid="stSidebar"] {
-            background-color: #1E1E1E;
-            color: white;
-        }
-        .stMetric, .stPlotlyChart, .stMarkdown {
-            color: white !important;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-else:
-    st.markdown(
-        """
-        <style>
-        body { background-color: #FAFAFA; color: black; }
-        [data-testid="stSidebar"] {
-            background-color: #FFFFFF;
-            color: black;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
-# ===== COLOR THEME =====
-color_theme = px.colors.qualitative.Pastel
 
 # --- LOAD DATA ---
 @st.cache_data
@@ -175,7 +139,6 @@ with st.sidebar:
         </style>
     """, unsafe_allow_html=True)
 
-
     # --- Reset and Download Buttons ---
     st.markdown("---")
 
@@ -193,6 +156,44 @@ with st.sidebar:
             file_name="motor_accident_data.csv",
             mime="text/csv"
         )
+
+# ===== THEME TOGGLE =====
+st.markdown("---")
+st.sidebar.markdown("### 🌓 Theme Settings")
+theme_mode = st.sidebar.radio("Select Theme Mode", ["Light 🌞", "Dark 🌙"], horizontal=True)
+
+if theme_mode == "Dark 🌙":
+    st.markdown(
+        """
+        <style>
+        body { background-color: #121212; color: white; }
+        [data-testid="stSidebar"] {
+            background-color: #1E1E1E;
+            color: white;
+        }
+        .stMetric, .stPlotlyChart, .stMarkdown {
+            color: white !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+else:
+    st.markdown(
+        """
+        <style>
+        body { background-color: #FAFAFA; color: black; }
+        [data-testid="stSidebar"] {
+            background-color: #FFFFFF;
+            color: black;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+# ===== COLOR THEME =====
+color_theme = px.colors.qualitative.Pastel
 
     st.caption("Designed with ❤️ using Streamlit")
 
