@@ -166,24 +166,6 @@ st.markdown("Explore accident patterns and biker behaviors with interactive visu
 
 st.markdown("---")
 
-# --- Current Filters Summary (Professional Layout) ---
-st.markdown("### 📝 Current Filters Applied")
-cols = st.columns(4)
-filters = {
-    "Accident Severity": ", ".join(severity),
-    "Weather": ", ".join(weather),
-    "Time of Day": ", ".join(time_of_day),
-    "Road Type": ", ".join(road_type),
-    "Alcohol": ", ".join(alcohol) if alcohol else "All",
-    "Traffic": ", ".join(traffic) if traffic else "All",
-    "License": ", ".join(license_status) if license_status else "All",
-    "Age Range": f"{min_age} - {max_age}" if min_age is not None else "All"
-}
-for i, (key, value) in enumerate(filters.items()):
-    col = cols[i % 4]
-    col.metric(label=key, value=value)
-st.markdown("---")
-
 # --- SUMMARY BOX ---
 col1, col2, col3, col4 = st.columns(4)
 
