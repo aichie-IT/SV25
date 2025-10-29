@@ -166,19 +166,22 @@ st.markdown("Explore accident patterns and biker behaviors with interactive visu
 
 st.markdown("---")
 
-# Show current filters
+# --- Current Filters Summary (Professional Layout) ---
 st.markdown("### 📝 Current Filters Applied")
-filter_df = pd.DataFrame({
-    "Filter": list(filters.keys()),
-    "Selection": list(filters.values())
-})
-st.dataframe(filter_df.style.set_properties(**{
-    'background-color': '#f0f2f6', 
-    'color': '#111', 
-    'border-color': '#ccc',
-    'font-weight': 'bold'
-}).hide_index())
-
+cols = st.columns(4)
+filters = {
+    "Accident Severity": ", ".join(severity),
+    "Weather": ", ".join(weather),
+    "Time of Day": ", ".join(time_of_day),
+    "Road Type": ", ".join(road_type),
+    "Alcohol": ", ".join(alcohol) if alcohol else "All",
+    "Traffic": ", ".join(traffic) if traffic else "All",
+    "License": ", ".join(license_status) if license_status else "All",
+    "Age Range": f"{min_age} - {max_age}" if min_age is not None else "All"
+}
+for i, (key, value) in enumerate(filters.items()):
+    col = cols[i % 4]
+    col.metric(label=key, value=value)
 st.markdown("---")
 
 # --- SUMMARY BOX ---
