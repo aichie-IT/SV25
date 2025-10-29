@@ -36,30 +36,52 @@ with st.sidebar:
     with st.expander("🎯 Filter Options", expanded=True):
         st.markdown("Select filters to refine your dashboard view:")
 
-        # Dropdown filters (example: adjust according to your columns)
-        state = st.selectbox("Select State", ["All"] + sorted(df["State"].unique().tolist()))
-        year = st.selectbox("Select Year", ["All"] + sorted(df["Year"].unique().tolist()))
-        severity = st.selectbox("Accident Severity", ["All"] + sorted(df["Severity"].unique().tolist()))
-
-        # Numeric filter
-        min_age, max_age = st.slider(
-            "Filter by Driver Age",
-            int(df["Driver_Age"].min()),
-            int(df["Driver_Age"].max()),
-            (int(df["Driver_Age"].min()), int(df["Driver_Age"].max()))
+        # Categorical filters — adjust to your dataset
+        severity = st.selectbox(
+            "Select Accident Severity",
+            ["All"] + sorted(df["Accident_Severity"].dropna().unique().tolist())
         )
 
-        # Apply filters dynamically
+        weather = st.selectbox(
+            "Select Weather Condition",
+            ["All"] + sorted(df["Weather"].dropna().unique().tolist())
+        )
+
+        time_of_day = st.selectbox(
+            "Select Time of Day",
+            ["All"] + sorted(df["Time_of_Day"].dropna().unique().tolist())
+        )
+
+        road_type = st.selectbox(
+            "Select Road Type",
+            ["All"] + sorted(df["Road_Type"].dropna().unique().tolist())
+        )
+
+        # Numeric filter
+        if "Biker_Age" in df.columns:
+            min_age, max_age = st.slider(
+                "Filter by Biker Age",
+                int(df["Biker_Age"].min()),
+                int(df["Biker_Age"].max()),
+                (int(df["Biker_Age"].min()), int(df["Biker_Age"].max()))
+            )
+        else:
+            min_age, max_age = None, None
+
+        # Apply filters
         filtered_df = df.copy()
-        if state != "All":
-            filtered_df = filtered_df[filtered_df["State"] == state]
-        if year != "All":
-            filtered_df = filtered_df[filtered_df["Year"] == year]
         if severity != "All":
-            filtered_df = filtered_df[filtered_df["Severity"] == severity]
-        filtered_df = filtered_df[
-            (filtered_df["Driver_Age"] >= min_age) & (filtered_df["Driver_Age"] <= max_age)
-        ]
+            filtered_df = filtered_df[filtered_df["Accident_Severity"] == severity]
+        if weather != "All":
+            filtered_df = filtered_df[filtered_df["Weather"] == weather]
+        if time_of_day != "All":
+            filtered_df = filtered_df[filtered_df["Time_of_Day"] == time_of_day]
+        if road_type != "All":
+            filtered_df = filtered_df[filtered_df["Road_Type"] == road_type]
+        if min_age is not None:
+            filtered_df = filtered_df[
+                (filtered_df["Biker_Age"] >= min_age) & (filtered_df["Biker_Age"] <= max_age)
+            ]
 
     # --- Reset button ---
     if st.button("🔄 Reset Filters"):
@@ -67,6 +89,7 @@ with st.sidebar:
 
     st.markdown("---")
     st.caption("Designed with ❤️ using Streamlit")
+
 # --- MAIN TITLE ---
 st.title("🏍️ Motorbike Accident Insights Dashboard")
 st.markdown("Explore accident patterns and biker behaviors with interactive visual analytics.")
