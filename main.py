@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import seaborn as sns
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Motorbike Accident Insights Dashboard", page_icon="🏍️", layout="wide")
@@ -170,9 +171,7 @@ with tab3:
 with tab4:
     st.subheader("Advanced Statistical Visualizations")
     st.markdown("Explore deeper relationships using box, violin, and scatter plots.")
-
-    import matplotlib.pyplot as plt
-    import seaborn as sns
+    
     sns.set_style("whitegrid")
 
     # Helper function
