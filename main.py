@@ -157,8 +157,9 @@ with st.sidebar:
             mime="text/csv"
         )
 
+    st.caption("Designed with ❤️ using Streamlit")
+
 # ===== THEME TOGGLE =====
-st.markdown("---")
 st.sidebar.markdown("### 🌓 Theme Settings")
 theme_mode = st.sidebar.radio("Select Theme Mode", ["Light 🌞", "Dark 🌙"], horizontal=True)
 
@@ -180,8 +181,6 @@ else:
 
 # ===== COLOR THEME =====
 color_theme = px.colors.qualitative.Pastel
-
-    st.caption("Designed with ❤️ using Streamlit")
 
 
 # --- MAIN TITLE ---
