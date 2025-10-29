@@ -163,34 +163,20 @@ st.sidebar.markdown("### 🌓 Theme Settings")
 theme_mode = st.sidebar.radio("Select Theme Mode", ["Light 🌞", "Dark 🌙"], horizontal=True)
 
 if theme_mode == "Dark 🌙":
-    st.markdown(
-        """
+    st.markdown("""
         <style>
         body { background-color: #121212; color: white; }
-        [data-testid="stSidebar"] {
-            background-color: #1E1E1E;
-            color: white;
-        }
-        .stMetric, .stPlotlyChart, .stMarkdown {
-            color: white !important;
-        }
+        [data-testid="stSidebar"] { background-color: #1E1E1E; color: white; }
+        .stMetric, .stPlotlyChart, .stMarkdown { color: white !important; }
         </style>
-        """,
-        unsafe_allow_html=True
-    )
+    """, unsafe_allow_html=True)
 else:
-    st.markdown(
-        """
+    st.markdown("""
         <style>
         body { background-color: #FAFAFA; color: black; }
-        [data-testid="stSidebar"] {
-            background-color: #FFFFFF;
-            color: black;
-        }
+        [data-testid="stSidebar"] { background-color: #FFFFFF; color: black; }
         </style>
-        """,
-        unsafe_allow_html=True
-    )
+    """, unsafe_allow_html=True)
 
 # ===== COLOR THEME =====
 color_theme = px.colors.qualitative.Pastel
