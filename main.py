@@ -121,27 +121,7 @@ with st.sidebar:
                 (filtered_df["Biker_Age"] >= min_age) & (filtered_df["Biker_Age"] <= max_age)
             ]
 
-    # --- Sticky Sidebar Effect ---
-    st.markdown("""
-        <style>
-            [data-testid="stSidebar"] {
-                position: fixed;
-                top: 0;
-                left: 0;
-                height: 100vh;
-                overflow-y: auto;
-                border-right: 2px solid #ccc;
-                padding-right: 10px;
-            }
-            section.main > div {
-                margin-left: 320px; /* shifts main area to the right */
-            }
-        </style>
-    """, unsafe_allow_html=True)
-
     # --- Reset and Download Buttons ---
-    st.markdown("---")
-
     col1, col2 = st.columns(2)
     with col1:
         if st.button("Reset Filters"):
