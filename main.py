@@ -98,28 +98,43 @@ with tab1:
 with tab2:
     st.subheader("Accident Severity by Categorical Factors")
 
-    # Occupation
+    # --- OCCUPATION ---
+    agg_occ = (
+        filtered_df.groupby(["Biker_Occupation", "Accident_Severity"])
+        .size()
+        .reset_index(name="Count")
+    )
     fig4 = px.bar(
-        filtered_df,
-        y="Biker_Occupation",
+        agg_occ,
+        x="Biker_Occupation",
+        y="Count",
         color="Accident_Severity",
         title="Accident Severity by Biker Occupation",
-        color_discrete_sequence=color_theme
+        color_discrete_sequence=color_theme,
+        barmode="group"
     )
     st.plotly_chart(fig4, use_container_width=True)
 
-    # Education
+    # --- EDUCATION ---
+    agg_edu = (
+        filtered_df.groupby(["Biker_Education_Level", "Accident_Severity"])
+        .size()
+        .reset_index(name="Count")
+    )
     fig5 = px.bar(
-        filtered_df,
-        y="Biker_Education_Level",
+        agg_edu,
+        x="Biker_Education_Level",
+        y="Count",
         color="Accident_Severity",
         title="Accident Severity by Biker Education Level",
-        color_discrete_sequence=color_theme
+        color_discrete_sequence=color_theme,
+        barmode="group"
     )
     st.plotly_chart(fig5, use_container_width=True)
 
     st.subheader("Other Influencing Factors")
 
+    # --- LOOP FOR OTHER CATEGORICAL VARIABLES ---
     categorical_cols = [
         "Wearing_Helmet", "Motorcycle_Ownership", "Valid_Driving_License",
         "Bike_Condition", "Road_Type", "Road_condition", "Weather",
@@ -127,14 +142,24 @@ with tab2:
     ]
 
     for col in categorical_cols:
+        agg_df = (
+            filtered_df.groupby([col, "Accident_Severity"])
+            .size()
+            .reset_index(name="Count")
+            .sort_values("Count", ascending=False)
+        )
+
         fig = px.bar(
-            filtered_df,
-            y=col,
+            agg_df,
+            x=col,
+            y="Count",
             color="Accident_Severity",
             title=f"Accident Severity by {col.replace('_', ' ')}",
-            color_discrete_sequence=color_theme
+            color_discrete_sequence=color_theme,
+            barmode="group"
         )
         st.plotly_chart(fig, use_container_width=True)
+
 
 # ============ TAB 3: NUMERICAL ANALYSIS ============
 with tab3:
