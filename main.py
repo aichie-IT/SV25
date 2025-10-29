@@ -156,9 +156,9 @@ with st.sidebar:
             file_name="motor_accident_data.csv",
             mime="text/csv"
         )
+    st.markdown("---")
 
 # ===== THEME TOGGLE =====
-st.markdown("---")
 theme_mode = st.sidebar.radio("Select Theme Mode", ["Light 🌞", "Dark 🌙"], horizontal=True)
 
 if theme_mode == "Dark 🌙":
@@ -176,8 +176,6 @@ else:
         [data-testid="stSidebar"] { background-color: #FFFFFF; color: black; }
         </style>
     """, unsafe_allow_html=True)
-st.markdown("---")
-st.caption("Designed with ❤️ using Streamlit")
 
 # ===== COLOR THEME =====
 color_theme = px.colors.qualitative.Pastel
