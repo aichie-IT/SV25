@@ -1,5 +1,43 @@
 import streamlit as st
 
+# ====== SIDEBAR ======
+with st.sidebar:
+    # --- Centered Logo ---
+    st.markdown(
+        """
+        <div style='text-align: center; margin-bottom: 10px;'>
+            <img src='https://cdn-icons-png.flaticon.com/512/743/743922.png' width='100'>
+        </div>
+        """, unsafe_allow_html=True
+    )
+
+    # --- Dashboard Title ---
+    st.markdown("<h2 style='text-align:center'>Motorbike Dashboard</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center; color: gray; margin-top:-10px;'>Interactive Accident Insights</p>", unsafe_allow_html=True)
+    st.markdown("---")
+
+# ===== THEME TOGGLE =====
+theme_mode = st.sidebar.radio("Select Theme Mode", ["Light 🌞", "Dark 🌙"], horizontal=True)
+
+if theme_mode == "Dark 🌙":
+    st.markdown("""
+        <style>
+        body { background-color: #121212; color: white; }
+        [data-testid="stSidebar"] { background-color: #1E1E1E; color: white; }
+        .stMetric, .stPlotlyChart, .stMarkdown { color: white !important; }
+        </style>
+    """, unsafe_allow_html=True)
+else:
+    st.markdown("""
+        <style>
+        body { background-color: #FAFAFA; color: black; }
+        [data-testid="stSidebar"] { background-color: #FFFFFF; color: black; }
+        </style>
+    """, unsafe_allow_html=True)
+
+# ===== COLOR THEME =====
+color_theme = px.colors.qualitative.Pastel
+
 # Add a banner image at the top
 banner_image = 'https://raw.githubusercontent.com/fakhitah3/FHPK-TVET/main/3u1i.jpeg'
 st.image(banner_image, use_container_width=True)
