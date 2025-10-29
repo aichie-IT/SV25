@@ -35,9 +35,6 @@ else:
         </style>
     """, unsafe_allow_html=True)
 
-# ===== COLOR THEME =====
-color_theme = px.colors.qualitative.Pastel
-
 # Add a banner image at the top
 banner_image = 'https://raw.githubusercontent.com/fakhitah3/FHPK-TVET/main/3u1i.jpeg'
 st.image(banner_image, use_container_width=True)
