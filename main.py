@@ -23,19 +23,6 @@ df = load_data()
 
 # ====== SIDEBAR ======
 with st.sidebar:
-    # --- Centered Logo ---
-    st.markdown(
-        """
-        <div style='text-align: center; margin-bottom: 10px;'>
-            <img src='https://cdn-icons-png.flaticon.com/512/743/743922.png' width='100'>
-        </div>
-        """, unsafe_allow_html=True
-    )
-
-    # --- Dashboard Title ---
-    st.markdown("<h2 style='text-align:center'>Motorbike Dashboard</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center; color: gray; margin-top:-10px;'>Interactive Accident Insights</p>", unsafe_allow_html=True)
-
     st.title("Dashboard Controls")
 
     # --- Data Summary ---
