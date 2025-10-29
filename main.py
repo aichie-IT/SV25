@@ -42,7 +42,7 @@ col4.metric("Avg. Travel Distance", f"{filtered_df['Daily_Travel_Distance'].mean
 st.markdown("---")
 
 # --- TAB LAYOUT ---
-tab1, tab2, tab3 = st.tabs(["⚙️ General Overview", "📊 Accident Factors", "📈 Numerical Analysis"])
+tab1, tab2, tab3, tab4 = st.tabs(["⚙️ General Overview", "📊 Accident Factors", "📈 Numerical Analysis", "📉 Advanced Visualizations"])
 
 # ============ TAB 1: GENERAL OVERVIEW ============
 with tab1:
@@ -165,6 +165,78 @@ with tab3:
             color_discrete_sequence=color_theme
         )
         st.plotly_chart(fig9, use_container_width=True)
+
+# ============ TAB 4: ADVANCED VISUALIZATIONS ============
+with tab4:
+    st.subheader("Advanced Statistical Visualizations")
+    st.markdown("Explore deeper relationships using box, violin, and scatter plots.")
+
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    sns.set_style("whitegrid")
+
+    # Helper function
+    def show_plot(title, xlabel, ylabel, rotation=False):
+        plt.title(title)
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+        if rotation:
+            plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
+        st.pyplot(plt.gcf())
+        plt.clf()
+
+    # --- BOX PLOTS ---
+    with st.expander("📦 Box Plots"):
+        plt.figure(figsize=(12, 7))
+        sns.boxplot(x='Accident_Severity', y='Biker_Age', data=filtered_df, palette='viridis')
+        show_plot('Distribution of Biker Age by Accident Severity', 'Accident Severity', 'Biker Age')
+
+        plt.figure(figsize=(12, 7))
+        sns.boxplot(x='Accident_Severity', y='Riding_Experience', data=filtered_df, palette='viridis')
+        show_plot('Distribution of Riding Experience by Accident Severity', 'Accident Severity', 'Riding Experience (Years)')
+
+        plt.figure(figsize=(12, 7))
+        sns.boxplot(x='Accident_Severity', y='Daily_Travel_Distance', data=filtered_df, palette='viridis')
+        show_plot('Distribution of Daily Travel Distance by Accident Severity', 'Accident Severity', 'Daily Travel Distance')
+
+        plt.figure(figsize=(12, 7))
+        sns.boxplot(x='Accident_Severity', y='Bike_Speed', data=filtered_df, palette='viridis')
+        show_plot('Distribution of Bike Speed by Accident Severity', 'Accident Severity', 'Bike Speed')
+
+        plt.figure(figsize=(12, 7))
+        sns.boxplot(x='Accident_Severity', y='Speed_Limit', data=filtered_df, palette='viridis')
+        show_plot('Distribution of Speed Limit by Accident Severity', 'Accident Severity', 'Speed Limit')
+
+        plt.figure(figsize=(12, 7))
+        sns.boxplot(x='Biker_Occupation', y='Bike_Speed', data=filtered_df, palette='viridis')
+        show_plot('Distribution of Bike Speed by Biker Occupation', 'Biker Occupation', 'Bike Speed', rotation=True)
+
+    # --- VIOLIN PLOTS ---
+    with st.expander("🎻 Violin Plots"):
+        plt.figure(figsize=(12, 7))
+        sns.violinplot(x='Accident_Severity', y='Biker_Age', data=filtered_df, palette='viridis')
+        show_plot('Distribution of Biker Age by Accident Severity (Violin Plot)', 'Accident Severity', 'Biker Age')
+
+        plt.figure(figsize=(12, 7))
+        sns.violinplot(x='Weather', y='Bike_Speed', data=filtered_df, palette='viridis')
+        show_plot('Distribution of Bike Speed by Weather (Violin Plot)', 'Weather', 'Bike Speed')
+
+    # --- SCATTER PLOTS ---
+    with st.expander("📈 Scatter Plots"):
+        plt.figure(figsize=(14, 10))
+        sns.scatterplot(x='Bike_Speed', y='Daily_Travel_Distance', hue='Accident_Severity', data=filtered_df, palette='viridis', alpha=0.6)
+        plt.legend(title='Accident Severity')
+        show_plot('Daily Travel Distance vs Bike Speed by Accident Severity', 'Bike Speed', 'Daily Travel Distance')
+
+        plt.figure(figsize=(12, 8))
+        sns.scatterplot(x='Bike_Speed', y='Biker_Age', data=filtered_df, alpha=0.6)
+        show_plot('Biker Age vs Bike Speed', 'Bike Speed', 'Biker Age')
+
+        plt.figure(figsize=(12, 8))
+        sns.scatterplot(x='Daily_Travel_Distance', y='Biker_Age', data=filtered_df, alpha=0.6)
+        show_plot('Biker Age vs Daily Travel Distance', 'Daily Travel Distance', 'Biker Age')
+
 
 # --- FOOTER ---
 st.markdown("---")
