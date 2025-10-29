@@ -71,51 +71,58 @@ with st.sidebar:
     with st.expander("🎯 Filter Options", expanded=True):
         st.markdown("Select filters to refine your dashboard view:")
 
-        # Categorical Filters
-        severity = st.selectbox(
+        # --- Multi-select Filters ---
+        severity = st.multiselect(
             "Accident Severity",
-            ["All"] + sorted(df["Accident_Severity"].dropna().unique().tolist())
+            options=sorted(df["Accident_Severity"].dropna().unique()),
+            default=sorted(df["Accident_Severity"].dropna().unique())
         )
 
-        weather = st.selectbox(
+        weather = st.multiselect(
             "Weather Condition",
-            ["All"] + sorted(df["Weather"].dropna().unique().tolist())
+            options=sorted(df["Weather"].dropna().unique()),
+            default=sorted(df["Weather"].dropna().unique())
         )
 
-        time_of_day = st.selectbox(
+        time_of_day = st.multiselect(
             "Time of Day",
-            ["All"] + sorted(df["Time_of_Day"].dropna().unique().tolist())
+            options=sorted(df["Time_of_Day"].dropna().unique()),
+            default=sorted(df["Time_of_Day"].dropna().unique())
         )
 
-        road_type = st.selectbox(
+        road_type = st.multiselect(
             "Road Type",
-            ["All"] + sorted(df["Road_Type"].dropna().unique().tolist())
+            options=sorted(df["Road_Type"].dropna().unique()),
+            default=sorted(df["Road_Type"].dropna().unique())
         )
 
-        # --- Optional Filters (only shown if columns exist) ---
+        # --- Optional Filters ---
         if "Biker_Alcohol" in df.columns:
-            alcohol = st.selectbox(
+            alcohol = st.multiselect(
                 "Biker Alcohol Consumption",
-                ["All"] + sorted(df["Biker_Alcohol"].dropna().unique().tolist())
+                options=sorted(df["Biker_Alcohol"].dropna().unique()),
+                default=sorted(df["Biker_Alcohol"].dropna().unique())
             )
         else:
-            alcohol = "All"
+            alcohol = []
 
         if "Traffic_Density" in df.columns:
-            traffic = st.selectbox(
+            traffic = st.multiselect(
                 "Traffic Density",
-                ["All"] + sorted(df["Traffic_Density"].dropna().unique().tolist())
+                options=sorted(df["Traffic_Density"].dropna().unique()),
+                default=sorted(df["Traffic_Density"].dropna().unique())
             )
         else:
-            traffic = "All"
+            traffic = []
 
         if "Valid_Driving_License" in df.columns:
-            license_status = st.selectbox(
+            license_status = st.multiselect(
                 "Valid Driving License",
-                ["All"] + sorted(df["Valid_Driving_License"].dropna().unique().tolist())
+                options=sorted(df["Valid_Driving_License"].dropna().unique()),
+                default=sorted(df["Valid_Driving_License"].dropna().unique())
             )
         else:
-            license_status = "All"
+            license_status = []
 
         # --- Numeric Filter: Biker Age ---
         if "Biker_Age" in df.columns:
@@ -130,20 +137,21 @@ with st.sidebar:
 
         # --- Apply Filters ---
         filtered_df = df.copy()
-        if severity != "All":
-            filtered_df = filtered_df[filtered_df["Accident_Severity"] == severity]
-        if weather != "All":
-            filtered_df = filtered_df[filtered_df["Weather"] == weather]
-        if time_of_day != "All":
-            filtered_df = filtered_df[filtered_df["Time_of_Day"] == time_of_day]
-        if road_type != "All":
-            filtered_df = filtered_df[filtered_df["Road_Type"] == road_type]
-        if alcohol != "All":
-            filtered_df = filtered_df[filtered_df["Biker_Alcohol"] == alcohol]
-        if traffic != "All":
-            filtered_df = filtered_df[filtered_df["Traffic_Density"] == traffic]
-        if license_status != "All":
-            filtered_df = filtered_df[filtered_df["Valid_Driving_License"] == license_status]
+
+        if severity:
+            filtered_df = filtered_df[filtered_df["Accident_Severity"].isin(severity)]
+        if weather:
+            filtered_df = filtered_df[filtered_df["Weather"].isin(weather)]
+        if time_of_day:
+            filtered_df = filtered_df[filtered_df["Time_of_Day"].isin(time_of_day)]
+        if road_type:
+            filtered_df = filtered_df[filtered_df["Road_Type"].isin(road_type)]
+        if alcohol:
+            filtered_df = filtered_df[filtered_df["Biker_Alcohol"].isin(alcohol)]
+        if traffic:
+            filtered_df = filtered_df[filtered_df["Traffic_Density"].isin(traffic)]
+        if license_status:
+            filtered_df = filtered_df[filtered_df["Valid_Driving_License"].isin(license_status)]
         if min_age is not None:
             filtered_df = filtered_df[
                 (filtered_df["Biker_Age"] >= min_age) & (filtered_df["Biker_Age"] <= max_age)
