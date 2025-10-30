@@ -413,19 +413,16 @@ with tab4:
         sns.scatterplot(x='Daily_Travel_Distance', y='Biker_Age', data=filtered_df, alpha=0.6)
         show_plot('Biker Age vs Daily Travel Distance', 'Daily Travel Distance', 'Biker Age')
 
-# ---- Tab 5: Correlation Insights ----
+# ---- Tab 5: Riding Behavior Insights ----
 with tab5:
-    st.subheader("📈 Correlation Insights")
+    st.subheader("🏍️ Riding Behavior Insights")
 
-    numeric_cols = df.select_dtypes(include=['int', 'float']).columns
-    corr = df[numeric_cols].corr()
+    behavior_cols = ["Talk_While_Riding", "Smoke_While_Riding", "Wearing_Helmet", "Biker_Alcohol"]
+    for col in behavior_cols:
+        if col in df.columns:
+            st.markdown(f"**{col.replace('_', ' ')}**")
+            st.bar_chart(filtered_df[col].value_counts())
 
-    st.markdown("#### 🔍 Correlation Heatmap")
-    fig = px.imshow(corr, text_auto=True, aspect="auto", title="Correlation Matrix of Numeric Features")
-    st.plotly_chart(fig, use_container_width=True)
-
-    st.markdown("#### 💬 Observation")
-    st.info("Higher correlations indicate stronger relationships between factors such as speed, experience, and accident severity.")
 
 # --- FOOTER ---
 st.markdown("---")
