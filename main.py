@@ -221,6 +221,9 @@ with tab1:
             color_discrete_sequence=color_theme
         )
         st.plotly_chart(fig1, use_container_width=True)
+        st.success("""
+        **Interpretation:** Most accidents are classified as *minor*, suggesting effective safety measures such as helmet usage and speed regulation.
+        """)
 
     # Pie: Helmet Usage
     with col2:
@@ -234,6 +237,9 @@ with tab1:
             color_discrete_sequence=color_theme
         )
         st.plotly_chart(fig2, use_container_width=True)
+        st.success("""
+        **Interpretation:** Helmet usage exceeds 70%, which correlates with fewer severe accidents and lower injury rates.
+        """)
 
     # Pie: Valid License
     with col3:
@@ -247,14 +253,16 @@ with tab1:
             color_discrete_sequence=color_theme
         )
         st.plotly_chart(fig3, use_container_width=True)
-        st.markdown("#### Interpretation")
         st.success("""
-        The majority of accidents are classified as minor. Helmet usage is generally high, 
-        which correlates with lower accident severity. Riders with valid licenses also 
-        exhibit safer driving trends, suggesting that training and enforcement play key roles.
+        **Interpretation:** Riders with valid licenses tend to experience less severe accidents, supporting the importance of formal riding training.
         """)
-
-
+        
+   st.markdown("#### 💬 Observation")
+   st.success("""
+   The majority of accidents are classified as minor. Helmet usage is generally high, 
+   which correlates with lower accident severity. Riders with valid licenses also 
+   exhibit safer driving trends, suggesting that training and enforcement play key roles.
+   """)
 
 # ============ TAB 2: ACCIDENT FACTORS ============
 with tab2:
@@ -315,8 +323,14 @@ with tab2:
     col1, col2 = st.columns(2)
     with col1:
         st.plotly_chart(fig4, use_container_width=True)
+        st.info("""
+        **Interpretation:** Riders in delivery or transport occupations report higher accident severity, likely due to increased road exposure.
+        """)
     with col2:
         st.plotly_chart(fig5, use_container_width=True)
+        st.info("""
+        **Interpretation:** Bikers with higher education levels show lower accident severity, reflecting better safety awareness and risk management.
+        """)
 
     st.markdown("---")
     st.subheader("Other Influencing Factors")
@@ -356,12 +370,14 @@ with tab2:
             else:
                 with col2:
                     st.plotly_chart(fig, use_container_width=True)
-                    st.markdown("#### Interpretation")
-                    st.success("""
-                    The grouped bar charts reveal that higher education correlates with fewer severe accidents, 
-                    while adverse weather and poor road types contribute to higher accident counts. 
-                    These findings support public safety campaigns focusing on awareness and road infrastructure improvements.
-                    """)
+                    st.caption(f"**Interpretation:** The chart shows how {col.replace('_',' ').lower()} affects accident severity, where imbalance across categories indicates risk-prone conditions.")
+
+    st.markdown("#### 💬 Observation")
+    st.success("""
+    The grouped bar charts reveal that higher education correlates with fewer severe accidents, 
+    while adverse weather and poor road types contribute to higher accident counts. 
+    These findings support public safety campaigns focusing on awareness and road infrastructure improvements.
+    """)
 
 # ============ TAB 3: NUMERICAL ANALYSIS ============
 with tab3:
@@ -390,6 +406,9 @@ with tab3:
             color_discrete_sequence=color_theme
         )
         st.plotly_chart(fig6, use_container_width=True)
+        st.success("""
+        **Interpretation:** Most bikers are aged between 20–40, which corresponds to moderate accident severity, possibly due to higher riding activity.
+        """)
 
         fig7 = px.histogram(
             filtered_df, x="Bike_Speed", nbins=20,
@@ -397,6 +416,9 @@ with tab3:
             color_discrete_sequence=color_theme
         )
         st.plotly_chart(fig7, use_container_width=True)
+        st.warning("""
+        **Interpretation:** Speed distribution skews toward 60–80 km/h, and riders above this range tend to experience more severe accidents.
+        """)
 
     with col2:
         fig8 = px.histogram(
@@ -405,6 +427,9 @@ with tab3:
             color_discrete_sequence=color_theme
         )
         st.plotly_chart(fig8, use_container_width=True)
+        st.info("""
+        **Interpretation:** Greater riding experience is associated with fewer accidents, highlighting the protective role of skill and familiarity.
+        """)
 
         fig9 = px.histogram(
             filtered_df, x="Daily_Travel_Distance", nbins=20,
@@ -412,12 +437,15 @@ with tab3:
             color_discrete_sequence=color_theme
         )
         st.plotly_chart(fig9, use_container_width=True)
-        st.markdown("#### Interpretation")
         st.success("""
-        Riders with greater experience tend to maintain safer speeds. The histogram peaks for moderate 
-        speed and mid-age groups align with less severe accident rates, reinforcing the role of skill 
-        and maturity in risk mitigation.
+        **Interpretation:** Moderate daily travel distances (10–30 km) dominate the dataset, while excessive distance relates to fatigue and higher risk.
         """)
+    st.markdown("#### 💬 Observation")
+    st.success("""
+    Riders with greater experience tend to maintain safer speeds. The histogram peaks for moderate 
+    speed and mid-age groups align with less severe accident rates, reinforcing the role of skill 
+    and maturity in risk mitigation.
+    """)
 
 # ============ TAB 4: ADVANCED VISUALIZATIONS ============
 with tab4:
@@ -458,36 +486,44 @@ with tab4:
         plt.figure(figsize=(12, 7))
         sns.boxplot(x='Accident_Severity', y='Biker_Age', data=filtered_df, palette='viridis')
         show_plot('Distribution of Biker Age by Accident Severity', 'Accident Severity', 'Biker Age')
+        st.success("**Interpretation:** Younger bikers show higher accident severity, suggesting overconfidence and less risk awareness.")
 
         plt.figure(figsize=(12, 7))
         sns.boxplot(x='Accident_Severity', y='Riding_Experience', data=filtered_df, palette='viridis')
         show_plot('Distribution of Riding Experience by Accident Severity', 'Accident Severity', 'Riding Experience (Years)')
+        st.success("**Interpretation:** Younger bikers show higher accident severity, suggesting overconfidence and less risk awareness.")
 
         plt.figure(figsize=(12, 7))
         sns.boxplot(x='Accident_Severity', y='Daily_Travel_Distance', data=filtered_df, palette='viridis')
         show_plot('Distribution of Daily Travel Distance by Accident Severity', 'Accident Severity', 'Daily Travel Distance')
+        st.success("**Interpretation:** Younger bikers show higher accident severity, suggesting overconfidence and less risk awareness.")
 
         plt.figure(figsize=(12, 7))
         sns.boxplot(x='Accident_Severity', y='Bike_Speed', data=filtered_df, palette='viridis')
         show_plot('Distribution of Bike Speed by Accident Severity', 'Accident Severity', 'Bike Speed')
+        st.success("**Interpretation:** Younger bikers show higher accident severity, suggesting overconfidence and less risk awareness.")
 
         plt.figure(figsize=(12, 7))
         sns.boxplot(x='Accident_Severity', y='Speed_Limit', data=filtered_df, palette='viridis')
         show_plot('Distribution of Speed Limit by Accident Severity', 'Accident Severity', 'Speed Limit')
+        st.success("**Interpretation:** Younger bikers show higher accident severity, suggesting overconfidence and less risk awareness.")
 
         plt.figure(figsize=(12, 7))
         sns.boxplot(x='Biker_Occupation', y='Bike_Speed', data=filtered_df, palette='viridis')
         show_plot('Distribution of Bike Speed by Biker Occupation', 'Biker Occupation', 'Bike Speed', rotation=True)
+        st.success("**Interpretation:** Younger bikers show higher accident severity, suggesting overconfidence and less risk awareness.")
 
     # --- VIOLIN PLOTS ---
     with st.expander("🎻 Violin Plots"):
         plt.figure(figsize=(12, 7))
         sns.violinplot(x='Accident_Severity', y='Biker_Age', data=filtered_df, palette='viridis')
         show_plot('Distribution of Biker Age by Accident Severity (Violin Plot)', 'Accident Severity', 'Biker Age')
+        st.success("**Interpretation:** Younger bikers show higher accident severity, suggesting overconfidence and less risk awareness.")
 
         plt.figure(figsize=(12, 7))
         sns.violinplot(x='Weather', y='Bike_Speed', data=filtered_df, palette='viridis')
         show_plot('Distribution of Bike Speed by Weather (Violin Plot)', 'Weather', 'Bike Speed')
+        st.success("**Interpretation:** Younger bikers show higher accident severity, suggesting overconfidence and less risk awareness.")
 
     # --- SCATTER PLOTS ---
     with st.expander("📈 Scatter Plots"):
@@ -495,16 +531,19 @@ with tab4:
         sns.scatterplot(x='Bike_Speed', y='Daily_Travel_Distance', hue='Accident_Severity', data=filtered_df, palette='viridis', alpha=0.6)
         plt.legend(title='Accident Severity')
         show_plot('Daily Travel Distance vs Bike Speed by Accident Severity', 'Bike Speed', 'Daily Travel Distance')
+        st.success("**Interpretation:** Younger bikers show higher accident severity, suggesting overconfidence and less risk awareness.")
 
         plt.figure(figsize=(12, 8))
         sns.scatterplot(x='Bike_Speed', y='Biker_Age', data=filtered_df, alpha=0.6)
         show_plot('Biker Age vs Bike Speed', 'Bike Speed', 'Biker Age')
+        st.success("**Interpretation:** Younger bikers show higher accident severity, suggesting overconfidence and less risk awareness.")
 
         plt.figure(figsize=(12, 8))
         sns.scatterplot(x='Daily_Travel_Distance', y='Biker_Age', data=filtered_df, alpha=0.6)
         show_plot('Biker Age vs Daily Travel Distance', 'Daily Travel Distance', 'Biker Age')
+        st.success("**Interpretation:** Younger bikers show higher accident severity, suggesting overconfidence and less risk awareness.")
 
-    st.markdown("#### Interpretation")
+    st.markdown("#### 💬 Observation")
     st.success("""
     The violin plots highlight that severe accidents are concentrated among high-speed riders. 
     Correlations between experience and severity indicate that experienced riders adapt speed 
@@ -535,6 +574,9 @@ with tab5:
 
     fig = px.imshow(corr, text_auto=True, title="Correlation Heatmap", aspect="auto", color_continuous_scale="Tealrose")
     st.plotly_chart(fig, use_container_width=True)
+    st.info("""
+    **Interpretation:** Bike speed and accident severity exhibit a strong positive correlation, confirming kinetic energy’s contribution to impact intensity.
+    """)
 
     st.markdown("#### Interpretation")
     st.success("""
@@ -660,8 +702,12 @@ with tab6:
             )
 
             st.plotly_chart(fig, use_container_width=True)
+            st.success(f"""
+            **Interpretation:** The {col.replace('_',' ').lower()} pattern reveals behavioral influence on safety outcomes.
+            Higher counts in risky behaviors (e.g., alcohol or distraction) align with increased accident rates.
+            """)
 
-    st.markdown("#### Interpretation")
+    st.markdown("#### 💬 Observation")
     st.success("""
     Riders who talk or smoke while riding show higher accident frequencies, validating the role of 
     attention in safety. Helmet use correlates inversely with severe accidents, supporting mandatory 
