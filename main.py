@@ -432,10 +432,40 @@ with tab6:
     st.subheader("🏍️ Riding Behavior Insights")
 
     behavior_cols = ["Talk_While_Riding", "Smoke_While_Riding", "Wearing_Helmet", "Biker_Alcohol"]
+
+    # Define custom color palette for bars
+    color_map = {
+        "Talk_While_Riding": "#FF7F50",   # Coral
+        "Smoke_While_Riding": "#6495ED",  # Cornflower Blue
+        "Wearing_Helmet": "#3CB371",      # Medium Sea Green
+        "Biker_Alcohol": "#FF6347"        # Tomato
+    }
+
     for col in behavior_cols:
-        if col in df.columns:
-            st.markdown(f"**{col.replace('_', ' ')}**")
-            st.bar_chart(filtered_df[col].value_counts())
+        if col in filtered_df.columns:
+            st.markdown(f"### {col.replace('_', ' ')}")
+
+            data = filtered_df[col].value_counts().reset_index()
+            data.columns = [col, "Count"]
+
+            fig = px.bar(
+                data,
+                x=col,
+                y="Count",
+                text="Count",
+                color_discrete_sequence=[color_map[col]],
+                title=f"{col.replace('_', ' ')} Distribution",
+            )
+            fig.update_traces(textposition="outside")
+            fig.update_layout(
+                showlegend=False,
+                xaxis_title=None,
+                yaxis_title="Count",
+                title_x=0.5,
+                plot_bgcolor="rgba(0,0,0,0)",
+                paper_bgcolor="rgba(0,0,0,0)",
+            )
+            st.plotly_chart(fig, use_container_width=True)
 
 # --- FOOTER ---
 st.markdown("---")
