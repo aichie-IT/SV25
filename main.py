@@ -414,15 +414,22 @@ with tab4:
         show_plot('Biker Age vs Daily Travel Distance', 'Daily Travel Distance', 'Biker Age')
 
 # ---- Tab 5: Riding Behavior Insights ----
+# ---- Tab 5: Severity Analysis ----
 with tab5:
-    st.subheader("🏍️ Riding Behavior Insights")
+    st.subheader("🔥 Severity by Environmental Factors")
 
-    behavior_cols = ["Talk_While_Riding", "Smoke_While_Riding", "Wearing_Helmet", "Biker_Alcohol"]
-    for col in behavior_cols:
-        if col in df.columns:
-            st.markdown(f"**{col.replace('_', ' ')}**")
-            st.bar_chart(filtered_df[col].value_counts())
-
+    factors = ["Weather", "Road_condition", "Time_of_Day", "Traffic_Density"]
+    for factor in factors:
+        if factor in df.columns:
+            st.markdown(f"**{factor.replace('_', ' ')} vs Accident Severity**")
+            fig = px.histogram(
+                filtered_df,
+                x=factor,
+                color="Accident_Severity",
+                barmode="group",
+                title=f"Accident Severity by {factor.replace('_', ' ')}"
+            )
+            st.plotly_chart(fig, use_container_width=True)
 
 # --- FOOTER ---
 st.markdown("---")
