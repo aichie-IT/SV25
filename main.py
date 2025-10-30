@@ -425,7 +425,7 @@ with tab5:
         lat_col = lat_cols[0]
         lon_col = lon_cols[0]
 
-        # Rename to standard format for Streamlit
+        # Rename columns to standard format for Streamlit and Plotly
         map_df = filtered_df.rename(columns={lat_col: "lat", lon_col: "lon"}).copy()
 
         # Drop missing or invalid coordinates
@@ -436,8 +436,37 @@ with tab5:
         ]
 
         if not map_df.empty:
-            st.success(f"✅ Showing {len(map_df)} accident locations on map.")
-            st.map(map_df[["lat", "lon"]])
+            st.success(f"✅ Showing {len(map_df)} accident locations on the interactive map.")
+
+            # --- INTERACTIVE PLOTLY MAP ---
+            fig_map = px.scatter_mapbox(
+                map_df,
+                lat="lat",
+                lon="lon",
+                hover_name="Accident_Severity",
+                hover_data={
+                    "Weather": True,
+                    "Time_of_Day": True,
+                    "Road_Type": True,
+                    "Biker_Age": True,
+                    "Bike_Speed": True
+                },
+                zoom=5,
+                height=600,
+                color="Accident_Severity",
+                color_discrete_sequence=px.colors.qualitative.Bold,
+                title="Motorbike Accident Locations by Severity"
+            )
+
+            fig_map.update_layout(
+                mapbox_style="open-street-map",
+                margin={"r": 0, "t": 40, "l": 0, "b": 0},
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)"
+            )
+
+            st.plotly_chart(fig_map, use_container_width=True)
+
         else:
             st.warning("⚠️ No valid coordinates available after filtering.")
     else:
