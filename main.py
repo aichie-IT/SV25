@@ -415,11 +415,33 @@ with tab4:
 
 # ---- Tab 5: Map ----
 with tab5:
-    st.subheader("🗺️ Geographical Distribution")
-    if "Latitude" in filtered_df.columns and "Longitude" in filtered_df.columns:
-        st.map(filtered_df[["Latitude", "Longitude"]])
+    st.subheader("🗺️ Geographical Distribution of Motorbike Accidents")
+
+    # --- Check if dataset has latitude/longitude columns ---
+    lat_cols = [col for col in filtered_df.columns if col.lower() in ["lat", "latitude"]]
+    lon_cols = [col for col in filtered_df.columns if col.lower() in ["lon", "longitude"]]
+
+    if lat_cols and lon_cols:
+        lat_col = lat_cols[0]
+        lon_col = lon_cols[0]
+
+        # Rename to standard format for Streamlit
+        map_df = filtered_df.rename(columns={lat_col: "lat", lon_col: "lon"}).copy()
+
+        # Drop missing or invalid coordinates
+        map_df = map_df.dropna(subset=["lat", "lon"])
+        map_df = map_df[
+            (map_df["lat"].between(-90, 90)) &
+            (map_df["lon"].between(-180, 180))
+        ]
+
+        if not map_df.empty:
+            st.success(f"✅ Showing {len(map_df)} accident locations on map.")
+            st.map(map_df[["lat", "lon"]])
+        else:
+            st.warning("⚠️ No valid coordinates available after filtering.")
     else:
-        st.warning("Map data not available in this dataset.")
+        st.warning("⚠️ Map data not available — this dataset has no Latitude/Longitude columns.")
 
 # --- FOOTER ---
 st.markdown("---")
