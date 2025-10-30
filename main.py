@@ -472,33 +472,89 @@ with tab5:
     st.info("Higher correlations indicate stronger relationships between factors such as speed, experience, and accident severity.")
 
 # ---- Tab 6: Riding Behavior Insights ----
+# ---- Tab 6: Riding Behavior Insights ----
 with tab6:
     st.subheader("🏍️ Riding Behavior Insights")
     st.markdown("Analyze rider behavior patterns and how habits influence accident severity.")
 
-    col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Helmet Usage", f"{(filtered_df['Wearing_Helmet'].value_counts(normalize=True).get('Yes',0)*100):.1f}%", border=True)
-    col2.metric("Alcohol Usage", f"{(filtered_df['Biker_Alcohol'].value_counts(normalize=True).get('Yes',0)*100):.1f}%", border=True)
-    col3.metric("Talk While Riding", f"{(filtered_df['Talk_While_Riding'].value_counts(normalize=True).get('Yes',0)*100):.1f}%", border=True)
-    col4.metric("Smoke While Riding", f"{(filtered_df['Smoke_While_Riding'].value_counts(normalize=True).get('Yes',0)*100):.1f}%", border=True)
+    # Calculate percentages
+    helmet = (filtered_df['Wearing_Helmet'].value_counts(normalize=True).get('Yes', 0) * 100)
+    alcohol = (filtered_df['Biker_Alcohol'].value_counts(normalize=True).get('Yes', 0) * 100)
+    talk = (filtered_df['Talk_While_Riding'].value_counts(normalize=True).get('Yes', 0) * 100)
+    smoke = (filtered_df['Smoke_While_Riding'].value_counts(normalize=True).get('Yes', 0) * 100)
+
+    # Styled metric summary using HTML/CSS
+    st.markdown("""
+    <style>
+        .metric-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+        .metric-card {
+            flex: 1;
+            background: #f9f9f9;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: all 0.2s ease-in-out;
+        }
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+        }
+        .metric-title {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 0.4rem;
+        }
+        .metric-value {
+            font-size: 1.6rem;
+            font-weight: bold;
+        }
+        .good { color: #2e7d32; }      /* Green for positive behavior */
+        .warning { color: #f57c00; }   /* Orange for risk behaviors */
+        .bad { color: #c62828; }       /* Red for negative behaviors */
+    </style>
+    """, unsafe_allow_html=True)
+
+    # Display metric boxes
+    st.markdown(f"""
+    <div class="metric-container">
+        <div class="metric-card">
+            <div class="metric-title">Helmet Usage</div>
+            <div class="metric-value {'good' if helmet > 70 else 'warning'}">{helmet:.1f}%</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-title">Alcohol Usage</div>
+            <div class="metric-value {'bad' if alcohol > 10 else 'good'}">{alcohol:.1f}%</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-title">Talk While Riding</div>
+            <div class="metric-value {'bad' if talk > 20 else 'good'}">{talk:.1f}%</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-title">Smoke While Riding</div>
+            <div class="metric-value {'bad' if smoke > 20 else 'good'}">{smoke:.1f}%</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
     st.markdown("---")
 
+    # Define behavior columns and color palette
     behavior_cols = ["Talk_While_Riding", "Smoke_While_Riding", "Wearing_Helmet", "Biker_Alcohol"]
     color_theme = px.colors.qualitative.Pastel
 
-    # Define behavior columns and consistent color theme
-    behavior_cols = ["Talk_While_Riding", "Smoke_While_Riding", "Wearing_Helmet", "Biker_Alcohol"]
-    color_theme = px.colors.qualitative.Pastel  # soft and professional
-
-    # Generate charts
+    # Professional bar charts
     for col in behavior_cols:
         if col in filtered_df.columns:
-            # Prepare data
             data = filtered_df[col].value_counts().reset_index()
             data.columns = [col, "Count"]
 
-            # Professional bar chart
             fig = px.bar(
                 data,
                 x=col,
@@ -506,16 +562,15 @@ with tab6:
                 text="Count",
                 color=col,
                 color_discrete_sequence=color_theme,
-                title=f"{col.replace('_', ' ')} Distribution",
+                title=f"{col.replace('_', ' ')} Distribution"
             )
 
-            # Fine-tune chart layout
             fig.update_traces(textposition="outside")
             fig.update_layout(
                 showlegend=False,
                 xaxis_title=None,
                 yaxis_title="Count",
-                title_x=0.0,
+                title_x=0.0,  # align to left
                 title_y=0.95,
                 title_font=dict(size=16, family="Arial", color="black"),
                 plot_bgcolor="rgba(0,0,0,0)",
@@ -523,8 +578,8 @@ with tab6:
                 margin=dict(t=40, b=40),
             )
 
-            # Display chart
             st.plotly_chart(fig, use_container_width=True)
+
 
 # --- FOOTER ---
 st.markdown("---")
