@@ -436,7 +436,7 @@ with tab5:
         ]
 
         if not map_df.empty:
-            st.success(f"✅ Showing {len(map_df)} accident locations on the interactive map.")
+            st.success(f"Showing {len(map_df)} accident locations on the interactive map.")
 
             # --- INTERACTIVE PLOTLY MAP ---
             fig_map = px.scatter_mapbox(
