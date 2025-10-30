@@ -617,16 +617,6 @@ with tab6:
     </div>
     """, unsafe_allow_html=True)
 
-    # ---- Dynamic Summary ----
-    behavior_summary = (
-        f"Helmet usage among riders is **{helmet_rate:.1f}%**, "
-        f"while **{alcohol_rate:.1f}%** report riding under alcohol influence. "
-        f"Distraction habits like talking ({talk_rate:.1f}%) and smoking ({smoke_rate:.1f}%) "
-        f"remain noticeable. The data suggests that protective and attentive behaviors "
-        f"play a critical role in reducing accident severity, reinforcing the need "
-        f"for behavioral safety programs."
-    )
-
     st.markdown("### Summary")
     st.info("""
     Behavior-based insights demonstrate how individual actions contribute to safety outcomes. 
@@ -671,34 +661,7 @@ with tab6:
 
             st.plotly_chart(fig, use_container_width=True)
 
-    # ---- Dynamic Interpretation ----
-    dominant_behavior = max(
-        {
-            "Helmet Usage": helmet_rate,
-            "Alcohol Usage": alcohol_rate,
-            "Talk While Riding": talk_rate,
-            "Smoke While Riding": smoke_rate,
-        },
-        key=lambda k: {
-            "Helmet Usage": helmet_rate,
-            "Alcohol Usage": 100 - alcohol_rate,  # safer when lower
-            "Talk While Riding": 100 - talk_rate,
-            "Smoke While Riding": 100 - smoke_rate,
-        }[k]
-    )
-
-    if helmet_rate > 80:
-        insight = "High helmet compliance suggests strong awareness of safety regulations among riders."
-    elif alcohol_rate > 10:
-        insight = "Alcohol-influenced riding remains a notable risk factor, highlighting enforcement needs."
-    elif talk_rate > 15:
-        insight = "Talking while riding indicates distraction habits that could elevate accident risks."
-    elif smoke_rate > 10:
-        insight = "Smoking while riding may impair focus, calling for behavior-focused awareness campaigns."
-    else:
-        insight = "Overall rider behavior trends show moderate safety compliance and awareness."
-        
-    st.markdown("#### 🔍 Interpretation")
+    st.markdown("#### Interpretation")
     st.success("""
     Riders who talk or smoke while riding show higher accident frequencies, validating the role of 
     attention in safety. Helmet use correlates inversely with severe accidents, supporting mandatory 
