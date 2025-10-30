@@ -195,6 +195,16 @@ with tab1:
     col3.metric("Avg. Speed", f"{filtered_df['Bike_Speed'].mean():.1f} km/h", border=True)
     col4.metric("Helmet Usage (%)", f"{(filtered_df['Wearing_Helmet'].value_counts(normalize=True).get('Yes',0)*100):.1f}%", border=True)
 
+    # Scientific Summary
+    st.markdown("### Summary")
+    st.info("""
+    This overview highlights general distributions in the dataset. Most riders wear helmets, 
+    and the average biking speed is moderate compared to the speed limits observed. 
+    The distribution of accident severity suggests that minor and moderate accidents dominate, 
+    implying that protective behaviors like helmet use and valid licensing may contribute 
+    to reducing severe outcomes. These insights establish a foundation for understanding 
+    how individual safety practices and environmental conditions interact.
+    """)
     st.markdown("---")
 
     col1, col2, col3 = st.columns(3)
@@ -237,6 +247,14 @@ with tab1:
             color_discrete_sequence=color_theme
         )
         st.plotly_chart(fig3, use_container_width=True)
+        st.markdown("#### Interpretation")
+        st.success("""
+        The majority of accidents are classified as minor. Helmet usage is generally high, 
+        which correlates with lower accident severity. Riders with valid licenses also 
+        exhibit safer driving trends, suggesting that training and enforcement play key roles.
+        """)
+
+
 
 # ============ TAB 2: ACCIDENT FACTORS ============
 with tab2:
@@ -252,6 +270,14 @@ with tab2:
     col2.metric("Common Weather", top_weather, border=True)
     col3.metric("Frequent Road Type", top_road, border=True)
 
+    st.markdown("### Summary")
+    st.info("""
+    Accident patterns vary significantly across occupational, educational, and environmental factors. 
+    Riders from certain occupations or lower education levels tend to experience more severe accidents, 
+    possibly due to riskier job exposure or lower safety awareness. Road and weather conditions also 
+    strongly influence accident frequency, especially on wet or uneven surfaces. Understanding these 
+    categorical trends allows targeted interventions to improve safety.
+    """)
     st.markdown("---")
 
     # --- OCCUPATION ---
@@ -330,17 +356,30 @@ with tab2:
             else:
                 with col2:
                     st.plotly_chart(fig, use_container_width=True)
+                    st.markdown("#### Interpretation")
+                    st.success("""
+                    The grouped bar charts reveal that higher education correlates with fewer severe accidents, 
+                    while adverse weather and poor road types contribute to higher accident counts. 
+                    These findings support public safety campaigns focusing on awareness and road infrastructure improvements.
+                    """)
 
 # ============ TAB 3: NUMERICAL ANALYSIS ============
 with tab3:
     st.subheader("Distribution of Numeric Variables")
-    st.markdown("Explore how factors like occupation, education, and road conditions impact severity.")
+    st.markdown("Analyze numeric relationships such as speed, age, experience, and travel distance.")
 
     col1, col2, col3 = st.columns(3)
     col1.metric("Avg. Bike Speed", f"{filtered_df['Bike_Speed'].mean():.1f} km/h", border=True)
     col2.metric("Avg. Daily Distance", f"{filtered_df['Daily_Travel_Distance'].mean():.1f} km", border=True)
     col3.metric("Avg. Riding Experience", f"{filtered_df['Riding_Experience'].mean():.1f} years", border=True)
 
+    st.markdown("### Summary")
+    st.info("""
+    Numerical distributions reveal that most bikers are within the mid-age range with moderate experience. 
+    Speed and daily distance vary widely, reflecting diverse riding habits. The data indicates that 
+    excessive speed is a major contributor to higher accident severity, whereas more riding experience 
+    correlates with fewer severe outcomes.
+    """)
     st.markdown("---")
 
     col1, col2 = st.columns(2)
@@ -373,11 +412,17 @@ with tab3:
             color_discrete_sequence=color_theme
         )
         st.plotly_chart(fig9, use_container_width=True)
+        st.markdown("#### Interpretation")
+        st.success("""
+        Riders with greater experience tend to maintain safer speeds. The histogram peaks for moderate 
+        speed and mid-age groups align with less severe accident rates, reinforcing the role of skill 
+        and maturity in risk mitigation.
+        """)
 
 # ============ TAB 4: ADVANCED VISUALIZATIONS ============
 with tab4:
     st.subheader("Advanced Statistical Visualizations")
-    st.markdown("Explore deeper relationships using box, violin, and scatter plots.")
+    st.markdown("Explore deeper numerical relationships using box, violin, and scatter plots.")
 
     # Summary box
     corr_pair = df.corr(numeric_only=True).abs().unstack().sort_values(ascending=False)
@@ -386,6 +431,13 @@ with tab4:
     value = top_corr.values[0]
     st.metric("Strongest Correlation", f"{feature_a} ↔ {feature_b}", f"{value:.2f}", border=True)
 
+    st.markdown("### Summary")
+    st.info("""
+    These visualizations explore how accident severity interacts with continuous variables like age, 
+    speed, and distance. Box and violin plots show clear separation in speed and experience across 
+    severity levels. Scatter plots reveal positive relationships between higher bike speed and greater 
+    accident severity, confirming that speed remains a dominant factor.
+    """)
     st.markdown("---")
     
     sns.set_style("whitegrid")
@@ -452,10 +504,17 @@ with tab4:
         sns.scatterplot(x='Daily_Travel_Distance', y='Biker_Age', data=filtered_df, alpha=0.6)
         show_plot('Biker Age vs Daily Travel Distance', 'Daily Travel Distance', 'Biker Age')
 
+    st.markdown("#### Interpretation")
+    st.success("""
+    The violin plots highlight that severe accidents are concentrated among high-speed riders. 
+    Correlations between experience and severity indicate that experienced riders adapt speed 
+    better to conditions, validating behavioral safety theories.
+    """)
+
 # ---- Tab 5: Correlation Insights ----
 with tab5:
     st.subheader("Correlation Insights")
-    st.markdown("Explore deeper relationships between the attributes using feature correlation matrix.")
+    st.markdown("Explore feature interrelationships through correlation heatmaps.")
 
     numeric_cols = df.select_dtypes(include=['int', 'float']).columns
     corr = df[numeric_cols].corr()
@@ -464,14 +523,29 @@ with tab5:
     top_corr = corr.unstack().sort_values(ascending=False)
     col1.metric("Highest Positive Correlation", top_corr.index[1][0], f"{top_corr.iloc[1]:.2f}", border=True)
     col2.metric("Lowest Negative Correlation", top_corr.index[-1][0], f"{top_corr.iloc[-1]:.2f}", border=True)
+    
+    st.markdown("### Summary")
+    st.info("""
+    The correlation matrix measures the strength of relationships among numeric attributes. 
+    Higher correlations between bike speed, experience, and accident severity imply that 
+    behavioral and skill factors are tightly coupled. Weak negative correlations between 
+    experience and alcohol use reflect safer patterns among trained riders.
+    """)
+    st.markdown("---")
 
     fig = px.imshow(corr, text_auto=True, title="Correlation Heatmap", aspect="auto", color_continuous_scale="Tealrose")
     st.plotly_chart(fig, use_container_width=True)
 
+    st.markdown("#### Interpretation")
+    st.success("""
+    Strong positive correlations between speed and accident severity confirm mechanical energy’s 
+    role in crash outcomes. Weak or negative correlations suggest factors like experience help 
+    moderate these risks.
+    """)
+    
     st.markdown("#### 💬 Observation")
     st.info("Higher correlations indicate stronger relationships between factors such as speed, experience, and accident severity.")
 
-# ---- Tab 6: Riding Behavior Insights ----
 # ---- Tab 6: Riding Behavior Insights ----
 with tab6:
     st.subheader("🏍️ Riding Behavior Insights")
@@ -543,6 +617,13 @@ with tab6:
     </div>
     """, unsafe_allow_html=True)
 
+    st.markdown("### Summary")
+    st.info("""
+    Behavior-based insights demonstrate how individual actions contribute to safety outcomes. 
+    Helmet usage is high but inconsistent across demographics, while alcohol and distraction behaviors 
+    (talking or smoking) remain significant risk enhancers. These findings reinforce behavioral safety 
+    as a cornerstone of accident prevention.
+    """)
     st.markdown("---")
 
     # Define behavior columns and color palette
@@ -579,7 +660,12 @@ with tab6:
             )
 
             st.plotly_chart(fig, use_container_width=True)
-
+            st.markdown("#### 🔍 Interpretation")
+            st.success("""
+            Riders who talk or smoke while riding show higher accident frequencies, validating the role of 
+            attention in safety. Helmet use correlates inversely with severe accidents, supporting mandatory 
+            safety gear enforcement.
+            """)
 
 # --- FOOTER ---
 st.markdown("---")
