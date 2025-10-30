@@ -618,23 +618,18 @@ with tab6:
     """, unsafe_allow_html=True)
 
     # ---- Dynamic Summary ----
-    behavior_summary = (
-        f"Helmet usage among riders is **{helmet_rate:.1f}%**, "
-        f"while **{alcohol_rate:.1f}%** report riding under alcohol influence. "
-        f"Distraction habits like talking ({talk_rate:.1f}%) and smoking ({smoke_rate:.1f}%) "
-        f"remain noticeable. The data suggests that protective and attentive behaviors "
-        f"play a critical role in reducing accident severity, reinforcing the need "
-        f"for behavioral safety programs."
-    )
+behavior_summary = (
+    f"Helmet usage among riders is **{helmet:.1f}%**, "
+    f"while **{alcohol:.1f}%** report riding under alcohol influence. "
+    f"Distraction habits like talking ({talk:.1f}%) and smoking ({smoke:.1f}%) "
+    f"remain noticeable. The data suggests that protective and attentive behaviors "
+    f"play a critical role in reducing accident severity, reinforcing the need "
+    f"for behavioral safety programs."
+)
 
-    st.markdown("### Summary")
-    st.info("""
-    Behavior-based insights demonstrate how individual actions contribute to safety outcomes. 
-    Helmet usage is high but inconsistent across demographics, while alcohol and distraction behaviors 
-    (talking or smoking) remain significant risk enhancers. These findings reinforce behavioral safety 
-    as a cornerstone of accident prevention.
-    """)
-    st.markdown("---")
+st.markdown("### Summary")
+st.info(behavior_summary)
+st.markdown("---")
 
     color_theme = px.colors.qualitative.Pastel
     behavior_cols = ["Talk_While_Riding", "Smoke_While_Riding", "Wearing_Helmet", "Biker_Alcohol"]
@@ -670,16 +665,16 @@ with tab6:
     # ---- Dynamic Interpretation ----
     dominant_behavior = max(
         {
-            "Helmet Usage": helmet_rate,
-            "Alcohol Usage": alcohol_rate,
-            "Talk While Riding": talk_rate,
-            "Smoke While Riding": smoke_rate,
+            "Helmet Usage": helmet,
+            "Alcohol Usage": alcohol,
+            "Talk While Riding": talk,
+            "Smoke While Riding": smoke,
         },
         key=lambda k: {
             "Helmet Usage": helmet_rate,
-            "Alcohol Usage": 100 - alcohol_rate,  # safer when lower
-            "Talk While Riding": 100 - talk_rate,
-            "Smoke While Riding": 100 - smoke_rate,
+            "Alcohol Usage": 100 - alcohol,  # safer when lower
+            "Talk While Riding": 100 - talk,
+            "Smoke While Riding": 100 - smoke,
         }[k]
     )
 
