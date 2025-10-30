@@ -257,12 +257,14 @@ with tab1:
         **Interpretation:** Riders with valid licenses tend to experience less severe accidents, supporting the importance of formal riding training.
         """)
         
-   st.markdown("#### 💬 Observation")
-   st.success("""
-   The majority of accidents are classified as minor. Helmet usage is generally high, 
-   which correlates with lower accident severity. Riders with valid licenses also 
-   exhibit safer driving trends, suggesting that training and enforcement play key roles.
-   """)
+    # --- Observation Section (Fixed Indentation) ---
+    st.markdown("#### 💬 Observation")
+    st.success("""
+    The majority of accidents are classified as minor. Helmet usage is generally high,
+    which correlates with lower accident severity. Riders with valid licenses also
+    exhibit safer driving trends, suggesting that training and enforcement play key roles.
+    """)
+
 
 # ============ TAB 2: ACCIDENT FACTORS ============
 with tab2:
