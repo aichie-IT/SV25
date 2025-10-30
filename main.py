@@ -181,7 +181,7 @@ else:
 st.markdown("---")
 
 # --- TAB LAYOUT ---
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["⚙️ General Overview", "📊 Accident Factors", "📈 Numerical Analysis", "📉 Advanced Visualizations", "🗺️ Geographical Distribution"])
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["⚙️ General Overview", "📊 Accident Factors", "📈 Numerical Analysis", "📉 Advanced Visualizations", "🗺️ Geographical Distribution", "📈 Correlation Insights", "🏍️ Riding Behavior Insights"])
 
 # ============ TAB 1: GENERAL OVERVIEW ============
 with tab1:
