@@ -485,42 +485,46 @@ with tab6:
     st.markdown("---")
 
     behavior_cols = ["Talk_While_Riding", "Smoke_While_Riding", "Wearing_Helmet", "Biker_Alcohol"]
-
-    # Professional consistent color theme (matches earlier tabs)
     color_theme = px.colors.qualitative.Pastel
 
+    # Define behavior columns and consistent color theme
+    behavior_cols = ["Talk_While_Riding", "Smoke_While_Riding", "Wearing_Helmet", "Biker_Alcohol"]
+    color_theme = px.colors.qualitative.Pastel  # soft and professional
+
+    # Generate charts
     for col in behavior_cols:
         if col in filtered_df.columns:
-            st.markdown(f"### {col.replace('_', ' ')}")
-
             # Prepare data
             data = filtered_df[col].value_counts().reset_index()
             data.columns = [col, "Count"]
 
-            # Bar chart using consistent pastel palette
+            # Professional bar chart
             fig = px.bar(
                 data,
                 x=col,
                 y="Count",
                 text="Count",
-                color=col,  # different color for each bar value (e.g., Yes/No)
+                color=col,
                 color_discrete_sequence=color_theme,
                 title=f"{col.replace('_', ' ')} Distribution",
             )
 
-            # Fine-tuning layout for professionalism
+            # Fine-tune chart layout
             fig.update_traces(textposition="outside")
             fig.update_layout(
                 showlegend=False,
                 xaxis_title=None,
                 yaxis_title="Count",
-                title_x=0.5,
+                title_x=0.0,
+                title_y=0.95,
+                title_font=dict(size=16, family="Arial", color="black"),
                 plot_bgcolor="rgba(0,0,0,0)",
                 paper_bgcolor="rgba(0,0,0,0)",
-                margin=dict(t=60, b=40),
+                margin=dict(t=40, b=40),
             )
-            st.plotly_chart(fig, use_container_width=True)
 
+            # Display chart
+            st.plotly_chart(fig, use_container_width=True)
 
 # --- FOOTER ---
 st.markdown("---")
