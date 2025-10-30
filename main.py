@@ -428,7 +428,7 @@ with tab5:
     st.info("Higher correlations indicate stronger relationships between factors such as speed, experience, and accident severity.")
 
 # ---- Tab 6: Riding Behavior Insights ----
-with tab5:
+with tab6:
     st.subheader("🏍️ Riding Behavior Insights")
 
     behavior_cols = ["Talk_While_Riding", "Smoke_While_Riding", "Wearing_Helmet", "Biker_Alcohol"]
