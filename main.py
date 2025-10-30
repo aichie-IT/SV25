@@ -485,16 +485,44 @@ with tab6:
 
     st.markdown("---")
     
-    for col in ["Talk_While_Riding", "Smoke_While_Riding", "Wearing_Helmet", "Biker_Alcohol"]:
+    behavior_cols = ["Talk_While_Riding", "Smoke_While_Riding", "Wearing_Helmet", "Biker_Alcohol"]
+
+    # Professional consistent color theme (matches earlier tabs)
+    color_theme = px.colors.qualitative.Pastel
+
+    for col in behavior_cols:
         if col in filtered_df.columns:
+            st.markdown(f"### {col.replace('_', ' ')}")
+
+            # Prepare data
             data = filtered_df[col].value_counts().reset_index()
             data.columns = [col, "Count"]
-            fig = px.bar(data, x=col, y="Count", text="Count", color=col,
-                         color_discrete_sequence=color_theme, title=f"{col.replace('_',' ')} Distribution")
+
+            # Bar chart using consistent pastel palette
+            fig = px.bar(
+                data,
+                x=col,
+                y="Count",
+                text="Count",
+                color=col,  # different color for each bar value (e.g., Yes/No)
+                color_discrete_sequence=color_theme,
+                title=f"{col.replace('_', ' ')} Distribution",
+            )
+
+            # Fine-tuning layout for professionalism
             fig.update_traces(textposition="outside")
-            fig.update_layout(showlegend=False, title_x=0.5, yaxis_title="Count", margin=dict(t=60, b=40))
+            fig.update_layout(
+                showlegend=False,
+                xaxis_title=None,
+                yaxis_title="Count",
+                title_x=0.5,
+                plot_bgcolor="rgba(0,0,0,0)",
+                paper_bgcolor="rgba(0,0,0,0)",
+                margin=dict(t=60, b=40),
+            )
             st.plotly_chart(fig, use_container_width=True)
-            
+
+
 # --- FOOTER ---
 st.markdown("---")
 st.caption("© 2025 Motorbike Accident Dashboard | Designed with ❤️ using Streamlit & Plotly")
