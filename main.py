@@ -190,10 +190,10 @@ with tab1:
 
     # Summary box
     col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Total Records", f"{len(filtered_df):,}")
-    col2.metric("Avg. Age", f"{filtered_df['Biker_Age'].mean():.1f}")
-    col3.metric("Avg. Speed", f"{filtered_df['Bike_Speed'].mean():.1f} km/h")
-    col4.metric("Helmet Usage (%)", f"{(filtered_df['Wearing_Helmet'].value_counts(normalize=True).get('Yes',0)*100):.1f}%")
+    col1.metric("Total Records", f"{len(filtered_df):,}", border=True)
+    col2.metric("Avg. Age", f"{filtered_df['Biker_Age'].mean():.1f}", border=True)
+    col3.metric("Avg. Speed", f"{filtered_df['Bike_Speed'].mean():.1f} km/h", border=True)
+    col4.metric("Helmet Usage (%)", f"{(filtered_df['Wearing_Helmet'].value_counts(normalize=True).get('Yes',0)*100):.1f}%", border=True)
 
     st.markdown("---")
 
@@ -248,9 +248,9 @@ with tab2:
     top_severity = filtered_df['Accident_Severity'].mode()[0]
     top_weather = filtered_df['Weather'].mode()[0]
     top_road = filtered_df['Road_Type'].mode()[0]
-    col1.metric("Most Common Severity", top_severity)
-    col2.metric("Common Weather", top_weather)
-    col3.metric("Frequent Road Type", top_road)
+    col1.metric("Most Common Severity", top_severity, border=True)
+    col2.metric("Common Weather", top_weather, border=True)
+    col3.metric("Frequent Road Type", top_road, border=True)
 
     st.markdown("---")
 
@@ -337,9 +337,9 @@ with tab3:
     st.markdown("Explore how factors like occupation, education, and road conditions impact severity.")
 
     col1, col2, col3 = st.columns(3)
-    col1.metric("Avg. Bike Speed", f"{filtered_df['Bike_Speed'].mean():.1f} km/h")
-    col2.metric("Avg. Daily Distance", f"{filtered_df['Daily_Travel_Distance'].mean():.1f} km")
-    col3.metric("Avg. Riding Experience", f"{filtered_df['Riding_Experience'].mean():.1f} years")
+    col1.metric("Avg. Bike Speed", f"{filtered_df['Bike_Speed'].mean():.1f} km/h", border=True)
+    col2.metric("Avg. Daily Distance", f"{filtered_df['Daily_Travel_Distance'].mean():.1f} km", border=True)
+    col3.metric("Avg. Riding Experience", f"{filtered_df['Riding_Experience'].mean():.1f} years", border=True)
 
     st.markdown("---")
 
@@ -379,12 +379,12 @@ with tab4:
     st.subheader("Advanced Statistical Visualizations")
     st.markdown("Explore deeper relationships using box, violin, and scatter plots.")
 
-    # Summary
+    # Summary box
     corr_pair = df.corr(numeric_only=True).abs().unstack().sort_values(ascending=False)
     top_corr = corr_pair[corr_pair < 1].head(1)
     feature_a, feature_b = top_corr.index[0]
     value = top_corr.values[0]
-    st.metric("Strongest Correlation", f"{feature_a} ↔ {feature_b}", f"{value:.2f}")
+    st.metric("Strongest Correlation", f"{feature_a} ↔ {feature_b}", f"{value:.2f}", border=True)
 
     st.markdown("---")
     
@@ -454,7 +454,7 @@ with tab4:
 
 # ---- Tab 5: Correlation Insights ----
 with tab5:
-    st.subheader("📈 Correlation Insights")
+    st.subheader("Correlation Insights")
     st.markdown("Explore deeper relationships between the attributes using feature correlation matrix.")
 
     numeric_cols = df.select_dtypes(include=['int', 'float']).columns
@@ -462,10 +462,9 @@ with tab5:
 
     col1, col2 = st.columns(2)
     top_corr = corr.unstack().sort_values(ascending=False)
-    col1.metric("Highest Positive Correlation", top_corr.index[1][0], f"{top_corr.iloc[1]:.2f}")
-    col2.metric("Lowest Negative Correlation", top_corr.index[-1][0], f"{top_corr.iloc[-1]:.2f}")
+    col1.metric("Highest Positive Correlation", top_corr.index[1][0], f"{top_corr.iloc[1]:.2f}", border=True)
+    col2.metric("Lowest Negative Correlation", top_corr.index[-1][0], f"{top_corr.iloc[-1]:.2f}", border=True)
 
-    st.markdown("#### 🔍 Correlation Heatmap")
     fig = px.imshow(corr, text_auto=True, title="Correlation Heatmap", aspect="auto", color_continuous_scale="Tealrose")
     st.plotly_chart(fig, use_container_width=True)
 
@@ -478,14 +477,12 @@ with tab6:
     st.markdown("Analyze rider behavior patterns and how habits influence accident severity.")
 
     col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Helmet Usage", f"{(filtered_df['Wearing_Helmet'].value_counts(normalize=True).get('Yes',0)*100):.1f}%")
-    col2.metric("Alcohol Usage", f"{(filtered_df['Biker_Alcohol'].value_counts(normalize=True).get('Yes',0)*100):.1f}%")
-    col3.metric("Talk While Riding", f"{(filtered_df['Talk_While_Riding'].value_counts(normalize=True).get('Yes',0)*100):.1f}%")
-    col4.metric("Smoke While Riding", f"{(filtered_df['Smoke_While_Riding'].value_counts(normalize=True).get('Yes',0)*100):.1f}%")
+    col1.metric("Helmet Usage", f"{(filtered_df['Wearing_Helmet'].value_counts(normalize=True).get('Yes',0)*100):.1f}%", border=True)
+    col2.metric("Alcohol Usage", f"{(filtered_df['Biker_Alcohol'].value_counts(normalize=True).get('Yes',0)*100):.1f}%", border=True)
+    col3.metric("Talk While Riding", f"{(filtered_df['Talk_While_Riding'].value_counts(normalize=True).get('Yes',0)*100):.1f}%", border=True)
+    col4.metric("Smoke While Riding", f"{(filtered_df['Smoke_While_Riding'].value_counts(normalize=True).get('Yes',0)*100):.1f}%", border=True)
 
     st.markdown("---")
-    
-    behavior_cols = ["Talk_While_Riding", "Smoke_While_Riding", "Wearing_Helmet", "Biker_Alcohol"]
 
     # Professional consistent color theme (matches earlier tabs)
     color_theme = px.colors.qualitative.Pastel
