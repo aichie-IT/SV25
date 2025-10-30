@@ -617,6 +617,16 @@ with tab6:
     </div>
     """, unsafe_allow_html=True)
 
+    # ---- Dynamic Summary ----
+    behavior_summary = (
+        f"Helmet usage among riders is **{helmet_rate:.1f}%**, "
+        f"while **{alcohol_rate:.1f}%** report riding under alcohol influence. "
+        f"Distraction habits like talking ({talk_rate:.1f}%) and smoking ({smoke_rate:.1f}%) "
+        f"remain noticeable. The data suggests that protective and attentive behaviors "
+        f"play a critical role in reducing accident severity, reinforcing the need "
+        f"for behavioral safety programs."
+    )
+
     st.markdown("### Summary")
     st.info("""
     Behavior-based insights demonstrate how individual actions contribute to safety outcomes. 
@@ -626,13 +636,13 @@ with tab6:
     """)
     st.markdown("---")
 
-    # Define behavior columns and color palette
-    behavior_cols = ["Talk_While_Riding", "Smoke_While_Riding", "Wearing_Helmet", "Biker_Alcohol"]
     color_theme = px.colors.qualitative.Pastel
+    behavior_cols = ["Talk_While_Riding", "Smoke_While_Riding", "Wearing_Helmet", "Biker_Alcohol"]
 
-    # Professional bar charts
     for col in behavior_cols:
         if col in filtered_df.columns:
+            st.markdown(f"**{col.replace('_', ' ')}**")
+
             data = filtered_df[col].value_counts().reset_index()
             data.columns = [col, "Count"]
 
@@ -643,7 +653,6 @@ with tab6:
                 text="Count",
                 color=col,
                 color_discrete_sequence=color_theme,
-                title=f"{col.replace('_', ' ')} Distribution"
             )
 
             fig.update_traces(textposition="outside")
@@ -651,21 +660,47 @@ with tab6:
                 showlegend=False,
                 xaxis_title=None,
                 yaxis_title="Count",
-                title_x=0.0,  # align to left
-                title_y=0.95,
-                title_font=dict(size=16, family="Arial", color="black"),
+                title=None,
                 plot_bgcolor="rgba(0,0,0,0)",
                 paper_bgcolor="rgba(0,0,0,0)",
-                margin=dict(t=40, b=40),
+                margin=dict(t=20, b=40),
             )
-
             st.plotly_chart(fig, use_container_width=True)
-            st.markdown("#### 🔍 Interpretation")
-            st.success("""
-            Riders who talk or smoke while riding show higher accident frequencies, validating the role of 
-            attention in safety. Helmet use correlates inversely with severe accidents, supporting mandatory 
-            safety gear enforcement.
-            """)
+
+    # ---- Dynamic Interpretation ----
+    dominant_behavior = max(
+        {
+            "Helmet Usage": helmet_rate,
+            "Alcohol Usage": alcohol_rate,
+            "Talk While Riding": talk_rate,
+            "Smoke While Riding": smoke_rate,
+        },
+        key=lambda k: {
+            "Helmet Usage": helmet_rate,
+            "Alcohol Usage": 100 - alcohol_rate,  # safer when lower
+            "Talk While Riding": 100 - talk_rate,
+            "Smoke While Riding": 100 - smoke_rate,
+        }[k]
+    )
+
+    if helmet_rate > 80:
+        insight = "High helmet compliance suggests strong awareness of safety regulations among riders."
+    elif alcohol_rate > 10:
+        insight = "Alcohol-influenced riding remains a notable risk factor, highlighting enforcement needs."
+    elif talk_rate > 15:
+        insight = "Talking while riding indicates distraction habits that could elevate accident risks."
+    elif smoke_rate > 10:
+        insight = "Smoking while riding may impair focus, calling for behavior-focused awareness campaigns."
+    else:
+        insight = "Overall rider behavior trends show moderate safety compliance and awareness."
+        
+    st.markdown("#### Interpretation")
+    st.success(f"**Key Finding:** {insight}")
+    st.success("""
+    Riders who talk or smoke while riding show higher accident frequencies, validating the role of 
+    attention in safety. Helmet use correlates inversely with severe accidents, supporting mandatory 
+    safety gear enforcement.
+    """)
 
 # --- FOOTER ---
 st.markdown("---")
