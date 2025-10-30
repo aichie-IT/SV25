@@ -484,6 +484,8 @@ with tab6:
 
     st.markdown("---")
 
+    behavior_cols = ["Talk_While_Riding", "Smoke_While_Riding", "Wearing_Helmet", "Biker_Alcohol"]
+
     # Professional consistent color theme (matches earlier tabs)
     color_theme = px.colors.qualitative.Pastel
 
