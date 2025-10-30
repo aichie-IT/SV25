@@ -181,14 +181,7 @@ else:
 st.markdown("---")
 
 # --- TAB LAYOUT ---
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-    "⚙️ General Overview", 
-    "📊 Accident Factors", 
-    "📈 Numerical Analysis", 
-    "📉 Advanced Visualizations", 
-    "📈 Correlation Insights", 
-    "🏍️ Riding Behavior Insights"
-])
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["⚙️ General Overview", "📊 Accident Factors", "📈 Numerical Analysis", "📉 Advanced Visualizations", "🗺️ Correlation Insights", "🏍️ Riding Behavior Insights"])
 
 # ============ TAB 1: GENERAL OVERVIEW ============
 with tab1:
@@ -205,20 +198,49 @@ with tab1:
     st.markdown("---")
 
     col1, col2, col3 = st.columns(3)
-    with col1:
-        fig1 = px.pie(filtered_df, names="Accident_Severity", title="Accident Severity", color_discrete_sequence=color_theme)
-        st.plotly_chart(fig1, use_container_width=True)
-    with col2:
-        fig2 = px.pie(filtered_df, names="Wearing_Helmet", title="Wearing Helmet", color_discrete_sequence=color_theme)
-        st.plotly_chart(fig2, use_container_width=True)
-    with col3:
-        fig3 = px.pie(filtered_df, names="Valid_Driving_License", title="Valid License", color_discrete_sequence=color_theme)
-        st.plotly_chart(fig3, use_container_width=True)
 
+    # Pie: Accident Severity
+    with col1:
+        severity_counts = filtered_df["Accident_Severity"].value_counts().reset_index()
+        severity_counts.columns = ["Accident_Severity", "Count"]
+        fig1 = px.pie(
+            severity_counts, 
+            values="Count", 
+            names="Accident_Severity",
+            title="Accident Severity Distribution",
+            color_discrete_sequence=color_theme
+        )
+        st.plotly_chart(fig1, use_container_width=True)
+
+    # Pie: Helmet Usage
+    with col2:
+        helmet_counts = filtered_df["Wearing_Helmet"].value_counts().reset_index()
+        helmet_counts.columns = ["Wearing_Helmet", "Count"]
+        fig2 = px.pie(
+            helmet_counts, 
+            values="Count", 
+            names="Wearing_Helmet", 
+            title="Wearing Helmet Distribution",
+            color_discrete_sequence=color_theme
+        )
+        st.plotly_chart(fig2, use_container_width=True)
+
+    # Pie: Valid License
+    with col3:
+        license_counts = filtered_df["Valid_Driving_License"].value_counts().reset_index()
+        license_counts.columns = ["Valid_Driving_License", "Count"]
+        fig3 = px.pie(
+            license_counts, 
+            values="Count", 
+            names="Valid_Driving_License",
+            title="Valid Driving License Distribution",
+            color_discrete_sequence=color_theme
+        )
+        st.plotly_chart(fig3, use_container_width=True)
 
 # ============ TAB 2: ACCIDENT FACTORS ============
 with tab2:
-    st.subheader("Accident Severity by Contributing Factors")
+    st.subheader("Accident Severity by Categorical Factors")
     st.markdown("Explore how factors like occupation, education, and road conditions impact severity.")
 
     # Summary
@@ -232,18 +254,87 @@ with tab2:
 
     st.markdown("---")
 
-    # Charts
-    categorical_cols = ["Biker_Occupation", "Biker_Education_Level", "Weather", "Road_Type", "Traffic_Density", "Biker_Alcohol"]
-    for col in categorical_cols:
-        agg_df = filtered_df.groupby([col, "Accident_Severity"]).size().reset_index(name="Count")
-        fig = px.bar(agg_df, x=col, y="Count", color="Accident_Severity", barmode="group", 
-                     color_discrete_sequence=color_theme, title=f"Accident Severity by {col.replace('_', ' ')}")
-        st.plotly_chart(fig, use_container_width=True)
+    # --- OCCUPATION ---
+    agg_occ = (
+        filtered_df.groupby(["Biker_Occupation", "Accident_Severity"])
+        .size()
+        .reset_index(name="Count")
+    )
+    fig4 = px.bar(
+        agg_occ,
+        x="Biker_Occupation",
+        y="Count",
+        color="Accident_Severity",
+        title="Accident Severity by Biker Occupation",
+        color_discrete_sequence=color_theme,
+        barmode="group"
+    )
 
+    # --- EDUCATION ---
+    agg_edu = (
+        filtered_df.groupby(["Biker_Education_Level", "Accident_Severity"])
+        .size()
+        .reset_index(name="Count")
+    )
+    fig5 = px.bar(
+        agg_edu,
+        x="Biker_Education_Level",
+        y="Count",
+        color="Accident_Severity",
+        title="Accident Severity by Biker Education Level",
+        color_discrete_sequence=color_theme,
+        barmode="group"
+    )
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.plotly_chart(fig4, use_container_width=True)
+    with col2:
+        st.plotly_chart(fig5, use_container_width=True)
+
+    st.markdown("---")
+    st.subheader("Other Influencing Factors")
+
+    # --- LOOP FOR OTHER CATEGORICAL VARIABLES ---
+    categorical_cols = [
+        "Wearing_Helmet", "Motorcycle_Ownership", "Valid_Driving_License",
+        "Bike_Condition", "Road_Type", "Road_condition", "Weather",
+        "Time_of_Day", "Traffic_Density", "Biker_Alcohol"
+    ]
+
+    # Display 2 charts per row
+    for i in range(0, len(categorical_cols), 2):
+        col1, col2 = st.columns(2)
+
+        for j, col in enumerate(categorical_cols[i:i+2]):
+            agg_df = (
+                filtered_df.groupby([col, "Accident_Severity"])
+                .size()
+                .reset_index(name="Count")
+                .sort_values("Count", ascending=False)
+            )
+
+            fig = px.bar(
+                agg_df,
+                x=col,
+                y="Count",
+                color="Accident_Severity",
+                title=f"Accident Severity by {col.replace('_', ' ')}",
+                color_discrete_sequence=color_theme,
+                barmode="group"
+            )
+
+            if j == 0:
+                with col1:
+                    st.plotly_chart(fig, use_container_width=True)
+            else:
+                with col2:
+                    st.plotly_chart(fig, use_container_width=True)
 
 # ============ TAB 3: NUMERICAL ANALYSIS ============
 with tab3:
-    st.subheader("Numeric Data Distributions")
+    st.subheader("Distribution of Numeric Variables")
+    st.markdown("Explore how factors like occupation, education, and road conditions impact severity.")
 
     col1, col2, col3 = st.columns(3)
     col1.metric("Avg. Bike Speed", f"{filtered_df['Bike_Speed'].mean():.1f} km/h")
@@ -252,16 +343,41 @@ with tab3:
 
     st.markdown("---")
 
-    numeric_cols = ["Biker_Age", "Bike_Speed", "Daily_Travel_Distance", "Riding_Experience"]
-    for col in numeric_cols:
-        fig = px.histogram(filtered_df, x=col, nbins=20, color_discrete_sequence=color_theme, title=f"Distribution of {col.replace('_',' ')}")
-        st.plotly_chart(fig, use_container_width=True)
+    col1, col2 = st.columns(2)
+    with col1:
+        fig6 = px.histogram(
+            filtered_df, x="Biker_Age", nbins=20,
+            title="Distribution of Biker Age",
+            color_discrete_sequence=color_theme
+        )
+        st.plotly_chart(fig6, use_container_width=True)
 
+        fig7 = px.histogram(
+            filtered_df, x="Bike_Speed", nbins=20,
+            title="Distribution of Bike Speed",
+            color_discrete_sequence=color_theme
+        )
+        st.plotly_chart(fig7, use_container_width=True)
+
+    with col2:
+        fig8 = px.histogram(
+            filtered_df, x="Riding_Experience", nbins=20,
+            title="Distribution of Riding Experience",
+            color_discrete_sequence=color_theme
+        )
+        st.plotly_chart(fig8, use_container_width=True)
+
+        fig9 = px.histogram(
+            filtered_df, x="Daily_Travel_Distance", nbins=20,
+            title="Distribution of Daily Travel Distance",
+            color_discrete_sequence=color_theme
+        )
+        st.plotly_chart(fig9, use_container_width=True)
 
 # ============ TAB 4: ADVANCED VISUALIZATIONS ============
 with tab4:
-    st.subheader("Statistical & Comparative Visuals")
-    st.markdown("Deeper exploration using box and scatter plots.")
+    st.subheader("Advanced Statistical Visualizations")
+    st.markdown("Explore deeper relationships using box, violin, and scatter plots.")
 
     # Summary
     corr_pair = df.corr(numeric_only=True).abs().unstack().sort_values(ascending=False)
@@ -271,16 +387,76 @@ with tab4:
     st.metric("Strongest Correlation", f"{feature_a} ↔ {feature_b}", f"{value:.2f}")
 
     st.markdown("---")
+    
+    sns.set_style("whitegrid")
 
-    # Example visual
-    fig = px.box(filtered_df, x="Accident_Severity", y="Bike_Speed", color="Accident_Severity",
-                 title="Bike Speed by Accident Severity", color_discrete_sequence=color_theme)
-    st.plotly_chart(fig, use_container_width=True)
+    # Helper function
+    def show_plot(title, xlabel, ylabel, rotation=False):
+        plt.title(title)
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+        if rotation:
+            plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
+        st.pyplot(plt.gcf())
+        plt.clf()
 
+    # --- BOX PLOTS ---
+    with st.expander("📦 Box Plots"):
+        plt.figure(figsize=(12, 7))
+        sns.boxplot(x='Accident_Severity', y='Biker_Age', data=filtered_df, palette='viridis')
+        show_plot('Distribution of Biker Age by Accident Severity', 'Accident Severity', 'Biker Age')
 
-# ============ TAB 5: CORRELATION INSIGHTS ============
+        plt.figure(figsize=(12, 7))
+        sns.boxplot(x='Accident_Severity', y='Riding_Experience', data=filtered_df, palette='viridis')
+        show_plot('Distribution of Riding Experience by Accident Severity', 'Accident Severity', 'Riding Experience (Years)')
+
+        plt.figure(figsize=(12, 7))
+        sns.boxplot(x='Accident_Severity', y='Daily_Travel_Distance', data=filtered_df, palette='viridis')
+        show_plot('Distribution of Daily Travel Distance by Accident Severity', 'Accident Severity', 'Daily Travel Distance')
+
+        plt.figure(figsize=(12, 7))
+        sns.boxplot(x='Accident_Severity', y='Bike_Speed', data=filtered_df, palette='viridis')
+        show_plot('Distribution of Bike Speed by Accident Severity', 'Accident Severity', 'Bike Speed')
+
+        plt.figure(figsize=(12, 7))
+        sns.boxplot(x='Accident_Severity', y='Speed_Limit', data=filtered_df, palette='viridis')
+        show_plot('Distribution of Speed Limit by Accident Severity', 'Accident Severity', 'Speed Limit')
+
+        plt.figure(figsize=(12, 7))
+        sns.boxplot(x='Biker_Occupation', y='Bike_Speed', data=filtered_df, palette='viridis')
+        show_plot('Distribution of Bike Speed by Biker Occupation', 'Biker Occupation', 'Bike Speed', rotation=True)
+
+    # --- VIOLIN PLOTS ---
+    with st.expander("🎻 Violin Plots"):
+        plt.figure(figsize=(12, 7))
+        sns.violinplot(x='Accident_Severity', y='Biker_Age', data=filtered_df, palette='viridis')
+        show_plot('Distribution of Biker Age by Accident Severity (Violin Plot)', 'Accident Severity', 'Biker Age')
+
+        plt.figure(figsize=(12, 7))
+        sns.violinplot(x='Weather', y='Bike_Speed', data=filtered_df, palette='viridis')
+        show_plot('Distribution of Bike Speed by Weather (Violin Plot)', 'Weather', 'Bike Speed')
+
+    # --- SCATTER PLOTS ---
+    with st.expander("📈 Scatter Plots"):
+        plt.figure(figsize=(14, 10))
+        sns.scatterplot(x='Bike_Speed', y='Daily_Travel_Distance', hue='Accident_Severity', data=filtered_df, palette='viridis', alpha=0.6)
+        plt.legend(title='Accident Severity')
+        show_plot('Daily Travel Distance vs Bike Speed by Accident Severity', 'Bike Speed', 'Daily Travel Distance')
+
+        plt.figure(figsize=(12, 8))
+        sns.scatterplot(x='Bike_Speed', y='Biker_Age', data=filtered_df, alpha=0.6)
+        show_plot('Biker Age vs Bike Speed', 'Bike Speed', 'Biker Age')
+
+        plt.figure(figsize=(12, 8))
+        sns.scatterplot(x='Daily_Travel_Distance', y='Biker_Age', data=filtered_df, alpha=0.6)
+        show_plot('Biker Age vs Daily Travel Distance', 'Daily Travel Distance', 'Biker Age')
+
+# ---- Tab 5: Correlation Insights ----
 with tab5:
-    st.subheader("Feature Correlation Matrix")
+    st.subheader("📈 Correlation Insights")
+    st.markdown("Explore deeper relationships between the attributes using feature correlation matrix.")
+
     numeric_cols = df.select_dtypes(include=['int', 'float']).columns
     corr = df[numeric_cols].corr()
 
@@ -289,13 +465,17 @@ with tab5:
     col1.metric("Highest Positive Correlation", top_corr.index[1][0], f"{top_corr.iloc[1]:.2f}")
     col2.metric("Lowest Negative Correlation", top_corr.index[-1][0], f"{top_corr.iloc[-1]:.2f}")
 
+    st.markdown("#### 🔍 Correlation Heatmap")
     fig = px.imshow(corr, text_auto=True, title="Correlation Heatmap", aspect="auto", color_continuous_scale="Tealrose")
     st.plotly_chart(fig, use_container_width=True)
 
+    st.markdown("#### 💬 Observation")
+    st.info("Higher correlations indicate stronger relationships between factors such as speed, experience, and accident severity.")
 
-# ============ TAB 6: RIDING BEHAVIOR INSIGHTS ============
+# ---- Tab 6: Riding Behavior Insights ----
 with tab6:
-    st.subheader("Rider Behavior Patterns")
+    st.subheader("🏍️ Riding Behavior Insights")
+    st.markdown("Analyze rider behavior patterns and how habits influence accident severity.")
 
     col1, col2, col3, col4 = st.columns(4)
     col1.metric("Helmet Usage", f"{(filtered_df['Wearing_Helmet'].value_counts(normalize=True).get('Yes',0)*100):.1f}%")
@@ -304,16 +484,44 @@ with tab6:
     col4.metric("Smoke While Riding", f"{(filtered_df['Smoke_While_Riding'].value_counts(normalize=True).get('Yes',0)*100):.1f}%")
 
     st.markdown("---")
+    
+    behavior_cols = ["Talk_While_Riding", "Smoke_While_Riding", "Wearing_Helmet", "Biker_Alcohol"]
 
-    for col in ["Talk_While_Riding", "Smoke_While_Riding", "Wearing_Helmet", "Biker_Alcohol"]:
+    # Professional consistent color theme (matches earlier tabs)
+    color_theme = px.colors.qualitative.Pastel
+
+    for col in behavior_cols:
         if col in filtered_df.columns:
+            st.markdown(f"### {col.replace('_', ' ')}")
+
+            # Prepare data
             data = filtered_df[col].value_counts().reset_index()
             data.columns = [col, "Count"]
-            fig = px.bar(data, x=col, y="Count", text="Count", color=col,
-                         color_discrete_sequence=color_theme, title=f"{col.replace('_',' ')} Distribution")
+
+            # Bar chart using consistent pastel palette
+            fig = px.bar(
+                data,
+                x=col,
+                y="Count",
+                text="Count",
+                color=col,  # different color for each bar value (e.g., Yes/No)
+                color_discrete_sequence=color_theme,
+                title=f"{col.replace('_', ' ')} Distribution",
+            )
+
+            # Fine-tuning layout for professionalism
             fig.update_traces(textposition="outside")
-            fig.update_layout(showlegend=False, title_x=0.5, yaxis_title="Count", margin=dict(t=60, b=40))
+            fig.update_layout(
+                showlegend=False,
+                xaxis_title=None,
+                yaxis_title="Count",
+                title_x=0.5,
+                plot_bgcolor="rgba(0,0,0,0)",
+                paper_bgcolor="rgba(0,0,0,0)",
+                margin=dict(t=60, b=40),
+            )
             st.plotly_chart(fig, use_container_width=True)
+
 
 # --- FOOTER ---
 st.markdown("---")
