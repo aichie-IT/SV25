@@ -392,21 +392,15 @@ with tab2:
                 category_orders={"Accident_Severity": severity_order},
                 barmode="group"
             )
-            
-            fig.update_layout(
-                title_x=0.0,
-                plot_bgcolor="rgba(0,0,0,0)",
-                paper_bgcolor="rgba(0,0,0,0)"
-            )
 
             if j == 0:
                 with col1:
                     st.plotly_chart(fig, use_container_width=True)
-                    st.caption(f"*Interpretation:* The chart shows how {col.replace('_',' ').lower()} affects accident severity, where imbalance across categories indicates risk-prone conditions.")
+                    st.info("""*Interpretation:* The chart shows how {col.replace('_',' ').lower()} affects accident severity, where imbalance across categories indicates risk-prone conditions.""")
             else:
                 with col2:
                     st.plotly_chart(fig, use_container_width=True)
-                    st.caption(f"*Interpretation:* The chart shows how {col.replace('_',' ').lower()} affects accident severity, where imbalance across categories indicates risk-prone conditions.")
+                    st.info("""*Interpretation:* The chart shows how {col.replace('_',' ').lower()} affects accident severity, where imbalance across categories indicates risk-prone conditions.""")
 
     st.markdown("#### 💬 Observation")
     st.success("""
