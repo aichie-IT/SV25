@@ -270,14 +270,23 @@ with tab2:
     st.subheader("Accident Severity by Categorical Factors")
     st.markdown("Explore how factors like occupation, education, and road conditions impact severity.")
 
-    # Summary
+    # ===== COLOR & ORDER SETTINGS =====
+    color_theme = px.colors.qualitative.Pastel
+    severity_order = ["No Accident", "Moderate Accident", "Severe Accident"]
+    severity_colors = {
+        "No Accident": "#A8E6CF",       # Pastel Green
+        "Moderate Accident": "#FFF3B0", # Pastel Yellow
+        "Severe Accident": "#FFD3B6"    # Pastel Orange
+    }
+
+    # ===== SUMMARY BOXES =====
     col1, col2, col3 = st.columns(3)
     top_severity = filtered_df['Accident_Severity'].mode()[0]
     top_weather = filtered_df['Weather'].mode()[0]
     top_road = filtered_df['Road_Type'].mode()[0]
-    col1.metric("Most Common Severity", top_severity, border=True)
-    col2.metric("Common Weather", top_weather, border=True)
-    col3.metric("Frequent Road Type", top_road, border=True)
+    col1.metric("Most Common Severity", top_severity)
+    col2.metric("Common Weather", top_weather)
+    col3.metric("Frequent Road Type", top_road)
 
     st.markdown("### Summary")
     st.info("""
@@ -289,11 +298,10 @@ with tab2:
     """)
     st.markdown("---")
 
-    # --- OCCUPATION ---
+    # ===== OCCUPATION =====
     agg_occ = (
         filtered_df.groupby(["Biker_Occupation", "Accident_Severity"])
-        .size()
-        .reset_index(name="Count")
+        .size().reset_index(name="Count")
     )
     fig4 = px.bar(
         agg_occ,
@@ -301,15 +309,15 @@ with tab2:
         y="Count",
         color="Accident_Severity",
         title="Accident Severity by Biker Occupation",
-        color_discrete_sequence=color_theme,
+        color_discrete_map=severity_colors,
+        category_orders={"Accident_Severity": severity_order},
         barmode="group"
     )
 
-    # --- EDUCATION ---
+    # ===== EDUCATION =====
     agg_edu = (
         filtered_df.groupby(["Biker_Education_Level", "Accident_Severity"])
-        .size()
-        .reset_index(name="Count")
+        .size().reset_index(name="Count")
     )
     fig5 = px.bar(
         agg_edu,
@@ -317,20 +325,28 @@ with tab2:
         y="Count",
         color="Accident_Severity",
         title="Accident Severity by Biker Education Level",
-        color_discrete_sequence=color_theme,
+        color_discrete_map=severity_colors,
+        category_orders={"Accident_Severity": severity_order},
         barmode="group"
     )
 
+    # ===== DISPLAY EDUCATION & OCCUPATION CHARTS =====
     col1, col2 = st.columns(2)
     with col1:
         st.plotly_chart(fig4, use_container_width=True)
+        st.info("""
+        *Interpretation:* Riders in delivery or transport occupations report higher accident severity, likely due to increased road exposure.
+        """)
     with col2:
         st.plotly_chart(fig5, use_container_width=True)
+        st.info("""
+        *Interpretation:* Bikers with higher education levels show lower accident severity, reflecting better safety awareness and risk management.
+        """)
 
     st.markdown("---")
     st.subheader("Other Influencing Factors")
 
-    # --- LOOP FOR OTHER CATEGORICAL VARIABLES ---
+    # ===== OTHER CATEGORICAL VARIABLES =====
     categorical_cols = [
         "Wearing_Helmet", "Motorcycle_Ownership", "Valid_Driving_License",
         "Bike_Condition", "Road_Type", "Road_condition", "Weather",
@@ -342,35 +358,42 @@ with tab2:
         col1, col2 = st.columns(2)
 
         for j, col in enumerate(categorical_cols[i:i+2]):
-            agg_df = (
-                filtered_df.groupby([col, "Accident_Severity"])
-                .size()
-                .reset_index(name="Count")
-                .sort_values("Count", ascending=False)
-            )
+            if col in filtered_df.columns:
+                agg_df = (
+                    filtered_df.groupby([col, "Accident_Severity"])
+                    .size().reset_index(name="Count")
+                    .sort_values("Count", ascending=False)
+                )
 
-            fig = px.bar(
-                agg_df,
-                x=col,
-                y="Count",
-                color="Accident_Severity",
-                title=f"Accident Severity by {col.replace('_', ' ')}",
-                color_discrete_sequence=color_theme,
-                barmode="group"
-            )
+                fig = px.bar(
+                    agg_df,
+                    x=col,
+                    y="Count",
+                    color="Accident_Severity",
+                    title=f"Accident Severity by {col.replace('_', ' ')}",
+                    color_discrete_map=severity_colors,
+                    category_orders={"Accident_Severity": severity_order},
+                    barmode="group"
+                )
 
-            if j == 0:
-                with col1:
-                    st.plotly_chart(fig, use_container_width=True)
-            else:
-                with col2:
-                    st.plotly_chart(fig, use_container_width=True)
-                    st.markdown("#### Interpretation")
-                    st.success("""
-                    The grouped bar charts reveal that higher education correlates with fewer severe accidents, 
-                    while adverse weather and poor road types contribute to higher accident counts. 
-                    These findings support public safety campaigns focusing on awareness and road infrastructure improvements.
-                    """)
+                if j == 0:
+                    with col1:
+                        st.plotly_chart(fig, use_container_width=True)
+                else:
+                    with col2:
+                        st.plotly_chart(fig, use_container_width=True)
+                        st.caption(f"*Interpretation:* The chart shows how {col.replace('_',' ').lower()} affects accident severity, where imbalance across categories indicates risk-prone conditions.")
+
+    st.markdown("#### 💬 Observation")
+    st.success("""
+    The grouped bar charts reveal consistent severity color mapping:
+    - 🟩 **No Accident (Green):** Indicates safe outcomes  
+    - 🟨 **Moderate Accident (Yellow):** Suggests medium-risk events  
+    - 🟧 **Severe Accident (Orange):** Represents high-risk conditions  
+
+    These consistent visuals make cross-tab comparisons easier. The findings highlight how education, weather, and road quality 
+    impact the likelihood and severity of accidents, guiding policy and awareness efforts.
+    """)
 
 # ============ TAB 3: NUMERICAL ANALYSIS ============
 with tab3:
