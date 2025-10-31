@@ -273,12 +273,11 @@ with tab2:
 
     # ===== COLOR & ORDER SETTINGS =====
     severity_order = ["No Accident", "Moderate Accident", "Severe Accident"]
-    severity_colors_map = {
-    "No Accident": "#A8E6CF",       # Pastel Green
-    "Moderate Accident": "#FFF3B0", # Pastel Yellow
-    "Severe Accident": "#FFD3B6"    # Pastel Orange
+    severity_colors = {
+        "No Accident": "#A8E6CF",       # Pastel Green
+        "Moderate Accident": "#FFF3B0", # Pastel Yellow
+        "Severe Accident": "#FFD3B6"    # Pastel Orange
     }
-
 
     # Force correct dtype & order for Accident_Severity
     filtered_df["Accident_Severity"] = pd.Categorical(
@@ -358,15 +357,29 @@ with tab2:
         "Time_of_Day", "Traffic_Density", "Biker_Alcohol"
     ]
 
+    # Consistent color mapping
+    severity_colors_map = {
+    "No Accident": "#A8E6CF",       # Pastel Green
+    "Moderate Accident": "#FFF3B0", # Pastel Yellow
+    "Severe Accident": "#FFD3B6"    # Pastel Orange
+     }
+
+    # Ensure categorical order for plotting
+    filtered_df["Accident_Severity"] = pd.Categorical(
+    filtered_df["Accident_Severity"], categories=severity_order, ordered=True
+    )
+
     # Display 2 charts per row
     for i in range(0, len(categorical_cols), 2):
         col1, col2 = st.columns(2)
 
         for j, col in enumerate(categorical_cols[i:i+2]):
+            if col not in filtered_df.columns:
+            continue
+            
             agg_df = (
-                filtered_df["Accident_Severity"] = pd.Categorical(
-                filtered_df["Accident_Severity"], categories=severity_order, ordered=True
-                 )
+                filtered_df.groupby([col, "Accident_Severity"])
+                .size()
                 .reset_index(name="Count")
                 .sort_values("Count", ascending=False)
             )
@@ -378,7 +391,14 @@ with tab2:
                 color="Accident_Severity",
                 title=f"Accident Severity by {col.replace('_', ' ')}",
                 color_discrete_map=severity_colors_map,
+                category_orders={"Accident_Severity": severity_order},
                 barmode="group"
+            )
+            
+            fig.update_layout(
+                title_x=0.0,
+                plot_bgcolor="rgba(0,0,0,0)",
+                paper_bgcolor="rgba(0,0,0,0)"
             )
 
             if j == 0:
