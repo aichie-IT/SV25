@@ -202,7 +202,7 @@ else:
 st.markdown("---")
 
 # ===== TABS =====
-tab_names = [
+sections = [
     "⚙️ General Overview",
     "📊 Accident Factors",
     "📈 Numerical Analysis",
@@ -211,19 +211,32 @@ tab_names = [
     "🏍️ Riding Behavior Insights"
 ]
 
-tab_objects = st.tabs(tab_names)
+# Top radio widget updates st.session_state.top_tab and then we push that to active_section
+if "top_tab" not in st.session_state:
+    st.session_state.top_tab = st.session_state.get("active_section", sections[0])
 
-# --- Synchronize tab selection ---
-for i, (tab, name) in enumerate(zip(tab_objects, tab_names)):
-    if name == tab_selection:
-        st.session_state.tab_selection = name
-    with tab:
-        # If this tab is currently selected, mark it active
-        if st.session_state.tab_selection == name:
-            st.markdown(f"### {name}")
+top_choice = st.radio("", sections, index=sections.index(st.session_state.top_tab), horizontal=True, key="top_tab",
+                     on_change=lambda: st.session_state.update({"active_section": st.session_state.top_tab}))
+
+# reflect that change in top_tab so the radio shows the same:
+if st.session_state.get("active_section") != st.session_state.get("top_tab"):
+    st.session_state.top_tab = st.session_state.active_section
+
+# Now render the content based on st.session_state.active_section
+active = st.session_state.active_section
+
+# Example: render content conditionally — replace blocks with your existing code for each section
+if page == "🏠 Home":
+    st.header("🏠 Home")
+    st.write("Welcome — use sidebar or top navigation to go to Analysis.")
+
+elif page == "🏍️ Motor Accident Severity Analysis":
+    # show header + metrics (your existing code)
+    st.title("🏍️ Motorbike Accident Insights Dashboard")
+    st.markdown("---")
             
 # ============ TAB 1: GENERAL OVERVIEW ============
- if name == "⚙️ General Overview":
+ if active == "⚙️ General Overview":
     st.subheader("Distribution Overview")
     st.markdown("Overview of accident severity, helmet use, and license validity.")
 
@@ -305,7 +318,7 @@ for i, (tab, name) in enumerate(zip(tab_objects, tab_names)):
     """)
 
 # ============ TAB 2: ACCIDENT FACTORS ============
-elif name == "📊 Accident Factors":
+elif active == "📊 Accident Factors":
     st.subheader("Accident Severity by Categorical Factors")
     st.markdown("Explore how factors like occupation, education, and road conditions impact severity.")
 
@@ -464,7 +477,7 @@ elif name == "📊 Accident Factors":
 
 
 # ============ TAB 3: NUMERICAL ANALYSIS ============
- elif name == "📈 Numerical Analysis":
+ elif active == "📈 Numerical Analysis":
     st.subheader("Distribution of Numeric Variables")
     st.markdown("Analyze numeric relationships such as speed, age, experience, and travel distance.")
 
@@ -532,7 +545,7 @@ elif name == "📊 Accident Factors":
     """)
 
 # ============ TAB 4: ADVANCED VISUALIZATIONS ============
-elif name == "📉 Advanced Visualizations":
+elif active == "📉 Advanced Visualizations":
     st.subheader("Advanced Statistical Visualizations")
     st.markdown("Explore deeper numerical relationships using box, violin, and scatter plots.")
 
@@ -635,7 +648,7 @@ elif name == "📉 Advanced Visualizations":
     """)
 
 # ---- Tab 5: Correlation Insights ----
- elif name == "🗺️ Correlation Insights":
+ elif active == "🗺️ Correlation Insights":
     st.subheader("Correlation Insights")
     st.markdown("Explore feature interrelationships through correlation heatmaps.")
 
@@ -673,8 +686,8 @@ elif name == "📉 Advanced Visualizations":
     st.info("Higher correlations indicate stronger relationships between factors such as speed, experience, and accident severity.")
 
 # ---- Tab 6: Riding Behavior Insights ----
-elif name == "🏍️ Riding Behavior Insights":
-    st.subheader("🏍️ Riding Behavior Insights")
+elif active == "🏍️ Riding Behavior Insights":
+    st.subheader("Riding Behavior Insights")
     st.markdown("Analyze rider behavior patterns and how habits influence accident severity.")
 
     # Calculate percentages
