@@ -182,19 +182,24 @@ else:
 st.markdown("---")
 
 # --- TAB LAYOUT ---
-# Set up tabs inside the page
-tab_names = ["⚙️ General Overview", "📊 Accident Factors", "📈 Numerical Analysis", "📉 Advanced Visualizations", "🗺️ Correlation Insights", "🏍️ Riding Behavior Insights"]
+tab_names = ["⚙️ General Overview", "📊 Accident Factors", "📈 Numerical Analysis", 
+             "📉 Advanced Visualizations", "🗺️ Correlation Insights", 
+             "🏍️ Riding Behavior Insights"]
 
-# Get tab from sidebar selection (if any)
-current_tab = st.session_state.get("current_tab", "Overview")
-
-# Make tab UI reflect sidebar selection
-selected_tab_index = tab_names.index(current_tab) if current_tab in tab_names else 0
+# Automatically detect which subpage was selected in sidebar
+current_page = st.session_state.get("_current_page_", None)
+# Match sidebar navigation with tab
+if current_page and current_page in tab_names:
+    selected_tab_index = tab_names.index(current_page)
+else:
+    selected_tab_index = 0
 
 tabs = st.tabs(tab_names)
 
+
 # ============ TAB 1: GENERAL OVERVIEW ============
 with tabs[0]:
+    st.session_state["_current_page_"] = "⚙️ General Overview"
     st.subheader("Distribution Overview")
     st.markdown("Overview of accident severity, helmet use, and license validity.")
 
@@ -277,6 +282,7 @@ with tabs[0]:
 
 # ============ TAB 2: ACCIDENT FACTORS ============
 with tabs[1]:
+    st.session_state["_current_page_"] = "📊 Accident Factors"
     st.subheader("Accident Severity by Categorical Factors")
     st.markdown("Explore how factors like occupation, education, and road conditions impact severity.")
 
@@ -436,6 +442,7 @@ with tabs[1]:
 
 # ============ TAB 3: NUMERICAL ANALYSIS ============
 with tabs[2]:
+    st.session_state["_current_page_"] = "📈 Numerical Analysis"
     st.subheader("Distribution of Numeric Variables")
     st.markdown("Analyze numeric relationships such as speed, age, experience, and travel distance.")
 
@@ -504,6 +511,7 @@ with tabs[2]:
 
 # ============ TAB 4: ADVANCED VISUALIZATIONS ============
 with tabs[3]:
+    st.session_state["_current_page_"] = "📉 Advanced Visualizations"
     st.subheader("Advanced Statistical Visualizations")
     st.markdown("Explore deeper numerical relationships using box, violin, and scatter plots.")
 
@@ -607,6 +615,7 @@ with tabs[3]:
 
 # ---- Tab 5: Correlation Insights ----
 with tabs[4]:
+    st.session_state["_current_page_"] = "🗺️ Correlation Insights"
     st.subheader("Correlation Insights")
     st.markdown("Explore feature interrelationships through correlation heatmaps.")
 
@@ -645,6 +654,7 @@ with tabs[4]:
 
 # ---- Tab 6: Riding Behavior Insights ----
 with tabs[5]:
+    st.session_state["_current_page_"] = "🏍️ Riding Behavior Insights"
     st.subheader("🏍️ Riding Behavior Insights")
     st.markdown("Analyze rider behavior patterns and how habits influence accident severity.")
 
