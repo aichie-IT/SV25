@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sidebar import sidebar_navigation
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -201,9 +202,9 @@ tabs = st.tabs(tab_names)
 # Assign each tab variable
 tab1, tab2, tab3, tab4, tab5, tab6 = tabs
 
-# Optionally, show info about sidebar-selected tab
-st.info(f"💡 Currently viewing section: **{tab_selection}** (selected via sidebar)")
-
+# Highlight tab based on sidebar selection
+if tab_selection:
+    st.info(f"💡 Currently viewing section: **{tab_selection}** (selected via sidebar)")
 
 # ============ TAB 1: GENERAL OVERVIEW ============
 with tab1:
