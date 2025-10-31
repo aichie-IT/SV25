@@ -271,13 +271,17 @@ with tab2:
     st.markdown("Explore how factors like occupation, education, and road conditions impact severity.")
 
     # ===== COLOR & ORDER SETTINGS =====
-    color_theme = px.colors.qualitative.Pastel
     severity_order = ["No Accident", "Moderate Accident", "Severe Accident"]
     severity_colors = {
         "No Accident": "#A8E6CF",       # Pastel Green
         "Moderate Accident": "#FFF3B0", # Pastel Yellow
         "Severe Accident": "#FFD3B6"    # Pastel Orange
     }
+
+    # Force correct dtype & order for Accident_Severity
+    filtered_df["Accident_Severity"] = pd.Categorical(
+        filtered_df["Accident_Severity"], categories=severity_order, ordered=True
+    )
 
     # ===== SUMMARY BOXES =====
     col1, col2, col3 = st.columns(3)
@@ -293,55 +297,49 @@ with tab2:
     Accident patterns vary significantly across occupational, educational, and environmental factors. 
     Riders from certain occupations or lower education levels tend to experience more severe accidents, 
     possibly due to riskier job exposure or lower safety awareness. Road and weather conditions also 
-    strongly influence accident frequency, especially on wet or uneven surfaces. Understanding these 
-    categorical trends allows targeted interventions to improve safety.
+    strongly influence accident frequency. Understanding these patterns enables targeted interventions.
     """)
     st.markdown("---")
 
-    # ===== OCCUPATION =====
-    agg_occ = (
-        filtered_df.groupby(["Biker_Occupation", "Accident_Severity"])
-        .size().reset_index(name="Count")
-    )
-    fig4 = px.bar(
-        agg_occ,
-        x="Biker_Occupation",
-        y="Count",
-        color="Accident_Severity",
-        title="Accident Severity by Biker Occupation",
-        color_discrete_map=severity_colors,
-        category_orders={"Accident_Severity": severity_order},
-        barmode="group"
-    )
+    # ===== FUNCTION TO PLOT CONSISTENT CHART =====
+    def consistent_bar(df, x_col, title):
+        # Make sure all severity levels appear (even if count = 0)
+        df = df.groupby([x_col, "Accident_Severity"]).size().reset_index(name="Count")
+        df = (
+            df.set_index(["Accident_Severity", x_col])
+            .reindex(pd.MultiIndex.from_product([severity_order, df[x_col].unique()], names=["Accident_Severity", x_col]),
+                     fill_value=0)
+            .reset_index()
+        )
 
-    # ===== EDUCATION =====
-    agg_edu = (
-        filtered_df.groupby(["Biker_Education_Level", "Accident_Severity"])
-        .size().reset_index(name="Count")
-    )
-    fig5 = px.bar(
-        agg_edu,
-        x="Biker_Education_Level",
-        y="Count",
-        color="Accident_Severity",
-        title="Accident Severity by Biker Education Level",
-        color_discrete_map=severity_colors,
-        category_orders={"Accident_Severity": severity_order},
-        barmode="group"
-    )
+        fig = px.bar(
+            df,
+            x=x_col,
+            y="Count",
+            color="Accident_Severity",
+            color_discrete_map=severity_colors,
+            category_orders={"Accident_Severity": severity_order},
+            title=title,
+            barmode="group"
+        )
 
-    # ===== DISPLAY EDUCATION & OCCUPATION CHARTS =====
+        fig.update_layout(
+            showlegend=True,
+            legend_title_text="Accident Severity",
+            plot_bgcolor="rgba(0,0,0,0)",
+            paper_bgcolor="rgba(0,0,0,0)",
+            margin=dict(t=40, b=40),
+        )
+        return fig
+
+    # ===== MAIN FACTORS =====
     col1, col2 = st.columns(2)
     with col1:
-        st.plotly_chart(fig4, use_container_width=True)
-        st.info("""
-        *Interpretation:* Riders in delivery or transport occupations report higher accident severity, likely due to increased road exposure.
-        """)
+        st.plotly_chart(consistent_bar(filtered_df, "Biker_Occupation", "Accident Severity by Biker Occupation"), use_container_width=True)
+        st.info("*Interpretation:* Riders in delivery or transport occupations report higher accident severity due to frequent road exposure.")
     with col2:
-        st.plotly_chart(fig5, use_container_width=True)
-        st.info("""
-        *Interpretation:* Bikers with higher education levels show lower accident severity, reflecting better safety awareness and risk management.
-        """)
+        st.plotly_chart(consistent_bar(filtered_df, "Biker_Education_Level", "Accident Severity by Education Level"), use_container_width=True)
+        st.info("*Interpretation:* Bikers with higher education levels show lower accident severity, reflecting better risk awareness.")
 
     st.markdown("---")
     st.subheader("Other Influencing Factors")
@@ -353,47 +351,31 @@ with tab2:
         "Time_of_Day", "Traffic_Density", "Biker_Alcohol"
     ]
 
-    # Display 2 charts per row
     for i in range(0, len(categorical_cols), 2):
         col1, col2 = st.columns(2)
-
         for j, col in enumerate(categorical_cols[i:i+2]):
             if col in filtered_df.columns:
-                agg_df = (
-                    filtered_df.groupby([col, "Accident_Severity"])
-                    .size().reset_index(name="Count")
-                    .sort_values("Count", ascending=False)
-                )
-
-                fig = px.bar(
-                    agg_df,
-                    x=col,
-                    y="Count",
-                    color="Accident_Severity",
-                    title=f"Accident Severity by {col.replace('_', ' ')}",
-                    color_discrete_map=severity_colors,
-                    category_orders={"Accident_Severity": severity_order},
-                    barmode="group"
-                )
-
+                fig = consistent_bar(filtered_df, col, f"Accident Severity by {col.replace('_', ' ')}")
                 if j == 0:
                     with col1:
                         st.plotly_chart(fig, use_container_width=True)
                 else:
                     with col2:
                         st.plotly_chart(fig, use_container_width=True)
-                        st.caption(f"*Interpretation:* The chart shows how {col.replace('_',' ').lower()} affects accident severity, where imbalance across categories indicates risk-prone conditions.")
+                        st.caption(f"*Interpretation:* The chart shows how {col.replace('_',' ').lower()} influences accident severity distribution.")
 
     st.markdown("#### 💬 Observation")
     st.success("""
-    The grouped bar charts reveal consistent severity color mapping:
-    - 🟩 **No Accident (Green):** Indicates safe outcomes  
-    - 🟨 **Moderate Accident (Yellow):** Suggests medium-risk events  
-    - 🟧 **Severe Accident (Orange):** Represents high-risk conditions  
+    **Color coding is consistent across all charts:**
+    - 🟩 No Accident → Safe outcomes  
+    - 🟨 Moderate Accident → Medium risk  
+    - 🟧 Severe Accident → High risk  
 
-    These consistent visuals make cross-tab comparisons easier. The findings highlight how education, weather, and road quality 
-    impact the likelihood and severity of accidents, guiding policy and awareness efforts.
+    **Order consistency:** All charts follow the same severity sequence, making comparison easy.
+
+    These improvements make the visuals uniform, professional, and easier for readers to interpret across multiple categories.
     """)
+
 
 # ============ TAB 3: NUMERICAL ANALYSIS ============
 with tab3:
