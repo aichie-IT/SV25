@@ -271,7 +271,7 @@ with tab2:
     st.subheader("Accident Severity by Categorical Factors")
     st.markdown("Explore how factors like occupation, education, and road conditions impact severity.")
 
-    # Summary
+    # --- Summary metrics ---
     col1, col2, col3 = st.columns(3)
     top_severity = filtered_df['Accident_Severity'].mode()[0]
     top_weather = filtered_df['Weather'].mode()[0]
@@ -290,6 +290,15 @@ with tab2:
     """)
     st.markdown("---")
 
+    # --- Define consistent severity order and color scheme ---
+    severity_order = ["No Accident", "Minor", "Major", "Severe"]
+    severity_colors = {
+        "No Accident": "#2ECC71",  # Green
+        "Minor": "#F4D03F",        # Yellow
+        "Major": "#E67E22",        # Orange
+        "Severe": "#E74C3C"        # Red
+    }
+
     # --- OCCUPATION ---
     agg_occ = (
         filtered_df.groupby(["Biker_Occupation", "Accident_Severity"])
@@ -302,7 +311,8 @@ with tab2:
         y="Count",
         color="Accident_Severity",
         title="Accident Severity by Biker Occupation",
-        color_discrete_sequence=color_theme,
+        category_orders={"Accident_Severity": severity_order},
+        color_discrete_map=severity_colors,
         barmode="group"
     )
 
@@ -318,10 +328,12 @@ with tab2:
         y="Count",
         color="Accident_Severity",
         title="Accident Severity by Biker Education Level",
-        color_discrete_sequence=color_theme,
+        category_orders={"Accident_Severity": severity_order},
+        color_discrete_map=severity_colors,
         barmode="group"
     )
 
+    # --- Display Occupation and Education Charts ---
     col1, col2 = st.columns(2)
     with col1:
         st.plotly_chart(fig4, use_container_width=True)
@@ -348,31 +360,45 @@ with tab2:
     for i in range(0, len(categorical_cols), 2):
         col1, col2 = st.columns(2)
 
-        for j, col in enumerate(categorical_cols[i:i+2]):
-            agg_df = (
-                filtered_df.groupby([col, "Accident_Severity"])
-                .size()
-                .reset_index(name="Count")
-                .sort_values("Count", ascending=False)
-            )
+        for j, col in enumerate(categorical_cols[i:i + 2]):
+            if col in filtered_df.columns:
+                agg_df = (
+                    filtered_df.groupby([col, "Accident_Severity"])
+                    .size()
+                    .reset_index(name="Count")
+                    .sort_values("Count", ascending=False)
+                )
 
-            fig = px.bar(
-                agg_df,
-                x=col,
-                y="Count",
-                color="Accident_Severity",
-                title=f"Accident Severity by {col.replace('_', ' ')}",
-                color_discrete_sequence=color_theme,
-                barmode="group"
-            )
+                fig = px.bar(
+                    agg_df,
+                    x=col,
+                    y="Count",
+                    color="Accident_Severity",
+                    title=f"Accident Severity by {col.replace('_', ' ')}",
+                    category_orders={"Accident_Severity": severity_order},
+                    color_discrete_map=severity_colors,
+                    barmode="group"
+                )
 
-            if j == 0:
-                with col1:
-                    st.plotly_chart(fig, use_container_width=True)
-            else:
-                with col2:
-                    st.plotly_chart(fig, use_container_width=True)
-                    st.caption(f"**Interpretation:** The chart shows how {col.replace('_',' ').lower()} affects accident severity, where imbalance across categories indicates risk-prone conditions.")
+                fig.update_layout(
+                    title_x=0.0,  # Align title left
+                    xaxis_title=None,
+                    yaxis_title="Count",
+                    plot_bgcolor="rgba(0,0,0,0)",
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    margin=dict(t=50, b=40)
+                )
+
+                if j == 0:
+                    with col1:
+                        st.plotly_chart(fig, use_container_width=True)
+                else:
+                    with col2:
+                        st.plotly_chart(fig, use_container_width=True)
+                        st.caption(
+                            f"**Interpretation:** The chart shows how {col.replace('_',' ').lower()} affects accident severity, "
+                            "where imbalance across categories indicates risk-prone conditions."
+                        )
 
     st.markdown("#### 💬 Observation")
     st.success("""
