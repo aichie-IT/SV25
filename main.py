@@ -391,18 +391,28 @@ with tab2:
                 color_discrete_map=severity_colors_map,
                 category_orders={"Accident_Severity": severity_order},
                 barmode="group",
-                opacity=1.0
+            ) 
+
+            # Force full solid color (no transparency, no gradient shading)
+            fig.update_traces(
+                marker=dict(
+                    line=dict(width=0),
+                    opacity=1.0,
+                    pattern_shape="",  # no shading pattern
+                    coloraxis=None
+                )
             )
-            
+
             fig.update_layout(
                 plot_bgcolor="rgba(0,0,0,0)",
                 paper_bgcolor="rgba(0,0,0,0)",
                 xaxis_title=None,
                 yaxis_title="Count",
-                title_x=0.0,  # Align left like earlier charts
+                title_x=0.0,  # left-aligned title
                 margin=dict(t=60, b=40),
                 bargap=0.2
             )
+
 
             fig.update_traces(texttemplate="%{y}", textposition="outside")
 
