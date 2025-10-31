@@ -374,8 +374,6 @@ with tab2:
         col1, col2 = st.columns(2)
 
         for j, col in enumerate(categorical_cols[i:i+2]):
-            if col not in filtered_df.columns:
-            continue
             
             agg_df = (
                 filtered_df.groupby([col, "Accident_Severity"])
