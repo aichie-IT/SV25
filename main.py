@@ -390,17 +390,31 @@ with tab2:
                 title=f"Accident Severity by {col.replace('_', ' ')}",
                 color_discrete_map=severity_colors_map,
                 category_orders={"Accident_Severity": severity_order},
-                barmode="group"
+                barmode="group",
+                opacity=1.0
             )
+            
+            fig.update_layout(
+                plot_bgcolor="rgba(0,0,0,0)",
+                paper_bgcolor="rgba(0,0,0,0)",
+                xaxis_title=None,
+                yaxis_title="Count",
+                title_x=0.0,  # Align left like earlier charts
+                margin=dict(t=60, b=40),
+                bargap=0.2
+            )
+
+            fig.update_traces(texttemplate="%{y}", textposition="outside")
 
             if j == 0:
                 with col1:
                     st.plotly_chart(fig, use_container_width=True)
-                    st.info("""*Interpretation:* The chart shows how {col.replace('_',' ').lower()} affects accident severity, where imbalance across categories indicates risk-prone conditions.""")
+                    st.info(f"""*Interpretation:* The chart shows how {col.replace('_',' ').lower()} affects accident severity, where imbalance across categories indicates risk-prone conditions.""")
             else:
                 with col2:
                     st.plotly_chart(fig, use_container_width=True)
-                    st.info("""*Interpretation:* The chart shows how {col.replace('_',' ').lower()} affects accident severity, where imbalance across categories indicates risk-prone conditions.""")
+                    st.info(f"""*Interpretation:* The chart shows how {col.replace('_',' ').lower()} affects accident severity, where imbalance across categories indicates risk-prone conditions.""")
+
 
     st.markdown("#### 💬 Observation")
     st.success("""
