@@ -23,6 +23,14 @@ df = load_data()
 
 # ====== SIDEBAR ======
 with st.sidebar:
+    st.markdown("---")
+    st.subheader("🏍️ Motor Accident Severity Analysis")
+    tab_selection = st.radio(
+        "Navigate Sections:",
+        ["⚙️ General Overview", "📊 Accident Factors", "📈 Numerical Analysis",
+         "📉 Advanced Visualizations", "🗺️ Correlation Insights", "🏍️ Riding Behavior Insights"]
+    )
+
     st.title("Dashboard Controls")
 
     # --- Data Summary ---
@@ -182,7 +190,20 @@ else:
 st.markdown("---")
 
 # --- TAB LAYOUT ---
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["⚙️ General Overview", "📊 Accident Factors", "📈 Numerical Analysis", "📉 Advanced Visualizations", "🗺️ Correlation Insights", "🏍️ Riding Behavior Insights"])
+tab_names = ["⚙️ General Overview", "📊 Accident Factors", "📈 Numerical Analysis",
+             "📉 Advanced Visualizations", "🗺️ Correlation Insights", "🏍️ Riding Behavior Insights"]
+
+# Get index from sidebar selection
+active_tab_index = tab_names.index(tab_selection)
+
+tabs = st.tabs(tab_names)
+
+# Assign each tab variable
+tab1, tab2, tab3, tab4, tab5, tab6 = tabs
+
+# Optionally, show info about sidebar-selected tab
+st.info(f"💡 Currently viewing section: **{tab_selection}** (selected via sidebar)")
+
 
 # ============ TAB 1: GENERAL OVERVIEW ============
 with tab1:
