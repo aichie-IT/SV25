@@ -7,24 +7,6 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-# ===== SIDEBAR NAVIGATION =====
-with st.sidebar:
-    st.markdown("### 🔍 Dashboard Sections")
-    page = st.radio(
-        "Navigate to section:",
-        [
-            "⚙️ General Overview",
-            "📊 Accident Factors",
-            "📈 Numerical Analysis",
-            "📉 Advanced Visualizations",
-            "🗺️ Correlation Insights",
-            "🏍️ Riding Behavior Insights"
-        ]
-    )
-    st.markdown("---")
-
-
-
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Motorbike Accident Insights Dashboard", page_icon="🏍️", layout="wide")
 
@@ -199,8 +181,11 @@ else:
 
 st.markdown("---")
 
+# --- TAB LAYOUT ---
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["⚙️ General Overview", "📊 Accident Factors", "📈 Numerical Analysis", "📉 Advanced Visualizations", "🗺️ Correlation Insights", "🏍️ Riding Behavior Insights"])
+
 # ============ TAB 1: GENERAL OVERVIEW ============
-if page == "⚙️ General Overview":
+with tab1:
     st.subheader("Distribution Overview")
     st.markdown("Overview of accident severity, helmet use, and license validity.")
 
@@ -282,7 +267,7 @@ if page == "⚙️ General Overview":
     """)
 
 # ============ TAB 2: ACCIDENT FACTORS ============
-elif page == "📊 Accident Factors":
+with tab2:
     st.subheader("Accident Severity by Categorical Factors")
     st.markdown("Explore how factors like occupation, education, and road conditions impact severity.")
 
@@ -441,7 +426,7 @@ elif page == "📊 Accident Factors":
 
 
 # ============ TAB 3: NUMERICAL ANALYSIS ============
-elif page == "📈 Numerical Analysis":
+with tab3:
     st.subheader("Distribution of Numeric Variables")
     st.markdown("Analyze numeric relationships such as speed, age, experience, and travel distance.")
 
@@ -509,7 +494,7 @@ elif page == "📈 Numerical Analysis":
     """)
 
 # ============ TAB 4: ADVANCED VISUALIZATIONS ============
-elif page == "📉 Advanced Visualizations":
+with tab4:
     st.subheader("Advanced Statistical Visualizations")
     st.markdown("Explore deeper numerical relationships using box, violin, and scatter plots.")
 
@@ -612,7 +597,7 @@ elif page == "📉 Advanced Visualizations":
     """)
 
 # ---- Tab 5: Correlation Insights ----
-elif page == "🗺️ Correlation Insights":
+with tab5:
     st.subheader("Correlation Insights")
     st.markdown("Explore feature interrelationships through correlation heatmaps.")
 
@@ -650,8 +635,8 @@ elif page == "🗺️ Correlation Insights":
     st.info("Higher correlations indicate stronger relationships between factors such as speed, experience, and accident severity.")
 
 # ---- Tab 6: Riding Behavior Insights ----
-elif page == "🏍️ Riding Behavior Insights":
-    st.subheader("Riding Behavior Insights")
+with tab6:
+    st.subheader("🏍️ Riding Behavior Insights")
     st.markdown("Analyze rider behavior patterns and how habits influence accident severity.")
 
     # Calculate percentages
