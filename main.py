@@ -273,11 +273,12 @@ with tab2:
 
     # ===== COLOR & ORDER SETTINGS =====
     severity_order = ["No Accident", "Moderate Accident", "Severe Accident"]
-    severity_colors = {
-        "No Accident": "#A8E6CF",       # Pastel Green
-        "Moderate Accident": "#FFF3B0", # Pastel Yellow
-        "Severe Accident": "#FFD3B6"    # Pastel Orange
+    severity_colors_map = {
+    "No Accident": "#A8E6CF",       # Pastel Green
+    "Moderate Accident": "#FFF3B0", # Pastel Yellow
+    "Severe Accident": "#FFD3B6"    # Pastel Orange
     }
+
 
     # Force correct dtype & order for Accident_Severity
     filtered_df["Accident_Severity"] = pd.Categorical(
@@ -315,7 +316,7 @@ with tab2:
         y="Count",
         color="Accident_Severity",
         title="Accident Severity by Biker Occupation",
-        color_discrete_sequence=color_theme,
+        color_discrete_map=severity_colors_map,
         barmode="group"
     )
 
@@ -331,7 +332,7 @@ with tab2:
         y="Count",
         color="Accident_Severity",
         title="Accident Severity by Biker Education Level",
-        color_discrete_sequence=color_theme,
+        color_discrete_map=severity_colors_map,
         barmode="group"
     )
 
@@ -357,27 +358,15 @@ with tab2:
         "Time_of_Day", "Traffic_Density", "Biker_Alcohol"
     ]
 
-    # ===== COLOR & ORDER SETTINGS =====
-    severity_order = ["No Accident", "Moderate Accident", "Severe Accident"]
-    severity_colors = {
-        "No Accident": "#A8E6CF",       # Pastel Green
-        "Moderate Accident": "#FFF3B0", # Pastel Yellow
-        "Severe Accident": "#FFD3B6"    # Pastel Orange
-    }
-
-    # Force correct dtype & order for Accident_Severity
-    filtered_df["Accident_Severity"] = pd.Categorical(
-        filtered_df["Accident_Severity"], categories=severity_order, ordered=True
-    )
-
     # Display 2 charts per row
     for i in range(0, len(categorical_cols), 2):
         col1, col2 = st.columns(2)
 
         for j, col in enumerate(categorical_cols[i:i+2]):
             agg_df = (
-                filtered_df.groupby([col, "Accident_Severity"])
-                .size()
+                filtered_df["Accident_Severity"] = pd.Categorical(
+                filtered_df["Accident_Severity"], categories=severity_order, ordered=True
+                 )
                 .reset_index(name="Count")
                 .sort_values("Count", ascending=False)
             )
@@ -388,13 +377,14 @@ with tab2:
                 y="Count",
                 color="Accident_Severity",
                 title=f"Accident Severity by {col.replace('_', ' ')}",
-                color_discrete_sequence=color_theme,
+                color_discrete_map=severity_colors_map,
                 barmode="group"
             )
 
             if j == 0:
                 with col1:
                     st.plotly_chart(fig, use_container_width=True)
+                    st.caption(f"*Interpretation:* The chart shows how {col.replace('_',' ').lower()} affects accident severity, where imbalance across categories indicates risk-prone conditions.")
             else:
                 with col2:
                     st.plotly_chart(fig, use_container_width=True)
