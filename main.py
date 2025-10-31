@@ -315,7 +315,7 @@ with tab2:
         y="Count",
         color="Accident_Severity",
         title="Accident Severity by Biker Occupation",
-        color_discrete_map=severity_colors_map,
+        color_discrete_sequence=color_theme,
         barmode="group"
     )
 
@@ -331,7 +331,7 @@ with tab2:
         y="Count",
         color="Accident_Severity",
         title="Accident Severity by Biker Education Level",
-        color_discrete_map=severity_colors_map,
+        color_discrete_sequence=color_theme,
         barmode="group"
     )
 
