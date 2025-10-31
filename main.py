@@ -21,17 +21,40 @@ def load_data():
 
 df = load_data()
 
+# ===== SIDEBAR NAVIGATION =====
+page, tab_selection = sidebar_navigation(filtered_df)
+
+# ===== HOME PAGE =====
+if page == "🏠 Home":
+    st.header("🏠 Welcome to the Dashboard")
+    st.markdown("""
+    This dashboard provides insights into motorbike accident trends, 
+    including severity levels, contributing factors, and rider behaviors.
+    
+    Use the sidebar or top tabs to navigate between sections.
+    """)
+    st.image("https://cdn.pixabay.com/photo/2017/01/31/21/23/motorcycle-2026544_960_720.png", use_container_width=True)
+    st.stop()
+
+# ===== MOTOR ACCIDENT SEVERITY ANALYSIS =====
+tab_names = [
+    "⚙️ General Overview",
+    "📊 Accident Factors",
+    "📈 Numerical Analysis",
+    "📉 Advanced Visualizations",
+    "🗺️ Correlation Insights",
+    "🏍️ Riding Behavior Insights"
+]
+
+tabs = st.tabs(tab_names)
+tab1, tab2, tab3, tab4, tab5, tab6 = tabs
+
+# --- Highlight current section ---
+if tab_selection:
+    st.info(f"💡 Navigated via sidebar: **{tab_selection}**")
 
 # ====== SIDEBAR ======
 with st.sidebar:
-    st.markdown("---")
-    st.subheader("🏍️ Motor Accident Severity Analysis")
-    tab_selection = st.radio(
-        "Navigate Sections:",
-        ["⚙️ General Overview", "📊 Accident Factors", "📈 Numerical Analysis",
-         "📉 Advanced Visualizations", "🗺️ Correlation Insights", "🏍️ Riding Behavior Insights"]
-    )
-
     st.title("Dashboard Controls")
 
     # --- Data Summary ---
@@ -191,20 +214,7 @@ else:
 st.markdown("---")
 
 # --- TAB LAYOUT ---
-tab_names = ["⚙️ General Overview", "📊 Accident Factors", "📈 Numerical Analysis",
-             "📉 Advanced Visualizations", "🗺️ Correlation Insights", "🏍️ Riding Behavior Insights"]
-
-# Get index from sidebar selection
-active_tab_index = tab_names.index(tab_selection)
-
-tabs = st.tabs(tab_names)
-
-# Assign each tab variable
-tab1, tab2, tab3, tab4, tab5, tab6 = tabs
-
-# Highlight tab based on sidebar selection
-if tab_selection:
-    st.info(f"💡 Currently viewing section: **{tab_selection}** (selected via sidebar)")
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["⚙️ General Overview", "📊 Accident Factors", "📈 Numerical Analysis", "📉 Advanced Visualizations", "🗺️ Correlation Insights", "🏍️ Riding Behavior Insights"])
 
 # ============ TAB 1: GENERAL OVERVIEW ============
 with tab1:
