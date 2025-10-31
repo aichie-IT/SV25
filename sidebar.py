@@ -2,29 +2,44 @@ import streamlit as st
 
 def sidebar_navigation(df):
     """
-    Returns the selected main page and the selected tab
+    Sidebar navigation for the app.
+    Returns:
+        page (str): Selected main page
+        tab_selection (str): Selected tab within the Motor Accident section
     """
 
-    # --- Main Page Selection ---
-    st.sidebar.title("Navigation")
+    # --- Main Navigation ---
+    st.sidebar.title("📂 Navigation")
     page = st.sidebar.radio(
-        "Select Page:",
+        "Main Menu:",
         ["🏠 Home", "🏍️ Motor Accident Severity Analysis"]
     )
 
+    # --- Sub-navigation for Analysis Page ---
     tab_selection = None
     if page == "🏍️ Motor Accident Severity Analysis":
         st.sidebar.markdown("---")
-        st.sidebar.subheader("📌 Dashboard Sections")
+        st.sidebar.subheader("📊 Dashboard Sections")
         tab_selection = st.sidebar.radio(
-            "Select Section:",
-            ["⚙️ General Overview", "📊 Accident Factors", "📈 Numerical Analysis",
-             "📉 Advanced Visualizations", "🗺️ Correlation Insights", "🏍️ Riding Behavior Insights"]
+            "Go to Section:",
+            [
+                "⚙️ General Overview",
+                "📊 Accident Factors",
+                "📈 Numerical Analysis",
+                "📉 Advanced Visualizations",
+                "🗺️ Correlation Insights",
+                "🏍️ Riding Behavior Insights"
+            ],
+            key="sidebar_tab"
         )
 
-    # --- Optional: Data Summary ---
-    st.sidebar.markdown("---")
-    st.sidebar.subheader("🧾 Data Summary")
-    st.sidebar.info(f"**Total Records:** {len(df):,}\n**Columns:** {len(df.columns)}")
+    # --- Optional: Dataset Summary ---
+    if df is not None:
+        st.sidebar.markdown("---")
+        st.sidebar.subheader("🧾 Data Summary")
+        st.sidebar.info(
+            f"**Total Records:** {len(df):,}\n"
+            f"**Columns:** {len(df.columns)}"
+        )
 
     return page, tab_selection
