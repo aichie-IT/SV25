@@ -357,6 +357,19 @@ with tab2:
         "Time_of_Day", "Traffic_Density", "Biker_Alcohol"
     ]
 
+    # ===== COLOR & ORDER SETTINGS =====
+    severity_order = ["No Accident", "Moderate Accident", "Severe Accident"]
+    severity_colors = {
+        "No Accident": "#A8E6CF",       # Pastel Green
+        "Moderate Accident": "#FFF3B0", # Pastel Yellow
+        "Severe Accident": "#FFD3B6"    # Pastel Orange
+    }
+
+    # Force correct dtype & order for Accident_Severity
+    filtered_df["Accident_Severity"] = pd.Categorical(
+        filtered_df["Accident_Severity"], categories=severity_order, ordered=True
+    )
+
     # Display 2 charts per row
     for i in range(0, len(categorical_cols), 2):
         col1, col2 = st.columns(2)
