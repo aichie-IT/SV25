@@ -390,31 +390,22 @@ with tab2:
                 title=f"Accident Severity by {col.replace('_', ' ')}",
                 color_discrete_map=severity_colors_map,
                 category_orders={"Accident_Severity": severity_order},
-                barmode="group",
-            ) 
-
-            # Force full solid color (no transparency, no gradient shading)
-            fig.update_traces(
-                marker=dict(
-                    line=dict(width=0),
-                    opacity=1.0,
-                    pattern_shape="",  # no shading pattern
-                    coloraxis=None
-                )
+                barmode="group"
             )
 
+            # Force bars to use fully solid fill (no shading or transparency)
+            fig.for_each_trace(lambda t: t.update(marker=dict(line=dict(width=0), opacity=1.0)))
+
+            # Remove the default Plotly gradient shading
+            fig.update_traces(marker_coloraxis=None)
+
+            # Force consistent flat color rendering
             fig.update_layout(
-                plot_bgcolor="rgba(0,0,0,0)",
-                paper_bgcolor="rgba(0,0,0,0)",
-                xaxis_title=None,
-                yaxis_title="Count",
-                title_x=0.0,  # left-aligned title
-                margin=dict(t=60, b=40),
-                bargap=0.2
+                template=None,  # remove plotly's default style template
+                plot_bgcolor="white",
+                paper_bgcolor="white",
+                bargap=0.25,
             )
-
-
-            fig.update_traces(texttemplate="%{y}", textposition="outside")
 
             if j == 0:
                 with col1:
