@@ -1,17 +1,18 @@
 import streamlit as st
 
-st.set_page_config(
-    page_title="Motor Accident Severity"
-)
+st.set_page_config(page_title="Motor Accident Severity", layout="wide")
 
-visualise = st.Page('main.py', title='Motor Accident Severity Analysis', icon=":material/school:")
+# Define each tab as its own page entry
+overview = st.Page("main.py", title="Overview", icon=":material/insights:", default=True)
+factors = st.Page("main.py", title="Accident Factors", icon=":material/bar_chart:")
+behavior = st.Page("main.py", title="Riding Behavior", icon=":material/safety_check:")
+summary = st.Page("main.py", title="Summary", icon=":material/description:")
+home = st.Page("home.py", title="Homepage", icon=":material/home:")
 
-home = st.Page('home.py', title='Homepage', default=True, icon=":material/home:")
+pg = st.navigation({
+    "🏠 Home": [home],
+    "🏍️ Motor Accident Severity Analysis": [overview, factors, behavior, summary],
+})
 
-pg = st.navigation(
-        {
-            "Menu": [home, visualise]
-        }
-    )
-
-pg.run()
+# Save current selected tab to session_state
+st.session_state["current_tab"] = pg.run()
