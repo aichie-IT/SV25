@@ -271,14 +271,24 @@ with tab2:
     st.subheader("Accident Severity by Categorical Factors")
     st.markdown("Explore how factors like occupation, education, and road conditions impact severity.")
 
-    # --- Summary metrics ---
+    # ===== COLOR & ORDER SETTINGS =====
+    color_theme = px.colors.qualitative.Pastel
+    severity_order = ["No Accident", "Minor", "Major", "Fatal"]
+    severity_colors = {
+        "No Accident": "#A8E6CF",  # pastel green
+        "Minor": "#FFD3B6",        # pastel orange
+        "Major": "#FFAAA5",        # pastel red
+        "Fatal": "#FF8B94"         # deeper pastel red/pink
+    }
+
+    # ===== SUMMARY BOXES =====
     col1, col2, col3 = st.columns(3)
     top_severity = filtered_df['Accident_Severity'].mode()[0]
     top_weather = filtered_df['Weather'].mode()[0]
     top_road = filtered_df['Road_Type'].mode()[0]
-    col1.metric("Most Common Severity", top_severity, border=True)
-    col2.metric("Common Weather", top_weather, border=True)
-    col3.metric("Frequent Road Type", top_road, border=True)
+    col1.metric("Most Common Severity", top_severity)
+    col2.metric("Common Weather", top_weather)
+    col3.metric("Frequent Road Type", top_road)
 
     st.markdown("### Summary")
     st.info("""
@@ -290,50 +300,38 @@ with tab2:
     """)
     st.markdown("---")
 
-    # --- Define consistent severity order and color scheme ---
-    severity_order = ["No Accident", "Minor", "Major", "Severe"]
-    severity_colors = {
-        "No Accident": "#2ECC71",  # Green
-        "Minor": "#F4D03F",        # Yellow
-        "Major": "#E67E22",        # Orange
-        "Severe": "#E74C3C"        # Red
-    }
-
-    # --- OCCUPATION ---
+    # ===== OCCUPATION =====
     agg_occ = (
         filtered_df.groupby(["Biker_Occupation", "Accident_Severity"])
-        .size()
-        .reset_index(name="Count")
+        .size().reset_index(name="Count")
     )
     fig4 = px.bar(
         agg_occ,
         x="Biker_Occupation",
         y="Count",
         color="Accident_Severity",
-        title="Accident Severity by Biker Occupation",
         category_orders={"Accident_Severity": severity_order},
         color_discrete_map=severity_colors,
+        title="Accident Severity by Biker Occupation",
         barmode="group"
     )
 
-    # --- EDUCATION ---
+    # ===== EDUCATION =====
     agg_edu = (
         filtered_df.groupby(["Biker_Education_Level", "Accident_Severity"])
-        .size()
-        .reset_index(name="Count")
+        .size().reset_index(name="Count")
     )
     fig5 = px.bar(
         agg_edu,
         x="Biker_Education_Level",
         y="Count",
         color="Accident_Severity",
-        title="Accident Severity by Biker Education Level",
         category_orders={"Accident_Severity": severity_order},
         color_discrete_map=severity_colors,
+        title="Accident Severity by Biker Education Level",
         barmode="group"
     )
 
-    # --- Display Occupation and Education Charts ---
     col1, col2 = st.columns(2)
     with col1:
         st.plotly_chart(fig4, use_container_width=True)
@@ -349,23 +347,21 @@ with tab2:
     st.markdown("---")
     st.subheader("Other Influencing Factors")
 
-    # --- LOOP FOR OTHER CATEGORICAL VARIABLES ---
+    # ===== OTHER CATEGORICAL VARIABLES =====
     categorical_cols = [
         "Wearing_Helmet", "Motorcycle_Ownership", "Valid_Driving_License",
         "Bike_Condition", "Road_Type", "Road_condition", "Weather",
         "Time_of_Day", "Traffic_Density", "Biker_Alcohol"
     ]
 
-    # Display 2 charts per row
     for i in range(0, len(categorical_cols), 2):
         col1, col2 = st.columns(2)
 
-        for j, col in enumerate(categorical_cols[i:i + 2]):
+        for j, col in enumerate(categorical_cols[i:i+2]):
             if col in filtered_df.columns:
                 agg_df = (
                     filtered_df.groupby([col, "Accident_Severity"])
-                    .size()
-                    .reset_index(name="Count")
+                    .size().reset_index(name="Count")
                     .sort_values("Count", ascending=False)
                 )
 
@@ -374,19 +370,10 @@ with tab2:
                     x=col,
                     y="Count",
                     color="Accident_Severity",
-                    title=f"Accident Severity by {col.replace('_', ' ')}",
                     category_orders={"Accident_Severity": severity_order},
                     color_discrete_map=severity_colors,
+                    title=f"Accident Severity by {col.replace('_', ' ')}",
                     barmode="group"
-                )
-
-                fig.update_layout(
-                    title_x=0.0,  # Align title left
-                    xaxis_title=None,
-                    yaxis_title="Count",
-                    plot_bgcolor="rgba(0,0,0,0)",
-                    paper_bgcolor="rgba(0,0,0,0)",
-                    margin=dict(t=50, b=40)
                 )
 
                 if j == 0:
@@ -395,10 +382,7 @@ with tab2:
                 else:
                     with col2:
                         st.plotly_chart(fig, use_container_width=True)
-                        st.caption(
-                            f"**Interpretation:** The chart shows how {col.replace('_',' ').lower()} affects accident severity, "
-                            "where imbalance across categories indicates risk-prone conditions."
-                        )
+                        st.caption(f"**Interpretation:** The chart shows how {col.replace('_',' ').lower()} affects accident severity, where imbalance across categories indicates risk-prone conditions.")
 
     st.markdown("#### 💬 Observation")
     st.success("""
