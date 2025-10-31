@@ -3,7 +3,6 @@ import pandas as pd
 import plotly.express as px
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sidebar import sidebar_navigation
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -21,25 +20,6 @@ def load_data():
 
 df = load_data()
 
-# ===== SIDEBAR NAVIGATION =====
-page, tab_selection = sidebar_navigation(df)
-
-# ===== HOME PAGE =====
-if page == "🏠 Home":
-    st.header("🏠 Welcome to the Dashboard")
-    st.markdown("""
-    This dashboard provides insights into motorbike accident trends, 
-    including severity levels, contributing factors, and rider behaviors.
-    
-    Use the sidebar or the top tabs to navigate between sections.
-    """)
-    st.image("https://cdn.pixabay.com/photo/2017/01/31/21/23/motorcycle-2026544_960_720.png", use_container_width=True)
-    st.stop()
-
-# ===== MOTOR ACCIDENT SEVERITY ANALYSIS =====
-st.title("🏍️ Motorbike Accident Insights Dashboard")
-st.markdown("Explore accident patterns and biker behaviors with interactive visual analytics.")
-st.markdown("---")
 
 # ====== SIDEBAR ======
 with st.sidebar:
@@ -201,42 +181,11 @@ else:
 
 st.markdown("---")
 
-# ===== TABS =====
-sections = [
-    "⚙️ General Overview",
-    "📊 Accident Factors",
-    "📈 Numerical Analysis",
-    "📉 Advanced Visualizations",
-    "🗺️ Correlation Insights",
-    "🏍️ Riding Behavior Insights"
-]
+# --- TAB LAYOUT ---
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["⚙️ General Overview", "📊 Accident Factors", "📈 Numerical Analysis", "📉 Advanced Visualizations", "🗺️ Correlation Insights", "🏍️ Riding Behavior Insights"])
 
-# Top radio widget updates st.session_state.top_tab and then we push that to active_section
-if "top_tab" not in st.session_state:
-    st.session_state.top_tab = st.session_state.get("active_section", sections[0])
-
-top_choice = st.radio("", sections, index=sections.index(st.session_state.top_tab), horizontal=True, key="top_tab",
-                     on_change=lambda: st.session_state.update({"active_section": st.session_state.top_tab}))
-
-# reflect that change in top_tab so the radio shows the same:
-if st.session_state.get("active_section") != st.session_state.get("top_tab"):
-    st.session_state.top_tab = st.session_state.active_section
-
-# Now render the content based on st.session_state.active_section
-active = st.session_state.active_section
-
-# Example: render content conditionally — replace blocks with your existing code for each section
-if page == "🏠 Home":
-    st.header("🏠 Home")
-    st.write("Welcome — use sidebar or top navigation to go to Analysis.")
-
-elif page == "🏍️ Motor Accident Severity Analysis":
-    # show header + metrics (your existing code)
-    st.title("🏍️ Motorbike Accident Insights Dashboard")
-    st.markdown("---")
-            
 # ============ TAB 1: GENERAL OVERVIEW ============
- if active == "⚙️ General Overview":
+with tab1:
     st.subheader("Distribution Overview")
     st.markdown("Overview of accident severity, helmet use, and license validity.")
 
@@ -318,7 +267,7 @@ elif page == "🏍️ Motor Accident Severity Analysis":
     """)
 
 # ============ TAB 2: ACCIDENT FACTORS ============
-elif active == "📊 Accident Factors":
+with tab2:
     st.subheader("Accident Severity by Categorical Factors")
     st.markdown("Explore how factors like occupation, education, and road conditions impact severity.")
 
@@ -477,7 +426,7 @@ elif active == "📊 Accident Factors":
 
 
 # ============ TAB 3: NUMERICAL ANALYSIS ============
- elif active == "📈 Numerical Analysis":
+with tab3:
     st.subheader("Distribution of Numeric Variables")
     st.markdown("Analyze numeric relationships such as speed, age, experience, and travel distance.")
 
@@ -545,7 +494,7 @@ elif active == "📊 Accident Factors":
     """)
 
 # ============ TAB 4: ADVANCED VISUALIZATIONS ============
-elif active == "📉 Advanced Visualizations":
+with tab4:
     st.subheader("Advanced Statistical Visualizations")
     st.markdown("Explore deeper numerical relationships using box, violin, and scatter plots.")
 
@@ -648,7 +597,7 @@ elif active == "📉 Advanced Visualizations":
     """)
 
 # ---- Tab 5: Correlation Insights ----
- elif active == "🗺️ Correlation Insights":
+with tab5:
     st.subheader("Correlation Insights")
     st.markdown("Explore feature interrelationships through correlation heatmaps.")
 
@@ -686,8 +635,8 @@ elif active == "📉 Advanced Visualizations":
     st.info("Higher correlations indicate stronger relationships between factors such as speed, experience, and accident severity.")
 
 # ---- Tab 6: Riding Behavior Insights ----
-elif active == "🏍️ Riding Behavior Insights":
-    st.subheader("Riding Behavior Insights")
+with tab6:
+    st.subheader("🏍️ Riding Behavior Insights")
     st.markdown("Analyze rider behavior patterns and how habits influence accident severity.")
 
     # Calculate percentages
@@ -810,9 +759,6 @@ elif active == "🏍️ Riding Behavior Insights":
     attention in safety. Helmet use correlates inversely with severe accidents, supporting mandatory 
     safety gear enforcement.
     """)
-
-# --- Sync sidebar if tab clicked manually ---
-st.session_state.tab_selection = tab_selection
 
 # --- FOOTER ---
 st.markdown("---")
