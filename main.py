@@ -182,10 +182,19 @@ else:
 st.markdown("---")
 
 # --- TAB LAYOUT ---
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["⚙️ General Overview", "📊 Accident Factors", "📈 Numerical Analysis", "📉 Advanced Visualizations", "🗺️ Correlation Insights", "🏍️ Riding Behavior Insights"])
+# Set up tabs inside the page
+tab_names = ["⚙️ General Overview", "📊 Accident Factors", "📈 Numerical Analysis", "📉 Advanced Visualizations", "🗺️ Correlation Insights", "🏍️ Riding Behavior Insights"]
+
+# Get tab from sidebar selection (if any)
+current_tab = st.session_state.get("current_tab", "Overview")
+
+# Make tab UI reflect sidebar selection
+selected_tab_index = tab_names.index(current_tab) if current_tab in tab_names else 0
+
+tabs = st.tabs(tab_names)
 
 # ============ TAB 1: GENERAL OVERVIEW ============
-with tab1:
+with tabs[0]:
     st.subheader("Distribution Overview")
     st.markdown("Overview of accident severity, helmet use, and license validity.")
 
@@ -267,7 +276,7 @@ with tab1:
     """)
 
 # ============ TAB 2: ACCIDENT FACTORS ============
-with tab2:
+with tabs[1]:
     st.subheader("Accident Severity by Categorical Factors")
     st.markdown("Explore how factors like occupation, education, and road conditions impact severity.")
 
@@ -426,7 +435,7 @@ with tab2:
 
 
 # ============ TAB 3: NUMERICAL ANALYSIS ============
-with tab3:
+with tabs[2]:
     st.subheader("Distribution of Numeric Variables")
     st.markdown("Analyze numeric relationships such as speed, age, experience, and travel distance.")
 
@@ -494,7 +503,7 @@ with tab3:
     """)
 
 # ============ TAB 4: ADVANCED VISUALIZATIONS ============
-with tab4:
+with tabs[3]:
     st.subheader("Advanced Statistical Visualizations")
     st.markdown("Explore deeper numerical relationships using box, violin, and scatter plots.")
 
@@ -597,7 +606,7 @@ with tab4:
     """)
 
 # ---- Tab 5: Correlation Insights ----
-with tab5:
+with tabs[4]:
     st.subheader("Correlation Insights")
     st.markdown("Explore feature interrelationships through correlation heatmaps.")
 
@@ -635,7 +644,7 @@ with tab5:
     st.info("Higher correlations indicate stronger relationships between factors such as speed, experience, and accident severity.")
 
 # ---- Tab 6: Riding Behavior Insights ----
-with tab6:
+with tabs[5]:
     st.subheader("🏍️ Riding Behavior Insights")
     st.markdown("Analyze rider behavior patterns and how habits influence accident severity.")
 
