@@ -156,7 +156,10 @@ else:
     """, unsafe_allow_html=True)
 
 # ===== COLOR THEME =====
-color_theme = px.colors.qualitative.Pastel
+color_theme = [
+    "#A2CFFE", "#FFB6B9", "#C6E2FF", "#FFD8B1", "#B0E57C", "#F49AC2", "#D4A5A5"
+]
+
 
 # --- MAIN TITLE ---
 st.title("🏍️ Motorbike Accident Insights Dashboard")
