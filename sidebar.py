@@ -8,11 +8,16 @@ def sidebar_navigation(df):
         tab_selection (str): Selected tab within the Motor Accident section
     """
 
+    # Initialize session state for tab synchronization
+    if "tab_selection" not in st.session_state:
+        st.session_state.tab_selection = "⚙️ General Overview"
+
     # --- Main Navigation ---
     st.sidebar.title("📂 Navigation")
     page = st.sidebar.radio(
         "Main Menu:",
-        ["🏠 Home", "🏍️ Motor Accident Severity Analysis"]
+        ["🏠 Home", "🏍️ Motor Accident Severity Analysis"],
+        key="main_menu"
     )
 
     # --- Sub-navigation for Analysis Page ---
@@ -30,7 +35,18 @@ def sidebar_navigation(df):
                 "🗺️ Correlation Insights",
                 "🏍️ Riding Behavior Insights"
             ],
-            key="sidebar_tab"
+            index=[
+                "⚙️ General Overview",
+                "📊 Accident Factors",
+                "📈 Numerical Analysis",
+                "📉 Advanced Visualizations",
+                "🗺️ Correlation Insights",
+                "🏍️ Riding Behavior Insights"
+            ].index(st.session_state.tab_selection),
+            key="sidebar_tab",
+            on_change=lambda: st.session_state.update(
+                {"tab_selection": st.session_state.sidebar_tab}
+            )
         )
 
     # --- Optional: Dataset Summary ---
@@ -42,4 +58,4 @@ def sidebar_navigation(df):
             f"**Columns:** {len(df.columns)}"
         )
 
-    return page, tab_selection
+    return page, st.session_state.tab_selection
