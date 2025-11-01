@@ -263,13 +263,13 @@ fig5 = px.bar(
 col1, col2 = st.columns(2)
 with col1:
     st.plotly_chart(fig4, use_container_width=True)
-    st.info("""
-    *Interpretation:* Riders in delivery or transport occupations report higher accident severity, likely due to increased road exposure.
+    st.success("""
+    **Interpretation:** Riders in delivery or transport occupations report higher accident severity, likely due to increased road exposure.
     """)
 with col2:
     st.plotly_chart(fig5, use_container_width=True)
-    st.info("""
-    *Interpretation:* Bikers with higher education levels show lower accident severity, reflecting better safety awareness and risk management.
+    st.success("""
+    **Interpretation:** Bikers with higher education levels show lower accident severity, reflecting better safety awareness and risk management.
     """)
 
 st.markdown("---")
@@ -335,15 +335,15 @@ for i in range(0, len(categorical_cols), 2):
         if j == 0:
             with col1:
                 st.plotly_chart(fig, use_container_width=True)
-                st.info(f"""*Interpretation:* The chart shows how {col.replace('_',' ').lower()} affects accident severity, where imbalance across categories indicates risk-prone conditions.""")
+                st.success(f"""**Interpretation:** The chart shows how {col.replace('_',' ').lower()} affects accident severity, where imbalance across categories indicates risk-prone conditions.""")
         else:
             with col2:
                 st.plotly_chart(fig, use_container_width=True)
-                st.info(f"""*Interpretation:* The chart shows how {col.replace('_',' ').lower()} affects accident severity, where imbalance across categories indicates risk-prone conditions.""")
+                st.success(f"""**Interpretation:** The chart shows how {col.replace('_',' ').lower()} affects accident severity, where imbalance across categories indicates risk-prone conditions.""")
 
 
 st.markdown("#### 💬 Observation")
-st.success("""
+st.info("""
 The grouped bar charts reveal that higher education correlates with fewer severe accidents, 
 while adverse weather and poor road types contribute to higher accident counts. 
 These findings support public safety campaigns focusing on awareness and road infrastructure improvements.
