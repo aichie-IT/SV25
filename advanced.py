@@ -195,7 +195,7 @@ else:
 # ===== COLOR THEME =====
 color_theme = px.colors.qualitative.Pastel
 
-st.subheader("Advanced Statistical Visualizations")
+st.head("Advanced Statistical Visualizations")
 st.markdown("Explore deeper numerical relationships using box, violin, and scatter plots.")
 
 # Summary box
