@@ -56,44 +56,26 @@ with st.sidebar:
             default=sorted(df["Road_Type"].dropna().unique())
         )
 
-        # --- Optional Filters ---
-        if "Biker_Alcohol" in df.columns:
-            alcohol = st.multiselect(
-                "Biker Alcohol Consumption",
-                options=sorted(df["Biker_Alcohol"].dropna().unique()),
-                default=sorted(df["Biker_Alcohol"].dropna().unique())
-            )
-        else:
-            alcohol = []
+        license_status = st.multiselect("Valid Driving License",
+            options=sorted(df["Valid_Driving_License"].dropna().unique()),
+            default=sorted(df["Valid_Driving_License"].dropna().unique())
+        )
 
-        if "Traffic_Density" in df.columns:
-            traffic = st.multiselect(
-                "Traffic Density",
-                options=sorted(df["Traffic_Density"].dropna().unique()),
-                default=sorted(df["Traffic_Density"].dropna().unique())
-            )
-        else:
-            traffic = []
+        min_age, max_age = st.slider(
+            "Filter by Biker Age",
+            int(df["Biker_Age"].min()),
+            int(df["Biker_Age"].max()),
+            (int(df["Biker_Age"].min()), int(df["Biker_Age"].max()))
+        )
 
-        if "Valid_Driving_License" in df.columns:
-            license_status = st.multiselect(
-                "Valid Driving License",
-                options=sorted(df["Valid_Driving_License"].dropna().unique()),
-                default=sorted(df["Valid_Driving_License"].dropna().unique())
-            )
-        else:
-            license_status = []
-
-        # --- Numeric Filter: Biker Age ---
-        if "Biker_Age" in df.columns:
-            min_age, max_age = st.slider(
-                "Filter by Biker Age",
-                int(df["Biker_Age"].min()),
-                int(df["Biker_Age"].max()),
-                (int(df["Biker_Age"].min()), int(df["Biker_Age"].max()))
-            )
-        else:
-            min_age, max_age = None, None
+        filtered_df = df[
+            (df["Accident_Severity"].isin(severity)) &
+            (df["Weather"].isin(weather)) &
+            (df["Time_of_Day"].isin(time_of_day)) &
+            (df["Road_Type"].isin(road_type)) &
+            (df["Valid_Driving_License"].isin(license_status)) &
+            (df["Biker_Age"].between(min_age, max_age))
+        ]
 
         # ===== COLOR THEME =====
         color_theme = px.colors.qualitative.Pastel
