@@ -95,6 +95,9 @@ with st.sidebar:
         else:
             min_age, max_age = None, None
 
+        # ===== COLOR THEME =====
+        color_theme = px.colors.qualitative.Pastel
+
         # --- Apply Filters ---
         filtered_df = df.copy()
 
@@ -157,10 +160,6 @@ else:
         [data-testid="stSidebar"] { background-color: #FFFFFF; color: black; }
         </style>
     """, unsafe_allow_html=True)
-
-# ===== COLOR THEME =====
-color_theme = px.colors.qualitative.Pastel
-
 
 # --- MAIN TITLE ---
 st.title("🏍️ Motorbike Accident Insights Dashboard")
