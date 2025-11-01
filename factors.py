@@ -193,7 +193,7 @@ else:
 # ===== COLOR THEME =====
 color_theme = px.colors.qualitative.Pastel
 
-st.subheader("Accident Severity by Categorical Factors")
+st.header("Accident Severity by Categorical Factors")
 st.markdown("Explore how factors like occupation, education, and road conditions impact severity.")
 
 # ===== COLOR & ORDER SETTINGS =====
