@@ -20,6 +20,44 @@ df = load_data()
 
 # ====== SIDEBAR ======
 with st.sidebar:
+    st.markdown(
+    """
+    <style>
+    /* Card-like filter boxes */
+    .stMultiSelect, .stSlider {
+        background-color: #ffffff !important;
+        border: 1px solid #e0e0e0 !important;
+        border-radius: 10px !important;
+        padding: 8px 10px !important;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    /* Selected filter tags */
+    div[data-baseweb="tag"] {
+        background-color: #6c757d !important; /* gray tone */
+        color: white !important;
+        border-radius: 6px !important;
+    }
+
+    /* Close (x) button inside tags */
+    div[data-baseweb="tag"] svg {
+        fill: white !important;
+    }
+
+    /* Slider color styling */
+    .stSlider > div > div > div[data-testid="stThumbValue"] {
+        color: #0073e6 !important;
+        font-weight: bold !important;
+    }
+    .stSlider > div > div > div[data-testid="stTickBar"] {
+        background: linear-gradient(to right, #0073e6, #00b894) !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+        
     st.title("Dashboard Controls")
 
     # --- Data Summary ---
