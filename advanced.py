@@ -290,7 +290,7 @@ with st.expander("Scatter Plots"):
     st.success("**Interpretation:** Younger bikers show higher accident severity, suggesting overconfidence and less risk awareness.")
 
 st.markdown("#### 💬 Observation")
-st.success("""
+st.info("""
 The violin plots highlight that severe accidents are concentrated among high-speed riders. 
 Correlations between experience and severity indicate that experienced riders adapt speed 
 better to conditions, validating behavioral safety theories.
