@@ -116,6 +116,11 @@ with st.sidebar:
             filtered_df = filtered_df[
                 (filtered_df["Biker_Age"] >= min_age) & (filtered_df["Biker_Age"] <= max_age)
             ]
+            
+        # share globally
+        st.session_state["filtered_df"] = filtered_df
+        st.session_state["color_theme"] = color_theme
+    
 
     # --- Reset and Download Buttons ---
     col1, col2 = st.columns(2)
@@ -173,10 +178,6 @@ if not filtered_df.empty:
     col4.metric("Avg. Travel Distance", f"{filtered_df['Daily_Travel_Distance'].mean():.1f} km", help="PLO 4: Average Daily Travel Distance", border=True)
 else:
     st.warning("No records match the selected filters.")
-
-# share globally
-st.session_state["filtered_df"] = filtered_df
-st.session_state["color_theme"] = color_theme
 
 # --- TAB LAYOUT ---
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["⚙️ General Overview", "📊 Accident Factors", "📈 Numerical Analysis", "📉 Advanced Visualizations", "🗺️ Correlation Insights", "🏍️ Riding Behavior Insights"])
