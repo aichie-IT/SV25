@@ -227,7 +227,7 @@ with col1:
         color_discrete_sequence=color_theme
     )
     st.plotly_chart(fig7, use_container_width=True)
-    st.warning("""
+    st.success("""
     **Interpretation:** Speed distribution skews toward 60–80 km/h, and riders above this range tend to experience more severe accidents.
     """)
 
@@ -238,7 +238,7 @@ with col2:
         color_discrete_sequence=color_theme
     )
     st.plotly_chart(fig8, use_container_width=True)
-    st.info("""
+    st.success("""
     **Interpretation:** Greater riding experience is associated with fewer accidents, highlighting the protective role of skill and familiarity.
     """)
 
@@ -252,7 +252,7 @@ with col2:
     **Interpretation:** Moderate daily travel distances (10–30 km) dominate the dataset, while excessive distance relates to fatigue and higher risk.
     """)
 st.markdown("#### 💬 Observation")
-st.success("""
+st.info("""
 Riders with greater experience tend to maintain safer speeds. The histogram peaks for moderate 
 speed and mid-age groups align with less severe accident rates, reinforcing the role of skill 
 and maturity in risk mitigation.
