@@ -4,6 +4,14 @@ import plotly.express as px
 import warnings
 warnings.filterwarnings("ignore")
 
+# Retrieve shared variables
+filtered_df = st.session_state.get("filtered_df")
+color_theme = st.session_state.get("color_theme", px.colors.qualitative.Pastel)
+
+if filtered_df is None or filtered_df.empty:
+    st.warning("⚠️ No data available. Please adjust your filters in the sidebar.")
+    st.stop()
+
 st.subheader("Distribution Overview")
 st.markdown("Overview of accident severity, helmet use, and license validity.")
 
