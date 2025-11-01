@@ -174,10 +174,9 @@ if not filtered_df.empty:
 else:
     st.warning("No records match the selected filters.")
 
-# --- Import and Run Overview Page ---
-st.markdown("---")
-import overview
-overview.show_overview(filtered_df)
+# share globally
+st.session_state["filtered_df"] = filtered_df
+st.session_state["color_theme"] = color_theme
 
 # --- TAB LAYOUT ---
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["⚙️ General Overview", "📊 Accident Factors", "📈 Numerical Analysis", "📉 Advanced Visualizations", "🗺️ Correlation Insights", "🏍️ Riding Behavior Insights"])
