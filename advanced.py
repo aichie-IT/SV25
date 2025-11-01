@@ -22,122 +22,173 @@ df = load_data()
 
 # ====== SIDEBAR ======
 with st.sidebar:
+    st.title("Dashboard Controls")
+
+    # --- Inject custom CSS for a professional look ---
     st.markdown("""
         <style>
-        /* Sidebar styling */
+        /* Sidebar background and text */
         [data-testid="stSidebar"] {
-            background: linear-gradient(180deg, #f9f9f9 0%, #f0f0f0 100%);
-            padding-top: 1rem;
+            background: linear-gradient(180deg, #f9fafc 0%, #eef1f5 100%);
+            color: #1e1e1e;
+            border-right: 1px solid #dee2e6;
         }
-        .sidebar-title {
-            font-size: 20px;
+
+        /* Section titles */
+        .stMarkdown h3, .stMarkdown h4 {
+            color: #1E88E5 !important;
             font-weight: 700;
-            color: #1E88E5;
-            margin-bottom: 10px;
+            margin-top: 10px;
         }
-        .filter-box {
-            background-color: #ffffff;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-            margin-bottom: 15px;
+
+        /* Info box */
+        .stAlert {
+            background-color: #e3f2fd !important;
+            border: 1px solid #90caf9 !important;
+            border-radius: 8px !important;
+            color: #0d47a1 !important;
         }
-        .filter-title {
-            color: #333;
+
+        /* Expander styling */
+        div[data-testid="stExpander"] {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            margin-top: 10px;
+        }
+        div[data-testid="stExpander"] div[role="button"] p {
+            color: #1E88E5 !important;
+            font-weight: 700 !important;
+        }
+
+        /* Multiselect dropdowns */
+        div[data-baseweb="select"] {
+            background-color: white !important;
+            border-radius: 6px !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            transition: all 0.2s ease-in-out;
+        }
+        div[data-baseweb="select"]:hover {
+            box-shadow: 0 0 0 2px #1E88E5 inset;
+        }
+
+        /* Slider styling */
+        [data-testid="stSlider"] > div > div {
+            background-color: #1E88E5 !important;
+        }
+
+        /* Buttons */
+        .stButton>button {
+            border-radius: 6px;
+            border: none;
+            background-color: #1E88E5;
+            color: white;
             font-weight: 600;
-            margin-bottom: 6px;
-            font-size: 16px;
+            padding: 0.6em 1em;
+            box-shadow: 0 2px 4px rgba(30,136,229,0.3);
+            transition: all 0.2s ease;
+        }
+        .stButton>button:hover {
+            background-color: #1565C0;
+            box-shadow: 0 3px 6px rgba(21,101,192,0.4);
+        }
+
+        /* Download button */
+        .stDownloadButton>button {
+            background-color: #43A047;
+            color: white;
+            border-radius: 6px;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(67,160,71,0.3);
+            border: none;
+        }
+        .stDownloadButton>button:hover {
+            background-color: #2E7D32;
+            box-shadow: 0 3px 6px rgba(46,125,50,0.4);
+        }
+
+        /* Divider line */
+        hr {
+            border: 0;
+            height: 1px;
+            background: #dcdfe3;
+            margin-top: 15px;
+            margin-bottom: 10px;
         }
         </style>
     """, unsafe_allow_html=True)
 
-    # --- Title and Data Summary ---
-    st.markdown('<p class="sidebar-title">🏍️ Dashboard Controls</p>', unsafe_allow_html=True)
+    # --- Data Summary ---
+    st.markdown("### 🧾 Data Summary")
     st.info(f"**Total Records:** {len(df):,}\n\n**Columns:** {len(df.columns)}")
 
-    # --- FILTER SECTION ---
-    with st.expander("🎛️ Filter Options", expanded=True):
+    # --- Filters Section ---
+    with st.expander("Filter Options", expanded=True):
+        st.markdown("Select filters to refine your dashboard view:")
 
-        # --- Accident Context ---
-        st.markdown('<p class="filter-title">🧭 Accident Context</p>', unsafe_allow_html=True)
-        with st.container():
-            col1, col2 = st.columns(2)
-            with col1:
-                severity = st.multiselect(
-                    "Severity",
-                    sorted(df["Accident_Severity"].dropna().unique()),
-                    default=sorted(df["Accident_Severity"].dropna().unique())
-                )
-            with col2:
-                road_type = st.multiselect(
-                    "Road Type",
-                    sorted(df["Road_Type"].dropna().unique()),
-                    default=sorted(df["Road_Type"].dropna().unique())
-                )
+        # --- Multi-select Filters ---
+        severity = st.multiselect(
+            "Accident Severity",
+            options=sorted(df["Accident_Severity"].dropna().unique()),
+            default=sorted(df["Accident_Severity"].dropna().unique())
+        )
 
-        # --- Environment Conditions ---
-        st.markdown('<p class="filter-title">🌦️ Environment</p>', unsafe_allow_html=True)
-        with st.container():
-            col1, col2 = st.columns(2)
-            with col1:
-                weather = st.multiselect(
-                    "Weather",
-                    sorted(df["Weather"].dropna().unique()),
-                    default=sorted(df["Weather"].dropna().unique())
-                )
-            with col2:
-                time_of_day = st.multiselect(
-                    "Time of Day",
-                    sorted(df["Time_of_Day"].dropna().unique()),
-                    default=sorted(df["Time_of_Day"].dropna().unique())
-                )
+        weather = st.multiselect(
+            "Weather Condition",
+            options=sorted(df["Weather"].dropna().unique()),
+            default=sorted(df["Weather"].dropna().unique())
+        )
 
-        # --- Rider Attributes ---
-        st.markdown('<p class="filter-title">🧍 Rider Attributes</p>', unsafe_allow_html=True)
-        with st.container():
-            col1, col2 = st.columns(2)
-            with col1:
-                if "Valid_Driving_License" in df.columns:
-                    license_status = st.multiselect(
-                        "Valid License",
-                        sorted(df["Valid_Driving_License"].dropna().unique()),
-                        default=sorted(df["Valid_Driving_License"].dropna().unique())
-                    )
-                else:
-                    license_status = []
-            with col2:
-                if "Biker_Age" in df.columns:
-                    min_age, max_age = st.slider(
-                        "Biker Age Range",
-                        int(df["Biker_Age"].min()),
-                        int(df["Biker_Age"].max()),
-                        (int(df["Biker_Age"].min()), int(df["Biker_Age"].max()))
-                    )
-                else:
-                    min_age, max_age = None, None
+        time_of_day = st.multiselect(
+            "Time of Day",
+            options=sorted(df["Time_of_Day"].dropna().unique()),
+            default=sorted(df["Time_of_Day"].dropna().unique())
+        )
 
-        # --- Rider Behavior ---
-        st.markdown('<p class="filter-title">🍺 Rider Behavior</p>', unsafe_allow_html=True)
-        with st.container():
-            col1, col2 = st.columns(2)
-            with col1:
-                if "Biker_Alcohol" in df.columns:
-                    alcohol = st.multiselect(
-                        "Alcohol Consumption",
-                        sorted(df["Biker_Alcohol"].dropna().unique()),
-                        default=sorted(df["Biker_Alcohol"].dropna().unique())
-                    )
-                else:
-                    alcohol = []
-            with col2:
-                if "Traffic_Density" in df.columns:
-                    traffic = st.multiselect(
-                        "Traffic Density",
-                        sorted(df["Traffic_Density"].dropna().unique()),
-                        default=sorted(df["Traffic_Density"].dropna().unique())
-                    )
-                else:
-                    traffic = []
+        road_type = st.multiselect(
+            "Road Type",
+            options=sorted(df["Road_Type"].dropna().unique()),
+            default=sorted(df["Road_Type"].dropna().unique())
+        )
+
+        # --- Optional Filters ---
+        if "Biker_Alcohol" in df.columns:
+            alcohol = st.multiselect(
+                "Biker Alcohol Consumption",
+                options=sorted(df["Biker_Alcohol"].dropna().unique()),
+                default=sorted(df["Biker_Alcohol"].dropna().unique())
+            )
+        else:
+            alcohol = []
+
+        if "Traffic_Density" in df.columns:
+            traffic = st.multiselect(
+                "Traffic Density",
+                options=sorted(df["Traffic_Density"].dropna().unique()),
+                default=sorted(df["Traffic_Density"].dropna().unique())
+            )
+        else:
+            traffic = []
+
+        if "Valid_Driving_License" in df.columns:
+            license_status = st.multiselect(
+                "Valid Driving License",
+                options=sorted(df["Valid_Driving_License"].dropna().unique()),
+                default=sorted(df["Valid_Driving_License"].dropna().unique())
+            )
+        else:
+            license_status = []
+
+        # --- Numeric Filter: Biker Age ---
+        if "Biker_Age" in df.columns:
+            min_age, max_age = st.slider(
+                "Filter by Biker Age",
+                int(df["Biker_Age"].min()),
+                int(df["Biker_Age"].max()),
+                (int(df["Biker_Age"].min()), int(df["Biker_Age"].max()))
+            )
+        else:
+            min_age, max_age = None, None
 
         # --- Apply Filters ---
         filtered_df = df.copy()
@@ -160,23 +211,21 @@ with st.sidebar:
                 (filtered_df["Biker_Age"] >= min_age) & (filtered_df["Biker_Age"] <= max_age)
             ]
 
-    # --- Buttons Section ---
-    st.markdown("### ⚙️ Actions")
+    # --- Reset and Download Buttons ---
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("🔄 Reset Filters"):
+        if st.button("Reset Filters"):
             for key in list(st.session_state.keys()):
                 del st.session_state[key]
             st.rerun()
 
     with col2:
         st.download_button(
-            label="⬇️ Download CSV",
+            label="Download CSV",
             data=filtered_df.to_csv(index=False).encode("utf-8"),
             file_name="motor_accident_data.csv",
             mime="text/csv"
         )
-
     st.markdown("---")
 
 # ===== THEME TOGGLE =====
