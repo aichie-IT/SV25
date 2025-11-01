@@ -23,7 +23,7 @@ with st.sidebar:
     st.markdown(
     """
     <style>
-    /* Card-like filter boxes */
+    /* Make filter boxes card-like */
     .stMultiSelect, .stSlider {
         background-color: #ffffff !important;
         border: 1px solid #e0e0e0 !important;
@@ -32,16 +32,29 @@ with st.sidebar:
         box-shadow: 0 2px 6px rgba(0,0,0,0.06);
     }
 
-    /* Selected filter tags */
+    /* Force tag background color override */
     div[data-baseweb="tag"] {
-        background-color: #6c757d !important; /* gray tone */
-        color: white !important;
-        border-radius: 6px !important;
+        background-color: transparent !important; /* remove base layer */
     }
 
-    /* Close (x) button inside tags */
+    div[data-baseweb="tag"] > div {
+        background-color: #6c757d !important;  /* gray tone */
+        color: white !important;
+        border-radius: 8px !important;
+        border: none !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    /* Tag text */
+    div[data-baseweb="tag"] span {
+        color: white !important;
+        font-weight: 500 !important;
+    }
+
+    /* Close (x) icon */
     div[data-baseweb="tag"] svg {
         fill: white !important;
+        opacity: 0.9;
     }
 
     /* Slider color styling */
@@ -52,11 +65,15 @@ with st.sidebar:
     .stSlider > div > div > div[data-testid="stTickBar"] {
         background: linear-gradient(to right, #0073e6, #00b894) !important;
     }
+
+    /* Extra override (strongest level) */
+    [data-baseweb="tag"] div {
+        background-color: #6c757d !important;
+    }
     </style>
     """,
     unsafe_allow_html=True
-)
-
+    )
         
     st.title("Dashboard Controls")
 
