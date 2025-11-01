@@ -27,7 +27,7 @@ with st.sidebar:
     st.info(f"**Total Records:** {len(df):,}\n\n**Columns:** {len(df.columns)}")
 
     # --- Filters Section ---
-    with st.expander("🎯 Filter Options", expanded=True):
+    with st.expander("Filter Options", expanded=True):
         st.markdown("Select filters to refine your dashboard view:")
 
         # --- Multi-select Filters ---
@@ -134,9 +134,9 @@ with st.sidebar:
     st.markdown("---")
 
 # ===== THEME TOGGLE =====
-theme_mode = st.sidebar.radio("Select Theme Mode", ["Light 🌞", "Dark 🌙"], horizontal=True)
+theme_mode = st.sidebar.radio("Select Theme Mode", ["Light", "Dark"], horizontal=True)
 
-if theme_mode == "Dark 🌙":
+if theme_mode == "Dark":
     st.markdown("""
         <style>
         body { background-color: #121212; color: white; }
@@ -188,7 +188,7 @@ def show_plot(title, xlabel, ylabel, rotation=False):
     plt.clf()
 
 # --- BOX PLOTS ---
-with st.expander("📦 Box Plots"):
+with st.expander("Box Plots"):
     plt.figure(figsize=(12, 7))
     sns.boxplot(x='Accident_Severity', y='Biker_Age', data=filtered_df, palette='viridis')
     show_plot('Distribution of Biker Age by Accident Severity', 'Accident Severity', 'Biker Age')
@@ -220,7 +220,7 @@ with st.expander("📦 Box Plots"):
     st.success("**Interpretation:** Younger bikers show higher accident severity, suggesting overconfidence and less risk awareness.")
 
 # --- VIOLIN PLOTS ---
-with st.expander("🎻 Violin Plots"):
+with st.expander("Violin Plots"):
     plt.figure(figsize=(12, 7))
     sns.violinplot(x='Accident_Severity', y='Biker_Age', data=filtered_df, palette='viridis')
     show_plot('Distribution of Biker Age by Accident Severity (Violin Plot)', 'Accident Severity', 'Biker Age')
@@ -232,7 +232,7 @@ with st.expander("🎻 Violin Plots"):
     st.success("**Interpretation:** Younger bikers show higher accident severity, suggesting overconfidence and less risk awareness.")
 
 # --- SCATTER PLOTS ---
-with st.expander("📈 Scatter Plots"):
+with st.expander("Scatter Plots"):
     plt.figure(figsize=(14, 10))
     sns.scatterplot(x='Bike_Speed', y='Daily_Travel_Distance', hue='Accident_Severity', data=filtered_df, palette='viridis', alpha=0.6)
     plt.legend(title='Accident Severity')
