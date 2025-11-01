@@ -210,7 +210,7 @@ else:
 # ===== COLOR THEME =====
 color_theme = px.colors.qualitative.Pastel
 
-st.subheader("Riding Behavior Insights")
+st.header("Riding Behavior Insights")
 st.markdown("Analyze rider behavior patterns and how habits influence accident severity.")
 
 # Calculate percentages
