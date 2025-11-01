@@ -192,7 +192,7 @@ else:
 # ===== COLOR THEME =====
 color_theme = px.colors.qualitative.Pastel
 
-st.subheader("Distribution of Numeric Variables")
+st.header("Distribution of Numeric Variables")
 st.markdown("Analyze numeric relationships such as speed, age, experience, and travel distance.")
 
 col1, col2, col3 = st.columns(3)
