@@ -10,6 +10,7 @@ warnings.filterwarnings("ignore")
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Motorbike Accident Insights Dashboard", page_icon="🏍️", layout="wide")
 
+
 # --- LOAD DATA ---
 @st.cache_data
 def load_data():
@@ -18,6 +19,7 @@ def load_data():
     return df
 
 df = load_data()
+
 
 # ====== SIDEBAR ======
 with st.sidebar:
@@ -56,29 +58,44 @@ with st.sidebar:
             default=sorted(df["Road_Type"].dropna().unique())
         )
 
-        license_status = st.multiselect("Valid Driving License",
-            options=sorted(df["Valid_Driving_License"].dropna().unique()),
-            default=sorted(df["Valid_Driving_License"].dropna().unique())
-        )
+        # --- Optional Filters ---
+        if "Biker_Alcohol" in df.columns:
+            alcohol = st.multiselect(
+                "Biker Alcohol Consumption",
+                options=sorted(df["Biker_Alcohol"].dropna().unique()),
+                default=sorted(df["Biker_Alcohol"].dropna().unique())
+            )
+        else:
+            alcohol = []
 
-        min_age, max_age = st.slider(
-            "Filter by Biker Age",
-            int(df["Biker_Age"].min()),
-            int(df["Biker_Age"].max()),
-            (int(df["Biker_Age"].min()), int(df["Biker_Age"].max()))
-        )
+        if "Traffic_Density" in df.columns:
+            traffic = st.multiselect(
+                "Traffic Density",
+                options=sorted(df["Traffic_Density"].dropna().unique()),
+                default=sorted(df["Traffic_Density"].dropna().unique())
+            )
+        else:
+            traffic = []
 
-        filtered_df = df[
-            (df["Accident_Severity"].isin(severity)) &
-            (df["Weather"].isin(weather)) &
-            (df["Time_of_Day"].isin(time_of_day)) &
-            (df["Road_Type"].isin(road_type)) &
-            (df["Valid_Driving_License"].isin(license_status)) &
-            (df["Biker_Age"].between(min_age, max_age))
-        ]
+        if "Valid_Driving_License" in df.columns:
+            license_status = st.multiselect(
+                "Valid Driving License",
+                options=sorted(df["Valid_Driving_License"].dropna().unique()),
+                default=sorted(df["Valid_Driving_License"].dropna().unique())
+            )
+        else:
+            license_status = []
 
-        # ===== COLOR THEME =====
-        color_theme = px.colors.qualitative.Pastel
+        # --- Numeric Filter: Biker Age ---
+        if "Biker_Age" in df.columns:
+            min_age, max_age = st.slider(
+                "Filter by Biker Age",
+                int(df["Biker_Age"].min()),
+                int(df["Biker_Age"].max()),
+                (int(df["Biker_Age"].min()), int(df["Biker_Age"].max()))
+            )
+        else:
+            min_age, max_age = None, None
 
         # --- Apply Filters ---
         filtered_df = df.copy()
@@ -101,11 +118,10 @@ with st.sidebar:
             filtered_df = filtered_df[
                 (filtered_df["Biker_Age"] >= min_age) & (filtered_df["Biker_Age"] <= max_age)
             ]
-            
-        # share globally
+        # --- Share globally ---
+        color_theme = px.colors.qualitative.Pastel
         st.session_state["filtered_df"] = filtered_df
         st.session_state["color_theme"] = color_theme
-    
 
     # --- Reset and Download Buttons ---
     col1, col2 = st.columns(2)
@@ -158,7 +174,12 @@ if not filtered_df.empty:
     col3.metric("Avg. Speed", f"{filtered_df['Bike_Speed'].mean():.1f} km/h", help="PLO 3: Average Bike Speed", border=True)
     col4.metric("Avg. Travel Distance", f"{filtered_df['Daily_Travel_Distance'].mean():.1f} km", help="PLO 4: Average Daily Travel Distance", border=True)
 else:
-    st.warning("No records match the selected filters.")
+    col1.metric("Total Records", "0", help="No data available")
+    col2.metric("Avg. Age", "N/A", help="No data available")
+    col3.metric("Avg. Speed", "N/A", help="No data available")
+    col4.metric("Avg. Travel Distance", "N/A", help="No data available")
+
+st.markdown("---")
 
 # --- TAB LAYOUT ---
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["⚙️ General Overview", "📊 Accident Factors", "📈 Numerical Analysis", "📉 Advanced Visualizations", "🗺️ Correlation Insights", "🏍️ Riding Behavior Insights"])
