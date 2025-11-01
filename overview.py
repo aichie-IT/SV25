@@ -199,7 +199,7 @@ else:
 # ===== COLOR THEME =====
 color_theme = px.colors.qualitative.Pastel
 
-st.subheader("Distribution Overview")
+st.header("Distribution Overview")
 st.markdown("Overview of accident severity, helmet use, and license validity.")
 
 # Summary box
