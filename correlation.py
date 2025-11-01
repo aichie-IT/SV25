@@ -193,7 +193,7 @@ else:
 # ===== COLOR THEME =====
 color_theme = px.colors.qualitative.Pastel
 
-st.subheader("Correlation Insights")
+st.header("Correlation Insights")
 st.markdown("Explore feature interrelationships through correlation heatmaps.")
 
 numeric_cols = df.select_dtypes(include=['int', 'float']).columns
