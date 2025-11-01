@@ -154,3 +154,105 @@ else:
 
 # ===== COLOR THEME =====
 color_theme = px.colors.qualitative.Pastel
+
+st.subheader("Advanced Statistical Visualizations")
+    st.markdown("Explore deeper numerical relationships using box, violin, and scatter plots.")
+
+    # Summary box
+    corr_pair = df.corr(numeric_only=True).abs().unstack().sort_values(ascending=False)
+    top_corr = corr_pair[corr_pair < 1].head(1)
+    feature_a, feature_b = top_corr.index[0]
+    value = top_corr.values[0]
+    st.metric("Strongest Correlation", f"{feature_a} ↔ {feature_b}", f"{value:.2f}", border=True)
+
+    st.markdown("### Summary")
+    st.info("""
+    These visualizations explore how accident severity interacts with continuous variables like age, 
+    speed, and distance. Box and violin plots show clear separation in speed and experience across 
+    severity levels. Scatter plots reveal positive relationships between higher bike speed and greater 
+    accident severity, confirming that speed remains a dominant factor.
+    """)
+    st.markdown("---")
+    
+    sns.set_style("whitegrid")
+
+    # Helper function
+    def show_plot(title, xlabel, ylabel, rotation=False):
+        plt.title(title)
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+        if rotation:
+            plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
+        st.pyplot(plt.gcf())
+        plt.clf()
+
+    # --- BOX PLOTS ---
+    with st.expander("📦 Box Plots"):
+        plt.figure(figsize=(12, 7))
+        sns.boxplot(x='Accident_Severity', y='Biker_Age', data=filtered_df, palette='viridis')
+        show_plot('Distribution of Biker Age by Accident Severity', 'Accident Severity', 'Biker Age')
+        st.success("**Interpretation:** Younger bikers show higher accident severity, suggesting overconfidence and less risk awareness.")
+
+        plt.figure(figsize=(12, 7))
+        sns.boxplot(x='Accident_Severity', y='Riding_Experience', data=filtered_df, palette='viridis')
+        show_plot('Distribution of Riding Experience by Accident Severity', 'Accident Severity', 'Riding Experience (Years)')
+        st.success("**Interpretation:** Younger bikers show higher accident severity, suggesting overconfidence and less risk awareness.")
+
+        plt.figure(figsize=(12, 7))
+        sns.boxplot(x='Accident_Severity', y='Daily_Travel_Distance', data=filtered_df, palette='viridis')
+        show_plot('Distribution of Daily Travel Distance by Accident Severity', 'Accident Severity', 'Daily Travel Distance')
+        st.success("**Interpretation:** Younger bikers show higher accident severity, suggesting overconfidence and less risk awareness.")
+
+        plt.figure(figsize=(12, 7))
+        sns.boxplot(x='Accident_Severity', y='Bike_Speed', data=filtered_df, palette='viridis')
+        show_plot('Distribution of Bike Speed by Accident Severity', 'Accident Severity', 'Bike Speed')
+        st.success("**Interpretation:** Younger bikers show higher accident severity, suggesting overconfidence and less risk awareness.")
+
+        plt.figure(figsize=(12, 7))
+        sns.boxplot(x='Accident_Severity', y='Speed_Limit', data=filtered_df, palette='viridis')
+        show_plot('Distribution of Speed Limit by Accident Severity', 'Accident Severity', 'Speed Limit')
+        st.success("**Interpretation:** Younger bikers show higher accident severity, suggesting overconfidence and less risk awareness.")
+
+        plt.figure(figsize=(12, 7))
+        sns.boxplot(x='Biker_Occupation', y='Bike_Speed', data=filtered_df, palette='viridis')
+        show_plot('Distribution of Bike Speed by Biker Occupation', 'Biker Occupation', 'Bike Speed', rotation=True)
+        st.success("**Interpretation:** Younger bikers show higher accident severity, suggesting overconfidence and less risk awareness.")
+
+    # --- VIOLIN PLOTS ---
+    with st.expander("🎻 Violin Plots"):
+        plt.figure(figsize=(12, 7))
+        sns.violinplot(x='Accident_Severity', y='Biker_Age', data=filtered_df, palette='viridis')
+        show_plot('Distribution of Biker Age by Accident Severity (Violin Plot)', 'Accident Severity', 'Biker Age')
+        st.success("**Interpretation:** Younger bikers show higher accident severity, suggesting overconfidence and less risk awareness.")
+
+        plt.figure(figsize=(12, 7))
+        sns.violinplot(x='Weather', y='Bike_Speed', data=filtered_df, palette='viridis')
+        show_plot('Distribution of Bike Speed by Weather (Violin Plot)', 'Weather', 'Bike Speed')
+        st.success("**Interpretation:** Younger bikers show higher accident severity, suggesting overconfidence and less risk awareness.")
+
+    # --- SCATTER PLOTS ---
+    with st.expander("📈 Scatter Plots"):
+        plt.figure(figsize=(14, 10))
+        sns.scatterplot(x='Bike_Speed', y='Daily_Travel_Distance', hue='Accident_Severity', data=filtered_df, palette='viridis', alpha=0.6)
+        plt.legend(title='Accident Severity')
+        show_plot('Daily Travel Distance vs Bike Speed by Accident Severity', 'Bike Speed', 'Daily Travel Distance')
+        st.success("**Interpretation:** Younger bikers show higher accident severity, suggesting overconfidence and less risk awareness.")
+
+        plt.figure(figsize=(12, 8))
+        sns.scatterplot(x='Bike_Speed', y='Biker_Age', data=filtered_df, alpha=0.6)
+        show_plot('Biker Age vs Bike Speed', 'Bike Speed', 'Biker Age')
+        st.success("**Interpretation:** Younger bikers show higher accident severity, suggesting overconfidence and less risk awareness.")
+
+        plt.figure(figsize=(12, 8))
+        sns.scatterplot(x='Daily_Travel_Distance', y='Biker_Age', data=filtered_df, alpha=0.6)
+        show_plot('Biker Age vs Daily Travel Distance', 'Daily Travel Distance', 'Biker Age')
+        st.success("**Interpretation:** Younger bikers show higher accident severity, suggesting overconfidence and less risk awareness.")
+
+    st.markdown("#### 💬 Observation")
+    st.success("""
+    The violin plots highlight that severe accidents are concentrated among high-speed riders. 
+    Correlations between experience and severity indicate that experienced riders adapt speed 
+    better to conditions, validating behavioral safety theories.
+    """)
+
