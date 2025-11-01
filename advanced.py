@@ -22,71 +22,7 @@ df = load_data()
 
 # ====== SIDEBAR ======
 with st.sidebar:
-    st.markdown(
-        """
-        <style>
-        /* Sidebar background and section spacing */
-        [data-testid="stSidebar"] {
-            background-color: #f8f9fb;
-            padding: 1.5rem 1rem;
-        }
-
-        /* Card-like filter boxes */
-        .stMultiSelect, .stSlider {
-            background-color: #ffffff !important;
-            border: 1px solid #e0e0e0 !important;
-            border-radius: 10px !important;
-            padding: 8px 10px !important;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-        }
-
-        /* Selected filter tags */
-        div[data-baseweb="tag"] {
-            background-color: #0073e6 !important;
-            color: white !important;
-            border-radius: 6px !important;
-        }
-
-        /* Slider color styling */
-        .stSlider > div > div > div[data-testid="stThumbValue"] {
-            color: #0073e6 !important;
-            font-weight: bold !important;
-        }
-        .stSlider > div > div > div[data-testid="stTickBar"] {
-            background: linear-gradient(to right, #0073e6, #00b894) !important;
-        }
-
-        /* Buttons uniform styling */
-        .custom-button {
-            width: 100%;
-            text-align: center;
-            font-weight: 600;
-            border-radius: 8px;
-            color: white !important;
-            padding: 10px 0 !important;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-        }
-        .reset-btn {
-            background-color: #007bff;
-        }
-        .download-btn {
-            background-color: #28a745;
-        }
-        .custom-button:hover {
-            opacity: 0.9;
-        }
-
-        /* Data Summary Info Box */
-        .stAlert {
-            border-radius: 10px !important;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.title("🏍️ Dashboard Controls")
+    st.title("Dashboard Controls")
 
     # --- Data Summary ---
     st.markdown("### 🧾 Data Summary")
@@ -96,6 +32,7 @@ with st.sidebar:
     with st.expander("Filter Options", expanded=True):
         st.markdown("Select filters to refine your dashboard view:")
 
+        # --- Multi-select Filters ---
         severity = st.multiselect(
             "Accident Severity",
             options=sorted(df["Accident_Severity"].dropna().unique()),
@@ -120,6 +57,7 @@ with st.sidebar:
             default=sorted(df["Road_Type"].dropna().unique())
         )
 
+        # --- Optional Filters ---
         if "Biker_Alcohol" in df.columns:
             alcohol = st.multiselect(
                 "Biker Alcohol Consumption",
@@ -147,6 +85,7 @@ with st.sidebar:
         else:
             license_status = []
 
+        # --- Numeric Filter: Biker Age ---
         if "Biker_Age" in df.columns:
             min_age, max_age = st.slider(
                 "Filter by Biker Age",
@@ -159,6 +98,7 @@ with st.sidebar:
 
         # --- Apply Filters ---
         filtered_df = df.copy()
+
         if severity:
             filtered_df = filtered_df[filtered_df["Accident_Severity"].isin(severity)]
         if weather:
@@ -178,28 +118,24 @@ with st.sidebar:
                 (filtered_df["Biker_Age"] >= min_age) & (filtered_df["Biker_Age"] <= max_age)
             ]
 
-    # --- Buttons Row ---
+    # --- Reset and Download Buttons ---
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown(
-            f'<button class="custom-button reset-btn" onclick="window.location.reload()">Reset Filters</button>',
-            unsafe_allow_html=True
-        )
+        if st.button("Reset Filters"):
+            for key in list(st.session_state.keys()):
+                del st.session_state[key]
+            st.rerun()
+
     with col2:
         st.download_button(
             label="Download CSV",
             data=filtered_df.to_csv(index=False).encode("utf-8"),
             file_name="motor_accident_data.csv",
-            mime="text/csv",
-            key="download_csv",
+            mime="text/csv"
         )
-        st.markdown(
-            "<style>div[data-testid='stDownloadButton'] button{width:100%;font-weight:600;border-radius:8px;background-color:#28a745;color:white;box-shadow:0 2px 6px rgba(0,0,0,0.15);}</style>",
-            unsafe_allow_html=True,
-        )
-
     st.markdown("---")
 
+do not change the layout and position, just improve the UI design like highlight color, filter selected color or add shadow, or any other profesional design
 
 # ===== THEME TOGGLE =====
 theme_mode = st.sidebar.radio("Select Theme Mode", ["Light", "Dark"], horizontal=True)
