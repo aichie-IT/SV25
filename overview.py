@@ -31,16 +31,24 @@ with st.sidebar:
         box-shadow: 0 2px 6px rgba(0,0,0,0.06);
     }
 
-    /* Selected filter tags */
-    div[data-baseweb="tag"] {
-        background-color: #6c757d !important; /* gray tone */
+    /* Selected filter tags (stronger override) */
+    div[data-baseweb="tag"] > div {
+        background-color: #6c757d !important; /* modern gray tone */
         color: white !important;
-        border-radius: 6px !important;
+        border-radius: 8px !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.15);
     }
 
-    /* Close (x) button inside tags */
+    /* Text inside tag */
+    div[data-baseweb="tag"] span {
+        color: white !important;
+        font-weight: 500 !important;
+    }
+
+    /* Close (x) icon inside tag */
     div[data-baseweb="tag"] svg {
         fill: white !important;
+        opacity: 0.9;
     }
 
     /* Slider color styling */
@@ -55,7 +63,6 @@ with st.sidebar:
     """,
     unsafe_allow_html=True
 )
-
         
     st.title("Dashboard Controls")
 
