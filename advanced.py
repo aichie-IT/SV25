@@ -135,8 +135,6 @@ with st.sidebar:
         )
     st.markdown("---")
 
-do not change the layout and position, just improve the UI design like highlight color, filter selected color or add shadow, or any other profesional design
-
 # ===== THEME TOGGLE =====
 theme_mode = st.sidebar.radio("Select Theme Mode", ["Light", "Dark"], horizontal=True)
 
