@@ -273,7 +273,7 @@ with col3:
 
 # --- Observation Section ---
 st.markdown("#### 💬 Observation")
-st.success("""
+st.info("""
 The majority of accidents are classified as minor. Helmet usage is generally high,
 which correlates with lower accident severity. Riders with valid licenses also
 exhibit safer driving trends, suggesting that training and enforcement play key roles.
