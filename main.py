@@ -602,7 +602,7 @@ if page == "🏍️ Motor Accident Severity Analysis" and sidebar_tab:
             Correlations between experience and severity indicate that experienced riders adapt speed 
             better to conditions, validating behavioral safety theories.
             """)
-        elif sidebar_tab == "🗺️ Correlation Insights"":
+        elif sidebar_tab == "🗺️ Correlation Insights":
             st.subheader("Correlation Insights")
             st.markdown("Explore feature interrelationships through correlation heatmaps.")
 
@@ -639,8 +639,8 @@ if page == "🏍️ Motor Accident Severity Analysis" and sidebar_tab:
             st.markdown("#### 💬 Observation")
             st.info("Higher correlations indicate stronger relationships between factors such as speed, experience, and accident severity.")
 
-        elif sidebar_tab == "🗺️ Correlation Insights"":
-            st.subheader("🏍️ Riding Behavior Insights")
+        elif sidebar_tab == "🏍️ Riding Behavior Insights":
+            st.subheader("Riding Behavior Insights")
             st.markdown("Analyze rider behavior patterns and how habits influence accident severity.")
 
             # Calculate percentages
@@ -767,7 +767,6 @@ if page == "🏍️ Motor Accident Severity Analysis" and sidebar_tab:
 else:
 # ============ TAB 1: GENERAL OVERVIEW ============
 with tabs[0]:
-    st.session_state["_current_page_"] = "⚙️ General Overview"
     st.subheader("Distribution Overview")
     st.markdown("Overview of accident severity, helmet use, and license validity.")
 
@@ -850,7 +849,6 @@ with tabs[0]:
 
 # ============ TAB 2: ACCIDENT FACTORS ============
 with tabs[1]:
-    st.session_state["_current_page_"] = "📊 Accident Factors"
     st.subheader("Accident Severity by Categorical Factors")
     st.markdown("Explore how factors like occupation, education, and road conditions impact severity.")
 
@@ -1010,7 +1008,6 @@ with tabs[1]:
 
 # ============ TAB 3: NUMERICAL ANALYSIS ============
 with tabs[2]:
-    st.session_state["_current_page_"] = "📈 Numerical Analysis"
     st.subheader("Distribution of Numeric Variables")
     st.markdown("Analyze numeric relationships such as speed, age, experience, and travel distance.")
 
@@ -1079,7 +1076,6 @@ with tabs[2]:
 
 # ============ TAB 4: ADVANCED VISUALIZATIONS ============
 with tabs[3]:
-    st.session_state["_current_page_"] = "📉 Advanced Visualizations"
     st.subheader("Advanced Statistical Visualizations")
     st.markdown("Explore deeper numerical relationships using box, violin, and scatter plots.")
 
@@ -1183,7 +1179,6 @@ with tabs[3]:
 
 # ---- Tab 5: Correlation Insights ----
 with tabs[4]:
-    st.session_state["_current_page_"] = "🗺️ Correlation Insights"
     st.subheader("Correlation Insights")
     st.markdown("Explore feature interrelationships through correlation heatmaps.")
 
@@ -1222,7 +1217,6 @@ with tabs[4]:
 
 # ---- Tab 6: Riding Behavior Insights ----
 with tabs[5]:
-    st.session_state["_current_page_"] = "🏍️ Riding Behavior Insights"
     st.subheader("🏍️ Riding Behavior Insights")
     st.markdown("Analyze rider behavior patterns and how habits influence accident severity.")
 
