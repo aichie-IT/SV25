@@ -215,15 +215,8 @@ st.markdown("---")
 
 fig = px.imshow(corr, text_auto=True, title="Correlation Heatmap", aspect="auto", color_continuous_scale="Tealrose")
 st.plotly_chart(fig, use_container_width=True)
-st.info("""
-**Interpretation:** Bike speed and accident severity exhibit a strong positive correlation, confirming kinetic energy’s contribution to impact intensity.
-""")
-
-st.markdown("#### Interpretation")
 st.success("""
-Strong positive correlations between speed and accident severity confirm mechanical energy’s 
-role in crash outcomes. Weak or negative correlations suggest factors like experience help 
-moderate these risks.
+**Interpretation:** Bike speed and accident severity exhibit a strong positive correlation, confirming kinetic energy’s contribution to impact intensity.
 """)
     
 st.markdown("#### 💬 Observation")
