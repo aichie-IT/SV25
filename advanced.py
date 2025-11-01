@@ -22,101 +22,71 @@ df = load_data()
 
 # ====== SIDEBAR ======
 with st.sidebar:
-    st.title("Dashboard Controls")
-
-    # --- Inject custom CSS for a professional look ---
-    st.markdown("""
+    st.markdown(
+        """
         <style>
-        /* Sidebar background and text */
+        /* Sidebar background and section spacing */
         [data-testid="stSidebar"] {
-            background: linear-gradient(180deg, #f9fafc 0%, #eef1f5 100%);
-            color: #1e1e1e;
-            border-right: 1px solid #dee2e6;
+            background-color: #f8f9fb;
+            padding: 1.5rem 1rem;
         }
 
-        /* Section titles */
-        .stMarkdown h3, .stMarkdown h4 {
-            color: #1E88E5 !important;
-            font-weight: 700;
-            margin-top: 10px;
+        /* Card-like filter boxes */
+        .stMultiSelect, .stSlider {
+            background-color: #ffffff !important;
+            border: 1px solid #e0e0e0 !important;
+            border-radius: 10px !important;
+            padding: 8px 10px !important;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
         }
 
-        /* Info box */
-        .stAlert {
-            background-color: #e3f2fd !important;
-            border: 1px solid #90caf9 !important;
-            border-radius: 8px !important;
-            color: #0d47a1 !important;
-        }
-
-        /* Expander styling */
-        div[data-testid="stExpander"] {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-            margin-top: 10px;
-        }
-        div[data-testid="stExpander"] div[role="button"] p {
-            color: #1E88E5 !important;
-            font-weight: 700 !important;
-        }
-
-        /* Multiselect dropdowns */
-        div[data-baseweb="select"] {
-            background-color: white !important;
+        /* Selected filter tags */
+        div[data-baseweb="tag"] {
+            background-color: #0073e6 !important;
+            color: white !important;
             border-radius: 6px !important;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            transition: all 0.2s ease-in-out;
-        }
-        div[data-baseweb="select"]:hover {
-            box-shadow: 0 0 0 2px #1E88E5 inset;
         }
 
-        /* Slider styling */
-        [data-testid="stSlider"] > div > div {
-            background-color: #1E88E5 !important;
+        /* Slider color styling */
+        .stSlider > div > div > div[data-testid="stThumbValue"] {
+            color: #0073e6 !important;
+            font-weight: bold !important;
+        }
+        .stSlider > div > div > div[data-testid="stTickBar"] {
+            background: linear-gradient(to right, #0073e6, #00b894) !important;
         }
 
-        /* Buttons */
-        .stButton>button {
-            border-radius: 6px;
-            border: none;
-            background-color: #1E88E5;
-            color: white;
+        /* Buttons uniform styling */
+        .custom-button {
+            width: 100%;
+            text-align: center;
             font-weight: 600;
-            padding: 0.6em 1em;
-            box-shadow: 0 2px 4px rgba(30,136,229,0.3);
-            transition: all 0.2s ease;
+            border-radius: 8px;
+            color: white !important;
+            padding: 10px 0 !important;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
         }
-        .stButton>button:hover {
-            background-color: #1565C0;
-            box-shadow: 0 3px 6px rgba(21,101,192,0.4);
+        .reset-btn {
+            background-color: #007bff;
         }
-
-        /* Download button */
-        .stDownloadButton>button {
-            background-color: #43A047;
-            color: white;
-            border-radius: 6px;
-            font-weight: 600;
-            box-shadow: 0 2px 4px rgba(67,160,71,0.3);
-            border: none;
+        .download-btn {
+            background-color: #28a745;
         }
-        .stDownloadButton>button:hover {
-            background-color: #2E7D32;
-            box-shadow: 0 3px 6px rgba(46,125,50,0.4);
+        .custom-button:hover {
+            opacity: 0.9;
         }
 
-        /* Divider line */
-        hr {
-            border: 0;
-            height: 1px;
-            background: #dcdfe3;
-            margin-top: 15px;
-            margin-bottom: 10px;
+        /* Data Summary Info Box */
+        .stAlert {
+            border-radius: 10px !important;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
         }
         </style>
-    """, unsafe_allow_html=True)
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.title("🏍️ Dashboard Controls")
 
     # --- Data Summary ---
     st.markdown("### 🧾 Data Summary")
@@ -126,7 +96,6 @@ with st.sidebar:
     with st.expander("Filter Options", expanded=True):
         st.markdown("Select filters to refine your dashboard view:")
 
-        # --- Multi-select Filters ---
         severity = st.multiselect(
             "Accident Severity",
             options=sorted(df["Accident_Severity"].dropna().unique()),
@@ -151,7 +120,6 @@ with st.sidebar:
             default=sorted(df["Road_Type"].dropna().unique())
         )
 
-        # --- Optional Filters ---
         if "Biker_Alcohol" in df.columns:
             alcohol = st.multiselect(
                 "Biker Alcohol Consumption",
@@ -179,7 +147,6 @@ with st.sidebar:
         else:
             license_status = []
 
-        # --- Numeric Filter: Biker Age ---
         if "Biker_Age" in df.columns:
             min_age, max_age = st.slider(
                 "Filter by Biker Age",
@@ -211,22 +178,28 @@ with st.sidebar:
                 (filtered_df["Biker_Age"] >= min_age) & (filtered_df["Biker_Age"] <= max_age)
             ]
 
-    # --- Reset and Download Buttons ---
+    # --- Buttons Row ---
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("Reset Filters"):
-            for key in list(st.session_state.keys()):
-                del st.session_state[key]
-            st.rerun()
-
+        st.markdown(
+            f'<button class="custom-button reset-btn" onclick="window.location.reload()">Reset Filters</button>',
+            unsafe_allow_html=True
+        )
     with col2:
         st.download_button(
             label="Download CSV",
             data=filtered_df.to_csv(index=False).encode("utf-8"),
             file_name="motor_accident_data.csv",
-            mime="text/csv"
+            mime="text/csv",
+            key="download_csv",
         )
+        st.markdown(
+            "<style>div[data-testid='stDownloadButton'] button{width:100%;font-weight:600;border-radius:8px;background-color:#28a745;color:white;box-shadow:0 2px 6px rgba(0,0,0,0.15);}</style>",
+            unsafe_allow_html=True,
+        )
+
     st.markdown("---")
+
 
 # ===== THEME TOGGLE =====
 theme_mode = st.sidebar.radio("Select Theme Mode", ["Light", "Dark"], horizontal=True)
