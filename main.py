@@ -172,12 +172,12 @@ if not filtered_df.empty:
     col3.metric("Avg. Speed", f"{filtered_df['Bike_Speed'].mean():.1f} km/h", help="PLO 3: Average Bike Speed", border=True)
     col4.metric("Avg. Travel Distance", f"{filtered_df['Daily_Travel_Distance'].mean():.1f} km", help="PLO 4: Average Daily Travel Distance", border=True)
 else:
-    col1.metric("Total Records", "0", help="No data available")
-    col2.metric("Avg. Age", "N/A", help="No data available")
-    col3.metric("Avg. Speed", "N/A", help="No data available")
-    col4.metric("Avg. Travel Distance", "N/A", help="No data available")
+    st.warning("No records match the selected filters.")
 
+# --- Import and Run Overview Page ---
 st.markdown("---")
+import overview
+overview.show_overview(filtered_df)
 
 # --- TAB LAYOUT ---
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["⚙️ General Overview", "📊 Accident Factors", "📈 Numerical Analysis", "📉 Advanced Visualizations", "🗺️ Correlation Insights", "🏍️ Riding Behavior Insights"])
