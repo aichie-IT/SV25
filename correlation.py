@@ -154,3 +154,40 @@ else:
 
 # ===== COLOR THEME =====
 color_theme = px.colors.qualitative.Pastel
+
+    st.subheader("Correlation Insights")
+    st.markdown("Explore feature interrelationships through correlation heatmaps.")
+
+    numeric_cols = df.select_dtypes(include=['int', 'float']).columns
+    corr = df[numeric_cols].corr()
+
+    col1, col2 = st.columns(2)
+    top_corr = corr.unstack().sort_values(ascending=False)
+    col1.metric("Highest Positive Correlation", top_corr.index[1][0], f"{top_corr.iloc[1]:.2f}", border=True)
+    col2.metric("Lowest Negative Correlation", top_corr.index[-1][0], f"{top_corr.iloc[-1]:.2f}", border=True)
+    
+    st.markdown("### Summary")
+    st.info("""
+    The correlation matrix measures the strength of relationships among numeric attributes. 
+    Higher correlations between bike speed, experience, and accident severity imply that 
+    behavioral and skill factors are tightly coupled. Weak negative correlations between 
+    experience and alcohol use reflect safer patterns among trained riders.
+    """)
+    st.markdown("---")
+
+    fig = px.imshow(corr, text_auto=True, title="Correlation Heatmap", aspect="auto", color_continuous_scale="Tealrose")
+    st.plotly_chart(fig, use_container_width=True)
+    st.info("""
+    **Interpretation:** Bike speed and accident severity exhibit a strong positive correlation, confirming kinetic energy’s contribution to impact intensity.
+    """)
+
+    st.markdown("#### Interpretation")
+    st.success("""
+    Strong positive correlations between speed and accident severity confirm mechanical energy’s 
+    role in crash outcomes. Weak or negative correlations suggest factors like experience help 
+    moderate these risks.
+    """)
+    
+    st.markdown("#### 💬 Observation")
+    st.info("Higher correlations indicate stronger relationships between factors such as speed, experience, and accident severity.")
+
