@@ -200,7 +200,7 @@ st.markdown("Explore deeper numerical relationships using box, violin, and scatt
 
 # Summary box
 corr_pair = df.corr(numeric_only=True).abs().unstack().sort_values(ascending=False)
-top_corr = corr_pair[corr_pair < 1].subhead(1)
+top_corr = corr_pair[corr_pair < 1].head(1)
 feature_a, feature_b = top_corr.index[0]
 value = top_corr.values[0]
 st.metric("Strongest Correlation", f"{feature_a} ↔ {feature_b}", f"{value:.2f}", border=True)
