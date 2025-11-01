@@ -33,6 +33,21 @@ with st.sidebar:
             padding: 8px 10px !important;
             box-shadow: 0 2px 6px rgba(0,0,0,0.06);
         }
+        /* Selected filter tags */
+        div[data-baseweb="tag"] {
+            background-color: #0073e6 !important;
+            color: white !important;
+            border-radius: 6px !important;
+        }
+
+        /* Slider color styling */
+        .stSlider > div > div > div[data-testid="stThumbValue"] {
+            color: #0073e6 !important;
+            font-weight: bold !important;
+        }
+        .stSlider > div > div > div[data-testid="stTickBar"] {
+            background: linear-gradient(to right, #0073e6, #00b894) !important;
+        }
         </style>
         """,
         unsafe_allow_html=True
