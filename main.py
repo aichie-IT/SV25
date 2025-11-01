@@ -118,10 +118,6 @@ with st.sidebar:
             filtered_df = filtered_df[
                 (filtered_df["Biker_Age"] >= min_age) & (filtered_df["Biker_Age"] <= max_age)
             ]
-        # --- Share globally ---
-        color_theme = px.colors.qualitative.Pastel
-        st.session_state["filtered_df"] = filtered_df
-        st.session_state["color_theme"] = color_theme
 
     # --- Reset and Download Buttons ---
     col1, col2 = st.columns(2)
@@ -158,6 +154,10 @@ else:
         [data-testid="stSidebar"] { background-color: #FFFFFF; color: black; }
         </style>
     """, unsafe_allow_html=True)
+
+# ===== COLOR THEME =====
+color_theme = px.colors.qualitative.Pastel
+
 
 # --- MAIN TITLE ---
 st.title("🏍️ Motorbike Accident Insights Dashboard")
