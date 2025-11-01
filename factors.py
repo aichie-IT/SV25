@@ -27,7 +27,7 @@ with st.sidebar:
     st.info(f"**Total Records:** {len(df):,}\n\n**Columns:** {len(df.columns)}")
 
     # --- Filters Section ---
-    with st.expander("🎯 Filter Options", expanded=True):
+    with st.expander("Filter Options", expanded=True):
         st.markdown("Select filters to refine your dashboard view:")
 
         # --- Multi-select Filters ---
@@ -134,9 +134,9 @@ with st.sidebar:
     st.markdown("---")
 
 # ===== THEME TOGGLE =====
-theme_mode = st.sidebar.radio("Select Theme Mode", ["Light 🌞", "Dark 🌙"], horizontal=True)
+theme_mode = st.sidebar.radio("Select Theme Mode", ["Light", "Dark"], horizontal=True)
 
-if theme_mode == "Dark 🌙":
+if theme_mode == "Dark":
     st.markdown("""
         <style>
         body { background-color: #121212; color: white; }
