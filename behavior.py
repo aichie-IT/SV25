@@ -328,7 +328,7 @@ for col in behavior_cols:
         """)
 
 st.markdown("#### 💬 Observation")
-st.success("""
+st.info("""
 Riders who talk or smoke while riding show higher accident frequencies, validating the role of 
 attention in safety. Helmet use correlates inversely with severe accidents, supporting mandatory 
 safety gear enforcement.
